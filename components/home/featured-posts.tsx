@@ -1,15 +1,4 @@
 import FeaturedPostCard from './featured-post-card';
-
-/**
- * 
-title: string;
-  date: string;
-  excerpt: string;
-  coverImage: string;
-  tags: string[];
-  summary: string;
-  category: string;
- */
 export default function FeaturedPosts() {
   return (
     <div className="py-14 text-center">

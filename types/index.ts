@@ -7,3 +7,10 @@ export interface Article {
   summary: string;
   category: string;
 }
+
+export interface Category {
+  name: string;
+  count: number;
+  icon: string;
+  key: string;
+}
