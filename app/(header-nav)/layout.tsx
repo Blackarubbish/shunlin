@@ -3,5 +3,9 @@ export default function HeaderNavLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="min-h-screen bg-background xl:max-w-[1280px] mx-auto">{children}</div>;
+  return (
+    <div className="bg-background mx-auto min-h-screen px-5 xl:max-w-[1200px]">
+      {children}
+    </div>
+  );
 }

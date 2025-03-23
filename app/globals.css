@@ -2,6 +2,8 @@
 
 @theme {
   --color-primary: var(--primary-color);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
   --color-secondary: var(--secondary-color);
   --color-background: var(--bg-color);
 
@@ -12,6 +14,9 @@
   --color-text-btn-text: var(--btn-font-color);
 
   --color-border: var(--border-color);
+
+  --color-card-bg: var(--card-bg);
+  --color-input-bg: var(--input-bg);
 
   --shadow-card: var(--card-shadow);
   --shadow-card-hover: var(--card-hover-shadow);
@@ -27,11 +32,10 @@
     --foreground: #ededed;
   }
 }
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Arial', 'Microsoft YaHei', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: var(--text-color);
@@ -46,7 +50,7 @@ body {
   --primary-light: #ffd1dd;
   --secondary-color: #78c5ff;
 
-  --card-shadow: 0 5px 15px rgba(255, 158, 181, 0.1);
+  --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   --card-hover-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   --transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
 

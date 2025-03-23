@@ -7,37 +7,37 @@ const BTN_CLASS = `px-6 py-3 rounded-3xl font-semibold
    `;
 const Hero = () => {
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between py-16 gap-10">
-      <div className="flex-1 flex justify-center items-center flex-col lg:justify-start lg:items-start">
-        <h2 className="md:text-[2.5rem] text-3xl font-bold mb-5 text-text">
+    <div className="flex flex-col items-center justify-between gap-10 py-16 lg:flex-row">
+      <div className="flex flex-1 flex-col items-center justify-center lg:items-start lg:justify-start">
+        <h2 className="text-text mb-5 text-3xl font-bold md:text-[2.5rem]">
           Welcome to{' '}
-          <span
-            className="text-primary relative after:content-[''] after:absolute after:bottom-[-5px] 
-          after:left-0 after:w-full after:h-[3px] after:bg-primary after:border-radius-[3px]"
-          >
+          <span className="text-primary after:bg-primary after:border-radius-[3px] relative after:absolute after:bottom-[-5px] after:left-0 after:h-[3px] after:w-full after:content-['']">
             Bocchi Blog
           </span>
         </h2>
-        <p className="text-text-secondary text-[1.2rem] mb-8">分享生活、技术、音乐、动漫等内容</p>
+        <p className="text-text-secondary mb-8 text-[1.2rem]">
+          分享生活、技术、音乐、动漫等内容
+        </p>
         <div className="flex gap-4">
           <a
             href="/articles"
-            className={cn(BTN_CLASS, 'text-text-btn-text bg-primary hover:bg-primary-dark')}
-          >
+            className={cn(
+              BTN_CLASS,
+              'text-text-btn-text bg-primary hover:bg-primary-dark'
+            )}>
             浏览文章
           </a>
           <a
             href="/about"
             className={cn(
               BTN_CLASS,
-              'text-primary border-2 border-primary hover:bg-primary hover:text-white'
-            )}
-          >
+              'text-primary border-primary hover:bg-primary border-2 hover:text-white'
+            )}>
             关于我
           </a>
         </div>
       </div>
-      <div className="flex-1 flex justify-end">
+      <div className="flex flex-1 justify-end">
         <Image
           src="/img/avatar.jpg"
           width={200}

@@ -10,6 +10,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@ant-design/icons": "^6.0.0",
     "clsx": "^2.1.1",
     "next": "15.2.3",
     "react": "^19.0.0",
@@ -26,6 +27,7 @@
     "eslint-config-next": "15.2.3",
     "eslint-config-prettier": "^10.1.1",
     "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -8,10 +8,9 @@ const Nav = ({ title, url, isActive }: (typeof appConfig)['navList'][number]) =>
       <a
         href={url}
         className={cn(
-          'transition-all  duration-300 hover:bg-primary hover:text-text-hover px-3 py-2 rounded-2xl',
+          'hover:bg-primary hover:text-text-hover rounded-2xl px-3 py-2 transition-all duration-300',
           isActive && 'bg-primary text-text-hover'
-        )}
-      >
+        )}>
         {title}
       </a>
     </li>
@@ -27,20 +26,20 @@ const Header = ({ currentPath }: Props) => {
     return currentPath === url;
   };
   return (
-    <header className="py-5 justify-between flex items-center border-b border-solid border-border md:flex-row flex-col">
+    <header className="border-border flex flex-col items-center justify-between border-b border-solid py-5 md:flex-row">
       <div className="flex items-center gap-4">
         <Image
           src="/img/avatar.jpg"
           alt="Bocchi博客"
-          className="w-12 h-12 object-contain rounded-lg"
+          className="h-12 w-12 rounded-lg object-contain"
           height={48}
           width={48}
         />
-        <h1 className="text-2xl font-bold text-text">
+        <h1 className="text-text text-2xl font-bold">
           Bocchi<span>博客</span>
         </h1>
       </div>
-      <nav className="md:flex   items-center ">
+      <nav className="items-center md:flex">
         <button className="mobile-menu-toggle">
           <span></span>
           <span></span>
@@ -48,7 +47,12 @@ const Header = ({ currentPath }: Props) => {
         </button>
         <ul className="flex gap-5">
           {appConfig.navList.map((item) => (
-            <Nav isActive={isActive(item.url)} key={item.key} title={item.title} url={item.url} />
+            <Nav
+              isActive={isActive(item.url)}
+              key={item.key}
+              title={item.title}
+              url={item.url}
+            />
           ))}
         </ul>
       </nav>
