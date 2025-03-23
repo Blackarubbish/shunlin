@@ -1,15 +1,24 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-primary: var(--primary-color);
+  --color-secondary: var(--secondary-color);
+  --color-background: var(--bg-color);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-text: var(--text-color);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-hover: var(--text-hover-color);
+  --color-text-btn-text: var(--btn-font-color);
+
+  --color-border: var(--border-color);
+
+  --shadow-card: var(--card-shadow);
+  --shadow-card-hover: var(--card-hover-shadow);
+
+  --animate-pluse: pulse 2s infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-bounce: bounce 2s ease-in-out infinite;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +31,133 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Arial', 'Microsoft YaHei', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+/* 主题变量结构 */
+:root {
+  /* 基础变量，会被各个主题覆盖 */
+  --primary-color: #ff9eb5;
+  --primary-dark: #ff7a9a;
+  --primary-light: #ffd1dd;
+  --secondary-color: #78c5ff;
+
+  --card-shadow: 0 5px 15px rgba(255, 158, 181, 0.1);
+  --card-hover-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --bg-color: #ffffff;
+  --bg-alt: #f8f9fa;
+  --card-bg: #ffffff;
+  --input-bg: #f5f5f5;
+
+  --text-color: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+
+  --text-hover-color: #ffffff;
+
+  --border-color: #eeeeee;
+
+  --footer-bg: #333333;
+  --footer-text: #ffffff;
+
+  --btn-font-color: #ffffff;
+
+  /* 动画时间 */
+  --transition-speed: 0.3s;
+
+  --pulse-0: 0 0 0 0 rgba(255, 158, 181, 0.7);
+  --pulse-70: 0 0 0 10px rgba(255, 158, 181, 0);
+  --pulse-100: 0 0 0 0 rgba(255, 158, 181, 0);
+}
+
+/* 深色主题 */
+.theme-dark {
+  --primary-color: #ff9eb5;
+  --primary-dark: #ff7a9a;
+  --primary-light: #ffd1dd;
+  --secondary-color: #78c5ff;
+
+  --text-hover-color: #121212;
+
+  --bg-color: #1a1a1a;
+  --bg-alt: #252525;
+  --card-bg: #2a2a2a;
+  --input-bg: #333333;
+
+  --text-color: #f5f5f5;
+  --text-secondary: #cccccc;
+  --text-tertiary: #999999;
+
+  --border-color: #444444;
+
+  --footer-bg: #111111;
+  --footer-text: #f5f5f5;
+}
+
+/* 蓝色主题 */
+.theme-blue {
+  --primary-color: #78c5ff;
+  --primary-dark: #5ab0ff;
+  --primary-light: #b5dfff;
+  --secondary-color: #ff9eb5;
+
+  --card-shadow: 0 5px 15px rgba(120, 197, 255, 0.1);
+  --card-hover-shadow: 0 15px 30px rgba(120, 197, 255, 0.2);
+  --transition-curve: cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* 黄色主题 */
+.theme-yellow {
+  --primary-color: #ffd878;
+  --primary-dark: #ffce5a;
+  --primary-light: #ffe7b5;
+  --secondary-color: #78c5ff;
+}
+
+/* 红色主题 */
+.theme-red {
+  --primary-color: #ff7878;
+  --primary-dark: #ff5a5a;
+  --primary-light: #ffb5b5;
+  --secondary-color: #78c5ff;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: var(--pulse-0);
+  }
+  70% {
+    box-shadow: var(--pulse-70);
+  }
+  100% {
+    box-shadow: var(--pulse-100);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
