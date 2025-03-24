@@ -18,6 +18,9 @@
   --color-card-bg: var(--card-bg);
   --color-input-bg: var(--input-bg);
 
+  --color-footer-bg: var(--footer-bg);
+  --color-footer-text: var(--footer-text);
+
   --shadow-card: var(--card-shadow);
   --shadow-card-hover: var(--card-hover-shadow);
 
@@ -164,4 +167,22 @@ body {
   50% {
     transform: translateY(-15px);
   }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* 悬停时暂停动画 */
+.animate-marquee:hover {
+  animation-play-state: paused;
 }

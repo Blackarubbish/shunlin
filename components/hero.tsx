@@ -10,9 +10,9 @@ const Hero = () => {
     <div className="flex flex-col items-center justify-between gap-10 py-16 lg:flex-row">
       <div className="flex flex-1 flex-col items-center justify-center lg:items-start lg:justify-start">
         <h2 className="text-text mb-5 text-3xl font-bold md:text-[2.5rem]">
-          Welcome to{' '}
+          你好！我是{' '}
           <span className="text-primary after:bg-primary after:border-radius-[3px] relative after:absolute after:bottom-[-5px] after:left-0 after:h-[3px] after:w-full after:content-['']">
-            Bocchi Blog
+            ShunLin
           </span>
         </h2>
         <p className="text-text-secondary mb-8 text-[1.2rem]">

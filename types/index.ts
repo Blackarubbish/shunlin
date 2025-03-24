@@ -13,4 +13,5 @@ export interface Category {
   count: number;
   icon: string;
   key: string;
+  coverImage?: string;
 }

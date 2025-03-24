@@ -8,6 +8,11 @@ interface AppConfig {
   }[];
   greeting: string;
   subGreeting: string;
+  contact: {
+    title: string;
+    link?: string;
+    value?: string;
+  }[];
 }
 
 export const appConfig: AppConfig = {
@@ -40,5 +45,19 @@ export const appConfig: AppConfig = {
     }
   ],
   greeting: "Hello, I'm Bocchi.",
-  subGreeting: 'A web developer.'
+  subGreeting: 'A web developer.',
+  contact: [
+    {
+      title: '掘金',
+      link: '/'
+    },
+    {
+      title: 'GitHub',
+      link: '/'
+    },
+    {
+      title: 'Email',
+      value: 'shunlin.li@qq.com'
+    }
+  ]
 };
