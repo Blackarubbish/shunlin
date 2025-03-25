@@ -1,5 +1,6 @@
 import { appConfig } from '@/app-config';
 import Image from 'next/image';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export default function Footer() {
   return (
@@ -10,8 +11,8 @@ export default function Footer() {
      */
     <footer className="bg-footer-bg text-footer-text pt-14 pb-4">
       <div className="mb-10 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-10">
-        <div className="p-4">
-          <div className="mb-5 flex items-center gap-2">
+        <div className="flex flex-col items-center gap-5 p-4">
+          <div className="flex items-center justify-center gap-2">
             <Image
               src="/img/avatar.jpg"
               width={200}
@@ -46,11 +47,25 @@ export default function Footer() {
           <ul className="flex flex-col gap-[10px]">
             {appConfig.contact.map((item) => (
               <li key={item.title}>
-                <a
-                  href={item.link}
-                  className="hover:text-primary transition-[color] duration-300">
-                  {item.title}
-                </a>
+                {item.link && (
+                  <a
+                    href={item.link}
+                    className="hover:text-primary transition-[color] duration-300">
+                    {item.title}
+                  </a>
+                )}
+                {item.value && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="hover:text-primary cursor-pointer transition-[color] duration-300">
+                        {item.title}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent side="bottom" align="center">
+                      <p className="text-center text-2xl font-bold">{item.value}</p>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </li>
             ))}
           </ul>

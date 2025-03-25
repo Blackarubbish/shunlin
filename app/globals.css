@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
 
 @theme {
   --color-primary: var(--primary-color);
@@ -27,6 +28,8 @@
   --animate-pluse: pulse 2s infinite;
   --animate-float: float 3s ease-in-out infinite;
   --animate-bounce: bounce 2s ease-in-out infinite;
+
+  /* --color-border: var(--border-color); */
 }
 
 @media (prefers-color-scheme: dark) {
