@@ -1,4 +1,4 @@
-import FeaturedPostCard from './featured-post-card';
+import PostCard from '../post-card';
 export default function FeaturedPosts() {
   return (
     <div className="py-14 text-center">
@@ -6,37 +6,37 @@ export default function FeaturedPosts() {
         精选文章
       </h2>
       <div className="mb-10 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[30px]">
-        <FeaturedPostCard
+        <PostCard
           article={{
             title: '这是一篇文章标题',
-            date: '2021-09-01',
+            publishDate: '2021-09-01',
             excerpt: '这是一篇文章摘要',
             coverImage: '/img/avatar.jpg',
             tags: ['JavaScript', 'TypeScript'],
-            summary: '这是一篇文章摘要',
-            category: '技术'
+            category: '技术',
+            slug: 'this-is-a-article-title'
           }}
         />
-        <FeaturedPostCard
+        <PostCard
           article={{
             title: '这是一篇文章标题',
-            date: '2021-09-01',
+            publishDate: '2021-09-01',
             excerpt: '这是一篇文章摘要',
             coverImage: '/img/avatar.jpg',
             tags: ['JavaScript', 'TypeScript'],
-            summary: '这是一篇文章摘要',
-            category: '技术'
+            category: '技术',
+            slug: 'this-is-a-article-title'
           }}
         />
-        <FeaturedPostCard
+        <PostCard
           article={{
             title: '这是一篇文章标题',
-            date: '2021-09-01',
+            publishDate: '2021-09-01',
             excerpt: '这是一篇文章摘要',
             coverImage: '/img/avatar.jpg',
             tags: ['JavaScript', 'TypeScript'],
-            summary: '这是一篇文章摘要',
-            category: '技术'
+            category: '技术',
+            slug: 'this-is-a-article-title'
           }}
         />
       </div>

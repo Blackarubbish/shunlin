@@ -7,9 +7,11 @@ export default function Home() {
   return (
     <>
       <Header currentPath="/" />
-      <Hero />
-      <FeaturedPosts />
-      <CategoryList />
+      <div className="h-[calc(100vh-64px)]">
+        <Hero />
+        <FeaturedPosts />
+        <CategoryList />
+      </div>
     </>
   );
 }

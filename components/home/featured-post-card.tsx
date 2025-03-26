@@ -9,7 +9,7 @@ interface Props {
 
 export default function FeaturedPostCard({ article }: Props) {
   return (
-    <article className="bg-card-bg shadow-card group hover:border-primary overflow-hidden rounded-2xl text-left transition-transform duration-300 ease-in-out hover:-mb-1 hover:-translate-y-2.5 hover:border-b-[3px] hover:border-solid hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
+    <article className="bg-card-bg shadow-card group hover:border-primary cursor-pointer overflow-hidden rounded-2xl text-left transition-transform duration-300 ease-in-out hover:-mb-1 hover:-translate-y-2.5 hover:border-b-[3px] hover:border-solid hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
       <div className="h-52 overflow-hidden">
         <Image
           src="/img/avatar.jpg"
@@ -34,7 +34,7 @@ export default function FeaturedPostCard({ article }: Props) {
         <div className="text-text-tertiary mb-4 gap-3 text-[0.8rem]">
           <span>
             <CalendarFilled className="mr-[5px]" />
-            {article.date}
+            {article.publishDate}
           </span>
         </div>
         <Link

@@ -1,11 +1,11 @@
 export interface Article {
   title: string;
-  date: string;
+  slug: string;
   excerpt: string;
   coverImage: string;
   tags: string[];
-  summary: string;
   category: string;
+  publishDate: string;
 }
 
 export interface Category {
