@@ -1,6 +1,6 @@
 import Footer from '@/components/footer';
 
-export default function HeaderNavLayout({
+export default async function HeaderNavLayout({
   children
 }: Readonly<{
   children: React.ReactNode;

@@ -1,0 +1,12 @@
+{
+  "categories": [
+    {
+      "name": "编程技术",
+      "key": "programming",
+      "icon": "code",
+      "description": "编程语言、框架和开发技巧",
+      "coverImage": "/img/categories/programming.jpg",
+      "order": 1
+    }
+  ]
+}

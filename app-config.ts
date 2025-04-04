@@ -1,3 +1,5 @@
+import path from 'path';
+
 interface AppConfig {
   title: string;
   navList: {
@@ -13,6 +15,7 @@ interface AppConfig {
     link?: string;
     value?: string;
   }[];
+  srcDir: string;
 }
 
 export const appConfig: AppConfig = {
@@ -59,5 +62,6 @@ export const appConfig: AppConfig = {
       title: 'Email',
       value: 'shunlin.li@qq.com'
     }
-  ]
+  ],
+  srcDir: path.join(process.cwd(), 'docs/blog')
 };

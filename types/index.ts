@@ -1,3 +1,6 @@
+/**
+ * @deprecated 统一用Post替代Article
+ */
 export interface Article {
   title: string;
   slug: string;
@@ -6,12 +9,26 @@ export interface Article {
   tags: string[];
   category: string;
   publishDate: string;
+  featured?: boolean;
+}
+
+export interface Post {
+  title: string;
+  slug: string;
+  excerpt: string;
+  coverImage: string;
+  tags: string[];
+  category: string;
+  publishDate: string;
+  featured?: boolean;
 }
 
 export interface Category {
   name: string;
-  count: number;
-  icon: string;
   key: string;
-  coverImage?: string;
+  icon: string;
+  count: number;
+  description?: string;
+  coverImage: string;
+  order?: number;
 }
