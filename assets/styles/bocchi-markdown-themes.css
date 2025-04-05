@@ -1,0 +1,1808 @@
+/* Bocchi the Rock Markdown Themes
+ * Based on the four main characters from the anime plus a dark night mode
+ * Characters: Hitori Gotoh (Bocchi), Nijika Ijichi, Ryo Yamada, Ikuyo Kita
+ * Updated with modern anime styling and animations
+ */
+
+/* ===== Common Animations and Effects ===== */
+@keyframes soft-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes soft-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes music-float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes background-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ===== Hitori Gotoh (Bocchi) Theme - Pink (#FF9EB5) ===== */
+.markdown-body.theme-bocchi {
+  --theme-color: #ff9eb5;
+  --theme-color-light: #ffd1db;
+  --theme-color-dark: #d67a8e;
+  --theme-color-muted: rgba(255, 158, 181, 0.2);
+  --theme-color-border: rgba(255, 158, 181, 0.4);
+  --theme-gradient: linear-gradient(135deg, #ff9eb5 0%, #ffb8c9 100%);
+
+  color: #333333;
+  background-color: #ffffff;
+  border-color: var(--theme-color-border);
+  font-family:
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Noto Sans',
+    Helvetica,
+    Arial,
+    sans-serif;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-bocchi h1,
+.markdown-body.theme-bocchi h2,
+.markdown-body.theme-bocchi h3,
+.markdown-body.theme-bocchi h4,
+.markdown-body.theme-bocchi h5,
+.markdown-body.theme-bocchi h6 {
+  color: var(--theme-color-dark);
+  border-bottom-color: var(--theme-color-border);
+  animation: fade-in 0.5s ease-out;
+  letter-spacing: 0.02em;
+}
+
+.markdown-body.theme-bocchi h1 {
+  background: var(--theme-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  border-bottom: 2px solid var(--theme-color);
+  padding-bottom: 0.4em;
+}
+
+.markdown-body.theme-bocchi a {
+  color: var(--theme-color-dark);
+  text-decoration: none;
+  background-image: linear-gradient(transparent 70%, var(--theme-color-muted) 100%);
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-bocchi a:hover {
+  color: var(--theme-color);
+  background-image: linear-gradient(transparent 60%, var(--theme-color-muted) 100%);
+  transform: translateY(-1px);
+}
+
+.markdown-body.theme-bocchi blockquote {
+  border-left: 4px solid var(--theme-color);
+  background-color: var(--theme-color-muted);
+  border-radius: 0 8px 8px 0;
+  padding: 1em 1em 1em 2em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-bocchi .markdown-alert {
+  border-left: 4px solid var(--theme-color);
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 3px 8px rgba(255, 158, 181, 0.15);
+}
+
+.markdown-body.theme-bocchi hr {
+  height: 4px;
+  background: var(--theme-gradient);
+  border-radius: 2px;
+  border: none;
+}
+
+.markdown-body.theme-bocchi code {
+  background-color: var(--theme-color-muted);
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-family: 'Fira Code', monospace;
+  transition: all 0.3s ease;
+}
+
+/* .markdown-body.theme-bocchi code:hover {
+  background-color: rgba(255, 158, 181, 0.3);
+} */
+
+.markdown-body.theme-bocchi pre {
+  background-color: #f8f8fa;
+  border: 1px solid var(--theme-color-border);
+  border-radius: 8px;
+  padding: 1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.markdown-body.theme-bocchi table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-bocchi table th {
+  background-color: var(--theme-color-muted);
+  color: #333;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--theme-color);
+  padding: 12px 15px;
+}
+
+.markdown-body.theme-bocchi table tr:nth-child(2n) {
+  background-color: var(--theme-color-muted);
+}
+
+.markdown-body.theme-bocchi table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+/* Guitar icon for the Bocchi theme with animation */
+.markdown-body.theme-bocchi h1::before,
+.markdown-body.theme-bocchi h2::before {
+  content: '🎸 ';
+  display: inline-block;
+  animation: music-float 3s ease-in-out infinite;
+}
+
+/* Add shimmer effect to task list items */
+.markdown-body.theme-bocchi .task-list-item-checkbox:checked {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-bocchi .task-list-item:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 158, 181, 0) 0%,
+    rgba(255, 158, 181, 0.1) 50%,
+    rgba(255, 158, 181, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: background-shimmer 1.5s ease infinite;
+}
+
+/* ===== Nijika Ijichi Theme - Yellow (#FFD878) ===== */
+.markdown-body.theme-nijika {
+  --theme-color: #ffd878;
+  --theme-color-light: #fff2d1;
+  --theme-color-dark: #d9b35e;
+  --theme-color-muted: rgba(255, 216, 120, 0.2);
+  --theme-color-border: rgba(255, 216, 120, 0.4);
+  --theme-gradient: linear-gradient(135deg, #ffd878 0%, #ffe3a3 100%);
+
+  color: #333333;
+  background-color: #ffffff;
+  border-color: var(--theme-color-border);
+  font-family:
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Noto Sans',
+    Helvetica,
+    Arial,
+    sans-serif;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-nijika h1,
+.markdown-body.theme-nijika h2,
+.markdown-body.theme-nijika h3,
+.markdown-body.theme-nijika h4,
+.markdown-body.theme-nijika h5,
+.markdown-body.theme-nijika h6 {
+  color: var(--theme-color-dark);
+  border-bottom-color: var(--theme-color-border);
+  animation: fade-in 0.5s ease-out;
+  letter-spacing: 0.02em;
+}
+
+.markdown-body.theme-nijika h1 {
+  background: var(--theme-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  border-bottom: 2px solid var(--theme-color);
+  padding-bottom: 0.4em;
+}
+
+.markdown-body.theme-nijika a {
+  color: var(--theme-color-dark);
+  text-decoration: none;
+  background-image: linear-gradient(transparent 70%, var(--theme-color-muted) 100%);
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-nijika a:hover {
+  color: #e0a800;
+  background-image: linear-gradient(transparent 60%, var(--theme-color-muted) 100%);
+  transform: translateY(-1px);
+}
+
+.markdown-body.theme-nijika blockquote {
+  border-left: 4px solid var(--theme-color);
+  background-color: var(--theme-color-muted);
+  border-radius: 0 8px 8px 0;
+  padding: 1em 1em 1em 2em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-nijika .markdown-alert {
+  border-left: 4px solid var(--theme-color);
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 3px 8px rgba(255, 216, 120, 0.15);
+}
+
+.markdown-body.theme-nijika hr {
+  height: 4px;
+  background: var(--theme-gradient);
+  border-radius: 2px;
+  border: none;
+}
+
+.markdown-body.theme-nijika code {
+  /* background-color: var(--theme-color-muted); */
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-family: 'Fira Code', monospace;
+  transition: all 0.3s ease;
+}
+
+/* .markdown-body.theme-nijika code:hover {
+  background-color: rgba(255, 216, 120, 0.3);
+} */
+
+.markdown-body.theme-nijika pre {
+  background-color: #f8f8fa;
+  border: 1px solid var(--theme-color-border);
+  border-radius: 8px;
+  padding: 1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.markdown-body.theme-nijika table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-nijika table th {
+  background-color: var(--theme-color-muted);
+  color: #333;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--theme-color);
+  padding: 12px 15px;
+}
+
+.markdown-body.theme-nijika table tr:nth-child(2n) {
+  background-color: var(--theme-color-muted);
+}
+
+.markdown-body.theme-nijika table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+/* Drum icon for the Nijika theme with animation */
+.markdown-body.theme-nijika h1::before,
+.markdown-body.theme-nijika h2::before {
+  content: '🥁 ';
+  display: inline-block;
+  animation: music-float 3s ease-in-out infinite;
+}
+
+/* Add shimmer effect to task list items */
+.markdown-body.theme-nijika .task-list-item-checkbox:checked {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-nijika .task-list-item:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 216, 120, 0) 0%,
+    rgba(255, 216, 120, 0.1) 50%,
+    rgba(255, 216, 120, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: background-shimmer 1.5s ease infinite;
+}
+
+/* ===== Ryo Yamada Theme - Blue (#78C5FF) ===== */
+.markdown-body.theme-ryo {
+  --theme-color: #78c5ff;
+  --theme-color-light: #d1e9ff;
+  --theme-color-dark: #4e9fdb;
+  --theme-color-muted: rgba(120, 197, 255, 0.2);
+  --theme-color-border: rgba(120, 197, 255, 0.4);
+  --theme-gradient: linear-gradient(135deg, #78c5ff 0%, #a5d8ff 100%);
+
+  color: #333333;
+  background-color: #ffffff;
+  border-color: var(--theme-color-border);
+  font-family:
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Noto Sans',
+    Helvetica,
+    Arial,
+    sans-serif;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-ryo h1,
+.markdown-body.theme-ryo h2,
+.markdown-body.theme-ryo h3,
+.markdown-body.theme-ryo h4,
+.markdown-body.theme-ryo h5,
+.markdown-body.theme-ryo h6 {
+  color: var(--theme-color-dark);
+  border-bottom-color: var(--theme-color-border);
+  animation: fade-in 0.5s ease-out;
+  letter-spacing: 0.02em;
+}
+
+.markdown-body.theme-ryo h1 {
+  background: var(--theme-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  border-bottom: 2px solid var(--theme-color);
+  padding-bottom: 0.4em;
+}
+
+.markdown-body.theme-ryo a {
+  color: var(--theme-color-dark);
+  text-decoration: none;
+  background-image: linear-gradient(transparent 70%, var(--theme-color-muted) 100%);
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-ryo a:hover {
+  color: #0078d7;
+  background-image: linear-gradient(transparent 60%, var(--theme-color-muted) 100%);
+  transform: translateY(-1px);
+}
+
+.markdown-body.theme-ryo blockquote {
+  border-left: 4px solid var(--theme-color);
+  background-color: var(--theme-color-muted);
+  border-radius: 0 8px 8px 0;
+  padding: 1em 1em 1em 2em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-ryo .markdown-alert {
+  border-left: 4px solid var(--theme-color);
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 3px 8px rgba(120, 197, 255, 0.15);
+}
+
+.markdown-body.theme-ryo hr {
+  height: 4px;
+  background: var(--theme-gradient);
+  border-radius: 2px;
+  border: none;
+}
+
+.markdown-body.theme-ryo code {
+  /* background-color: var(--theme-color-muted); */
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-family: 'Fira Code', monospace;
+  transition: all 0.3s ease;
+}
+
+/* .markdown-body.theme-ryo code:hover {
+  background-color: rgba(120, 197, 255, 0.3);
+} */
+
+.markdown-body.theme-ryo pre {
+  background-color: #f8f8fa;
+  border: 1px solid var(--theme-color-border);
+  border-radius: 8px;
+  padding: 1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.markdown-body.theme-ryo table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-ryo table th {
+  background-color: var(--theme-color-muted);
+  color: #333;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--theme-color);
+  padding: 12px 15px;
+}
+
+.markdown-body.theme-ryo table tr:nth-child(2n) {
+  background-color: var(--theme-color-muted);
+}
+
+.markdown-body.theme-ryo table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+/* Bass icon for the Ryo theme with animation */
+.markdown-body.theme-ryo h1::before,
+.markdown-body.theme-ryo h2::before {
+  content: '🎵 ';
+  display: inline-block;
+  animation: music-float 3s ease-in-out infinite;
+}
+
+/* Add shimmer effect to task list items */
+.markdown-body.theme-ryo .task-list-item-checkbox:checked {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-ryo .task-list-item:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(120, 197, 255, 0) 0%,
+    rgba(120, 197, 255, 0.1) 50%,
+    rgba(120, 197, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: background-shimmer 1.5s ease infinite;
+}
+
+/* ===== Ikuyo Kita Theme - Red (#FF7878) ===== */
+.markdown-body.theme-ikuyo {
+  --theme-color: #ff7878;
+  --theme-color-light: #ffd1d1;
+  --theme-color-dark: #d65e5e;
+  --theme-color-muted: rgba(255, 120, 120, 0.2);
+  --theme-color-border: rgba(255, 120, 120, 0.4);
+  --theme-gradient: linear-gradient(135deg, #ff7878 0%, #ffa7a7 100%);
+
+  color: #333333;
+  background-color: #ffffff;
+  border-color: var(--theme-color-border);
+  font-family:
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Noto Sans',
+    Helvetica,
+    Arial,
+    sans-serif;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-ikuyo h1,
+.markdown-body.theme-ikuyo h2,
+.markdown-body.theme-ikuyo h3,
+.markdown-body.theme-ikuyo h4,
+.markdown-body.theme-ikuyo h5,
+.markdown-body.theme-ikuyo h6 {
+  color: var(--theme-color-dark);
+  border-bottom-color: var(--theme-color-border);
+  animation: fade-in 0.5s ease-out;
+  letter-spacing: 0.02em;
+}
+
+.markdown-body.theme-ikuyo h1 {
+  background: var(--theme-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  border-bottom: 2px solid var(--theme-color);
+  padding-bottom: 0.4em;
+}
+
+.markdown-body.theme-ikuyo a {
+  color: var(--theme-color-dark);
+  text-decoration: none;
+  background-image: linear-gradient(transparent 70%, var(--theme-color-muted) 100%);
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-ikuyo a:hover {
+  color: #cc3333;
+  background-image: linear-gradient(transparent 60%, var(--theme-color-muted) 100%);
+  transform: translateY(-1px);
+}
+
+.markdown-body.theme-ikuyo blockquote {
+  border-left: 4px solid var(--theme-color);
+  background-color: var(--theme-color-muted);
+  border-radius: 0 8px 8px 0;
+  padding: 1em 1em 1em 2em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-ikuyo .markdown-alert {
+  border-left: 4px solid var(--theme-color);
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 3px 8px rgba(255, 120, 120, 0.15);
+}
+
+.markdown-body.theme-ikuyo hr {
+  height: 4px;
+  background: var(--theme-gradient);
+  border-radius: 2px;
+  border: none;
+}
+
+.markdown-body.theme-ikuyo code {
+  /* background-color: var(--theme-color-muted); */
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-family: 'Fira Code', monospace;
+  transition: all 0.3s ease;
+}
+
+/* .markdown-body.theme-ikuyo code:hover {
+  background-color: rgba(255, 120, 120, 0.3);
+} */
+
+.markdown-body.theme-ikuyo pre {
+  background-color: #f8f8fa;
+  border: 1px solid var(--theme-color-border);
+  border-radius: 8px;
+  padding: 1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.markdown-body.theme-ikuyo table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-ikuyo table th {
+  background-color: var(--theme-color-muted);
+  color: #333;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var (--theme-color);
+  padding: 12px 15px;
+}
+
+.markdown-body.theme-ikuyo table tr:nth-child(2n) {
+  background-color: var(--theme-color-muted);
+}
+
+.markdown-body.theme-ikuyo table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+/* Guitar icon for the Ikuyo theme with animation */
+.markdown-body.theme-ikuyo h1::before,
+.markdown-body.theme-ikuyo h2::before {
+  content: '🎸 ';
+  display: inline-block;
+  animation: music-float 3s ease-in-out infinite;
+}
+
+/* Add shimmer effect to task list items */
+.markdown-body.theme-ikuyo .task-list-item-checkbox:checked {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-ikuyo .task-list-item:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 120, 120, 0) 0%,
+    rgba(255, 120, 120, 0.1) 50%,
+    rgba(255, 120, 120, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: background-shimmer 1.5s ease infinite;
+}
+
+/* ===== Dark Night Mode Theme - Purple (#9D4EDD) ===== */
+.markdown-body.theme-dark-night {
+  --theme-color: #9d4edd;
+  --theme-color-light: #c39bd3;
+  --theme-color-dark: #7b2cbf;
+  --theme-color-muted: rgba(157, 78, 221, 0.2);
+  --theme-color-border: rgba(157, 78, 221, 0.4);
+  --theme-gradient: linear-gradient(135deg, #9d4edd 0%, #b266ff 100%);
+
+  color: #e6e6e6;
+  background-color: #121212;
+  border-color: var(--theme-color-border);
+  font-family:
+    'Nunito',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Noto Sans',
+    Helvetica,
+    Arial,
+    sans-serif;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-image: radial-gradient(circle at 50% 0%, #1e1e2e 0%, #121212 100%);
+}
+
+.markdown-body.theme-dark-night h1,
+.markdown-body.theme-dark-night h2,
+.markdown-body.theme-dark-night h3,
+.markdown-body.theme-dark-night h4,
+.markdown-body.theme-dark-night h5,
+.markdown-body.theme-dark-night h6 {
+  color: var(--theme-color-light);
+  border-bottom-color: var(--theme-color-border);
+  animation: fade-in 0.5s ease-out;
+  letter-spacing: 0.02em;
+}
+
+.markdown-body.theme-dark-night h1 {
+  background: var(--theme-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  border-bottom: 2px solid var(--theme-color);
+  padding-bottom: 0.4em;
+}
+
+.markdown-body.theme-dark-night a {
+  color: var(--theme-color-light);
+  text-decoration: none;
+  background-image: linear-gradient(transparent 70%, rgba(157, 78, 221, 0.3) 100%);
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-dark-night a:hover {
+  color: #b266ff;
+  background-image: linear-gradient(transparent 60%, rgba(157, 78, 221, 0.4) 100%);
+  transform: translateY(-1px);
+  text-shadow: 0 0 8px rgba(178, 102, 255, 0.6);
+  animation: soft-pulse 2s infinite;
+}
+
+.markdown-body.theme-dark-night blockquote {
+  border-left: 4px solid var(--theme-color);
+  background-color: rgba(157, 78, 221, 0.1);
+  border-radius: 0 8px 8px 0;
+  padding: 1em 1em 1em 2em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-dark-night .markdown-alert {
+  border-left: 4px solid var(--theme-color);
+  border-radius: 0 8px 8px 0;
+  background-color: rgba(30, 30, 46, 0.6);
+  box-shadow: 0 3px 8px rgba(157, 78, 221, 0.2);
+}
+
+.markdown-body.theme-dark-night hr {
+  height: 4px;
+  background: var(--theme-gradient);
+  border-radius: 2px;
+  border: none;
+  animation: soft-glow 2s infinite;
+}
+
+.markdown-body.theme-dark-night code {
+  /* background-color: #2a2a40; */
+  color: #e6e6e6;
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-family: 'Fira Code', monospace;
+  border: 1px solid rgba(157, 78, 221, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* .markdown-body.theme-dark-night code:hover {
+  background-color: #33334d;
+  border-color: rgba(157, 78, 221, 0.5);
+  box-shadow: 0 0 8px rgba(157, 78, 221, 0.3);
+} */
+
+.markdown-body.theme-dark-night pre {
+  background-color: #2a2a40;
+  border: 1px solid var(--theme-color-border);
+  border-radius: 8px;
+  padding: 1em;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+
+.markdown-body.theme-dark-night pre code {
+  color: #e6e6e6;
+  border: none;
+  background: transparent;
+}
+
+.markdown-body.theme-dark-night table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+  margin: 1.5em 0;
+}
+
+.markdown-body.theme-dark-night table th {
+  background-color: #2a2a40;
+  color: var(--theme-color-light);
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--theme-color);
+  padding: 12px 15px;
+}
+
+.markdown-body.theme-dark-night table tr:nth-child(2n) {
+  background-color: #28283a;
+}
+
+.markdown-body.theme-dark-night table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #444455;
+  color: #e6e6e6;
+}
+
+/* Star icon for the Dark Night theme with animation */
+.markdown-body.theme-dark-night h1::before,
+.markdown-body.theme-dark-night h2::before {
+  content: '✨ ';
+  display: inline-block;
+  animation: music-float 3s ease-in-out infinite;
+}
+
+/* Add shimmer and glow effects */
+.markdown-body.theme-dark-night .task-list-item-checkbox:checked {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color-light);
+  box-shadow: 0 0 5px rgba(157, 78, 221, 0.5);
+}
+
+.markdown-body.theme-dark-night .task-list-item:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(157, 78, 221, 0) 0%,
+    rgba(157, 78, 221, 0.1) 50%,
+    rgba(157, 78, 221, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: background-shimmer 1.5s ease infinite;
+}
+
+/* Custom scrollbar for Dark Night theme */
+.markdown-body.theme-dark-night::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.markdown-body.theme-dark-night::-webkit-scrollbar-track {
+  background: #1e1e2e;
+}
+
+.markdown-body.theme-dark-night::-webkit-scrollbar-thumb {
+  background: var(--theme-color);
+  border-radius: 10px;
+}
+
+.markdown-body.theme-dark-night::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-color-light);
+}
+
+/* Additional responsive design for mobile */
+@media (max-width: 768px) {
+  .markdown-body.theme-bocchi,
+  .markdown-body.theme-nijika,
+  .markdown-body.theme-ryo,
+  .markdown-body.theme-ikuyo,
+  .markdown-body.theme-dark-night {
+    padding: 12px;
+  }
+
+  .markdown-body.theme-bocchi h1,
+  .markdown-body.theme-nijika h1,
+  .markdown-body.theme-ryo h1,
+  .markdown-body.theme-ikuyo h1,
+  .markdown-body.theme-dark-night h1 {
+    font-size: 1.8em;
+  }
+}
+
+/* Usage instructions */
+/* 
+ * To use these themes, add one of the following classes to your markdown-body element:
+ * - theme-bocchi: Pink theme (Hitori Gotoh)
+ * - theme-nijika: Yellow theme (Nijika Ijichi) 
+ * - theme-ryo: Blue theme (Ryo Yamada)
+ * - theme-ikuyo: Red theme (Ikuyo Kita)
+ * - theme-dark-night: Dark purple theme
+ * 
+ * Example:
+ * <div class="markdown-body theme-bocchi">
+ *   Your markdown content here
+ * </div>
+ */
+
+/* Font imports for enhanced typography */
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh0NSDulI.woff2)
+    format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh2dSDulI.woff2)
+    format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh0dSDulI.woff2)
+    format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh3tSDulI.woff2)
+    format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh09SDulI.woff2)
+    format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh3dSD.woff2)
+    format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh0NSDulI.woff2)
+    format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh2dSDulI.woff2)
+    format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh0dSDulI.woff2)
+    format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh3tSDulI.woff2)
+    format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh09SDulI.woff2)
+    format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/firacode/v22/uU9NCBsR6Z2vfE9aq3bh3dSD.woff2)
+    format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOOaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIMeaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOuaBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0,
+    U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIO-aBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofINeaB.woff2)
+    format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOOaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIMeaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOuaBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0,
+    U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIO-aBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofINeaB.woff2)
+    format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOOaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIMeaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOuaBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0,
+    U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIO-aBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofINeaB.woff2)
+    format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOOaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIMeaBXso.woff2)
+    format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIOuaBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0,
+    U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofIO-aBXso.woff2)
+    format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofINeaB.woff2)
+    format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ===== Syntax Highlighting for all themes ===== */
+/* Base syntax highlighting styles that will be customized per theme */
+.markdown-body .theme-bocchi pre .hljs-keyword,
+.markdown-body .theme-nijika pre .hljs-keyword,
+.markdown-body .theme-ryo pre .hljs-keyword,
+.markdown-body .theme-ikuyo pre .hljs-keyword,
+.markdown-body .theme-dark-night pre .hljs-keyword {
+  font-weight: bold;
+}
+
+.markdown-body .theme-bocchi pre .hljs-built_in,
+.markdown-body .theme-nijika pre .hljs-built_in,
+.markdown-body .theme-ryo pre .hljs-built_in,
+.markdown-body .theme-ikuyo pre .hljs-built_in,
+.markdown-body .theme-dark-night pre .hljs-built_in {
+  font-style: italic;
+}
+
+.markdown-body .theme-bocchi pre .hljs-comment,
+.markdown-body .theme-nijika pre .hljs-comment,
+.markdown-body .theme-ryo pre .hljs-comment,
+.markdown-body .theme-ikuyo pre .hljs-comment,
+.markdown-body .theme-dark-night pre .hljs-comment {
+  font-style: italic;
+}
+
+/* Bocchi Theme Syntax Highlighting */
+.markdown-body.theme-bocchi pre .hljs-keyword {
+  color: #D83B82;
+}
+
+.markdown-body.theme-bocchi pre .hljs-built_in {
+  color: #D67A8E;
+}
+
+.markdown-body.theme-bocchi pre .hljs-type {
+  color: #D83B82;
+}
+
+.markdown-body.theme-bocchi pre .hljs-literal {
+  color: #D67A8E;
+}
+
+.markdown-body.theme-bocchi pre .hljs-number {
+  color: #D67A8E;
+}
+
+.markdown-body.theme-bocchi pre .hljs-regexp {
+  color: #18A8B6;
+}
+
+.markdown-body.theme-bocchi pre .hljs-string {
+  color: #18A8B6;
+}
+
+.markdown-body.theme-bocchi pre .hljs-special {
+  color: #D67A8E;
+}
+
+.markdown-body.theme-bocchi pre .hljs-attr {
+  color: #D83B82;
+}
+
+.markdown-body.theme-bocchi pre .hljs-symbol {
+  color: #18A8B6;
+}
+
+.markdown-body.theme-bocchi pre .hljs-meta {
+  color: #A65C76;
+}
+
+.markdown-body.theme-bocchi pre .hljs-function {
+  color: #D67A8E;
+}
+
+.markdown-body.theme-bocchi pre .hljs-title {
+  color: #C15B98;
+}
+
+.markdown-body.theme-bocchi pre .hljs-comment {
+  color: #A65C76;
+}
+
+/* Nijika Theme Syntax Highlighting */
+.markdown-body.theme-nijika pre .hljs-keyword {
+  color: #CC9900;
+}
+
+.markdown-body.theme-nijika pre .hljs-built_in {
+  color: #D9B35E;
+}
+
+.markdown-body.theme-nijika pre .hljs-type {
+  color: #CC9900;
+}
+
+.markdown-body.theme-nijika pre .hljs-literal {
+  color: #D9B35E;
+}
+
+.markdown-body.theme-nijika pre .hljs-number {
+  color: #D9B35E;
+}
+
+.markdown-body.theme-nijika pre .hljs-regexp {
+  color: #18A8B6;
+}
+
+.markdown-body.theme-nijika pre .hljs-string {
+  color: #18A8B6;
+}
+
+.markdown-body.theme-nijika pre .hljs-special {
+  color: #D9B35E;
+}
+
+.markdown-body.theme-nijika pre .hljs-attr {
+  color: #CC9900;
+}
+
+.markdown-body.theme-nijika pre .hljs-symbol {
+  color: #18A8B6;
+}
+
+.markdown-body.theme-nijika pre .hljs-meta {
+  color: #B89856;
+}
+
+.markdown-body.theme-nijika pre .hljs-function {
+  color: #D9B35E;
+}
+
+.markdown-body.theme-nijika pre .hljs-title {
+  color: #A88A1A;
+}
+
+.markdown-body.theme-nijika pre .hljs-comment {
+  color: #B89856;
+}
+
+/* Ryo Theme Syntax Highlighting */
+.markdown-body.theme-ryo pre .hljs-keyword {
+  color: #2B90D9;
+}
+
+.markdown-body.theme-ryo pre .hljs-built_in {
+  color: #4E9FDB;
+}
+
+.markdown-body.theme-ryo pre .hljs-type {
+  color: #2B90D9;
+}
+
+.markdown-body.theme-ryo pre .hljs-literal {
+  color: #4E9FDB;
+}
+
+.markdown-body.theme-ryo pre .hljs-number {
+  color: #4E9FDB;
+}
+
+.markdown-body.theme-ryo pre .hljs-regexp {
+  color: #24A597;
+}
+
+.markdown-body.theme-ryo pre .hljs-string {
+  color: #24A597;
+}
+
+.markdown-body.theme-ryo pre .hljs-special {
+  color: #4E9FDB;
+}
+
+.markdown-body.theme-ryo pre .hljs-attr {
+  color: #2B90D9;
+}
+
+.markdown-body.theme-ryo pre .hljs-symbol {
+  color: #24A597;
+}
+
+.markdown-body.theme-ryo pre .hljs-meta {
+  color: #5E93C5;
+}
+
+.markdown-body.theme-ryo pre .hljs-function {
+  color: #4E9FDB;
+}
+
+.markdown-body.theme-ryo pre .hljs-title {
+  color: #1C7FC9;
+}
+
+.markdown-body.theme-ryo pre .hljs-comment {
+  color: #5E93C5;
+}
+
+/* Ikuyo Theme Syntax Highlighting */
+.markdown-body.theme-ikuyo pre .hljs-keyword {
+  color: #E64A3C;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-built_in {
+  color: #D65E5E;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-type {
+  color: #E64A3C;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-literal {
+  color: #D65E5E;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-number {
+  color: #D65E5E;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-regexp {
+  color: #24A597;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-string {
+  color: #24A597;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-special {
+  color: #D65E5E;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-attr {
+  color: #E64A3C;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-symbol {
+  color: #24A597;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-meta {
+  color: #C25252;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-function {
+  color: #D65E5E;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-title {
+  color: #B83636;
+}
+
+.markdown-body.theme-ikuyo pre .hljs-comment {
+  color: #C25252;
+}
+
+/* Dark Night Theme Syntax Highlighting */
+.markdown-body.theme-dark-night pre .hljs-keyword {
+  color: #BB86FC;
+}
+
+.markdown-body.theme-dark-night pre .hljs-built_in {
+  color: #C39BD3;
+}
+
+.markdown-body.theme-dark-night pre .hljs-type {
+  color: #BB86FC;
+}
+
+.markdown-body.theme-dark-night pre .hljs-literal {
+  color: #C39BD3;
+}
+
+.markdown-body.theme-dark-night pre .hljs-number {
+  color: #C39BD3;
+}
+
+.markdown-body.theme-dark-night pre .hljs-regexp {
+  color: #78FFEA;
+}
+
+.markdown-body.theme-dark-night pre .hljs-string {
+  color: #78FFEA;
+}
+
+.markdown-body.theme-dark-night pre .hljs-special {
+  color: #C39BD3;
+}
+
+.markdown-body.theme-dark-night pre .hljs-attr {
+  color: #BB86FC;
+}
+
+.markdown-body.theme-dark-night pre .hljs-symbol {
+  color: #78FFEA;
+}
+
+.markdown-body.theme-dark-night pre .hljs-meta {
+  color: #9D73C9;
+}
+
+.markdown-body.theme-dark-night pre .hljs-function {
+  color: #C39BD3;
+}
+
+.markdown-body.theme-dark-night pre .hljs-title {
+  color: #D3A6FF;
+}
+
+.markdown-body.theme-dark-night pre .hljs-comment {
+  color: #9D73C9;
+}
+
+/* Enhance code and pre styling for each theme to better incorporate syntax highlighting */
+.markdown-body.theme-bocchi pre,
+.markdown-body.theme-nijika pre,
+.markdown-body.theme-ryo pre,
+.markdown-body.theme-ikuyo pre {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.markdown-body.theme-bocchi pre:hover,
+.markdown-body.theme-nijika pre:hover,
+.markdown-body.theme-ryo pre:hover,
+.markdown-body.theme-ikuyo pre:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-body.theme-dark-night pre:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Add language indicator badge */
+.markdown-body.theme-bocchi pre[data-language]::before,
+.markdown-body.theme-nijika pre[data-language]::before,
+.markdown-body.theme-ryo pre[data-language]::before,
+.markdown-body.theme-ikuyo pre[data-language]::before,
+.markdown-body.theme-dark-night pre[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0;
+  right: 10px;
+  font-size: 0.7em;
+  padding: 0.3em 0.5em;
+  border-radius: 0 0 4px 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+.markdown-body.theme-bocchi pre[data-language]::before {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-nijika pre[data-language]::before {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-ryo pre[data-language]::before {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-ikuyo pre[data-language]::before {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-dark-night pre[data-language]::before {
+  background-color: rgba(157, 78, 221, 0.2);
+  color: var(--theme-color-light);
+}
+
+/* Line numbers for code blocks */
+.markdown-body pre.line-numbers {
+  position: relative;
+  padding-left: 3.5em;
+  counter-reset: linenumber;
+}
+
+.markdown-body pre.line-numbers > code {
+  position: relative;
+}
+
+.markdown-body .line-numbers .line-numbers-rows {
+  position: absolute;
+  top: 0;
+  left: -3.5em;
+  width: 3em;
+  letter-spacing: -1px;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  user-select: none;
+  pointer-events: none;
+}
+
+.markdown-body.theme-dark-night .line-numbers .line-numbers-rows {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.markdown-body .line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+}
+
+.markdown-body .line-numbers-rows > span:before {
+  content: counter(linenumber);
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+  opacity: 0.5;
+}
+
+.markdown-body.theme-bocchi .line-numbers-rows > span:before {
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-nijika .line-numbers-rows > span:before {
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-ryo .line-numbers-rows > span:before {
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-ikuyo .line-numbers-rows > span:before {
+  color: var(--theme-color-dark);
+}
+
+.markdown-body.theme-dark-night .line-numbers-rows > span:before {
+  color: var(--theme-color-light);
+}
+
+/* Copy code button */
+.markdown-body pre {
+  position: relative;
+}
+
+.markdown-body pre .copy-code-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  opacity: 0;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.markdown-body pre:hover .copy-code-button {
+  opacity: 1;
+}
+
+.markdown-body pre .copy-code-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.markdown-body.theme-dark-night pre .copy-code-button {
+  background: rgba(157, 78, 221, 0.2);
+  color: var(--theme-color-light);
+}
+
+.markdown-body.theme-dark-night pre .copy-code-button:hover {
+  background: rgba(157, 78, 221, 0.4);
+}
+
+/* Add JavaScript to enable code copying functionality */
+/* This would typically be added as a separate script, but including for reference */
+/* 
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('pre:not(.line-numbers)').forEach(function(codeBlock) {
+    // Add data-language attribute
+    const languageClass = Array.from(codeBlock.classList).find(c => c.startsWith('language-'));
+    if (languageClass) {
+      const language = languageClass.replace('language-', '');
+      codeBlock.setAttribute('data-language', language);
+    }
+    
+    // Add copy button
+    const copyButton = document.createElement('button');
+    copyButton.className = 'copy-code-button';
+    copyButton.textContent = 'Copy';
+    
+    copyButton.addEventListener('click', function() {
+      const code = codeBlock.querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(function() {
+        copyButton.textContent = 'Copied!';
+        setTimeout(function() {
+          copyButton.textContent = 'Copy';
+        }, 2000);
+      });
+    });
+    
+    codeBlock.appendChild(copyButton);
+  });
+});
+*/
+
+/* Additional responsive design for syntax highlighting on mobile */
+@media (max-width: 768px) {
+  .markdown-body pre[data-language]::before {
+    font-size: 0.6em;
+    padding: 0.2em 0.4em;
+  }
+  
+  .markdown-body pre .copy-code-button {
+    padding: 3px 6px;
+    font-size: 0.7em;
+  }
+}
+
+/* Usage instructions */
+/* 
+ * To use these themes, add one of the following classes to your markdown-body element:
+ * - theme-bocchi: Pink theme (Hitori Gotoh)
+ * - theme-nijika: Yellow theme (Nijika Ijichi) 
+ * - theme-ryo: Blue theme (Ryo Yamada)
+ * - theme-ikuyo: Red theme (Ikuyo Kita)
+ * - theme-dark-night: Dark purple theme
+ * 
+ * Example:
+ * <div class="markdown-body theme-bocchi">
+ *   Your markdown content here
+ * </div>
+ */

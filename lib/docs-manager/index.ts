@@ -5,7 +5,7 @@ import slugify from 'slugify';
 import { remark } from 'remark';
 import strip from 'strip-markdown';
 import { readFileSync } from 'fs';
-import path from 'path';
+import { parseMarkdown } from '../markdown';
 
 export const defaultCategory = {
   name: '未分类',
@@ -23,9 +23,12 @@ export class BasePostManager {
   private posts: Post[] = [];
   private postsByCategory: Record<string, Post[]> = {};
   private postsByTag: Record<string, Post[]> = {};
-  private postsContent: Record<string, string> = {};
+  private postsFilePathRecord: Record<string, string> = {};
   // 添加到 BasePostManager 类中
   private categoryMetadata: Record<string, Category> = {};
+
+  private isInitialized = false;
+  private isLoading = false;
 
   constructor(srcDir: string) {
     this.srcDir = srcDir;
@@ -112,8 +115,14 @@ export class BasePostManager {
   }
 
   public async initialize() {
+    if (this.isInitialized) {
+      return;
+    }
+    this.isLoading = true;
     this.loadPosts();
     this.loadCategories();
+    this.isInitialized = true;
+    this.isLoading = false;
   }
 
   /**
@@ -180,7 +189,7 @@ export class BasePostManager {
         publishDate: data.publishDate || new Date().toISOString()
       };
       // slug关联文件路径
-      this.postsContent[article.slug] = file;
+      this.postsFilePathRecord[article.slug] = file;
 
       this.addPostToCategoryRecord(article);
 
@@ -254,7 +263,12 @@ export class BasePostManager {
    * 根据slug获取文章内容
    */
   public getPostContentBySlug(slug: string): string | undefined {
-    return this.postsContent[slug];
+    const filePath = this.postsFilePathRecord[slug];
+    if (!filePath) {
+      return;
+    }
+    const content = readFileSync(filePath, 'utf-8');
+    return content;
   }
 
   /**
@@ -263,7 +277,6 @@ export class BasePostManager {
   public getFeaturedPosts(limit: number = 5): Post[] {
     // 首先查找前置数据中标记为featured的文章
     const featuredPosts = this.posts.filter((post) => post.featured === true);
-
     // 如果有足够的精选文章，返回限制数量的精选文章
     if (featuredPosts.length >= limit) {
       return featuredPosts.slice(0, limit);
@@ -278,13 +291,85 @@ export class BasePostManager {
     // 组合精选文章和最新文章
     return [...featuredPosts, ...recentPosts.slice(0, limit - featuredPosts.length)];
   }
+
+  public async getPostHtmlContent(slug: string): Promise<string | null> {
+    const filePath = this.postsFilePathRecord[slug];
+    if (!filePath) {
+      return null;
+    }
+    try {
+      const fileContent = readFileSync(filePath, 'utf-8');
+      const htmlContent = await parseMarkdown(fileContent);
+      return htmlContent;
+    } catch (error) {
+      console.error('Error reading file:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 获取相关文章
+   * @param slug 当前文章的 slug
+   * @param limit 返回的相关文章数量
+   * @returns 相关文章列表
+   */
+  public getRelatedPosts(slug: string, limit: number = 5): Post[] {
+    // 获取当前文章
+    const currentPost = this.getPostBySlug(slug);
+    if (!currentPost) {
+      return [];
+    }
+
+    // 获取与当前文章相同分类的文章（排除当前文章）
+    const categoryPosts = this.getPostsByCategory(currentPost.category).filter(
+      (post) => post.slug !== slug
+    );
+
+    // 获取与当前文章有相同标签的文章（排除当前文章）
+    const tagPosts = currentPost.tags.flatMap((tag) =>
+      this.getPostsByTag(tag).filter((post) => post.slug !== slug)
+    );
+
+    // 合并分类和标签的相关文章，并去重
+    const relatedPosts = Array.from(
+      new Map([...categoryPosts, ...tagPosts].map((post) => [post.slug, post])).values()
+    );
+
+    // 如果相关文章不足 limit，从所有文章中补齐
+    if (relatedPosts.length < limit) {
+      const additionalPosts = this.posts
+        .filter(
+          (post) =>
+            post.slug !== slug && !relatedPosts.some((rp) => rp.slug === post.slug)
+        )
+        .sort(
+          (a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+        )
+        .slice(0, limit - relatedPosts.length);
+
+      relatedPosts.push(...additionalPosts);
+    }
+
+    // 按发布日期降序排序，并限制返回数量
+    return relatedPosts
+      .sort(
+        (a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+      )
+      .slice(0, limit);
+  }
 }
 
-let blogManager: BasePostManager | null = null;
+declare const globalThis: {
+  blogManagerGlobal: BasePostManager | null;
+} & typeof global;
+
+let blogManager: BasePostManager | null = globalThis.blogManagerGlobal ?? null;
+console.log('blogManager', blogManager);
 export async function getPostManager(): Promise<BasePostManager> {
   if (!blogManager) {
     throw new Error('BlogPostManager not initialized. Please call initialize() first.');
   }
+  console.log('BlogPostManager already initialized. Returning existing instance.');
   await blogManager.initialize();
   return blogManager;
 }
@@ -292,5 +377,9 @@ export async function getPostManager(): Promise<BasePostManager> {
 export function initializePostManager(srcDir: string) {
   if (!blogManager) {
     blogManager = new BasePostManager(srcDir);
+    if (process.env.NODE_ENV !== 'production') {
+      globalThis.blogManagerGlobal = blogManager;
+    }
+    console.log('BlogPostManager initialized with srcDir:', srcDir);
   }
 }

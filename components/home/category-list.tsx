@@ -16,7 +16,18 @@ const CategoryCard = ({ category }: { category: Category }) => {
   );
 };
 
-export default function CategoryList() {
+interface Props {
+  categories: Category[];
+  limit?: number;
+}
+
+export default function CategoryList({ categories, limit }: Props) {
+  // 如果设置了 limit，则只取前 limit 个分类
+  if (limit) {
+    categories = categories.slice(0, limit);
+  } else {
+    categories = categories.slice(0, 4);
+  }
   return (
     <div className="py-14 text-center">
       <h2 className="text-text after:bg-primary after:border-radius-[2px] relative mb-10 inline-block text-[2rem] font-bold after:absolute after:bottom-[-10px] after:left-1/2 after:h-[4px] after:w-[60px] after:transform-[translateX(-50%)] after:content-['']">
@@ -24,46 +35,9 @@ export default function CategoryList() {
       </h2>
       {/* 这里添加类别卡片网格 */}
       <div className="mt-1 grid grid-cols-2 gap-[30px] sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
-        <CategoryCard
-          category={{
-            name: 'JavaScript',
-            count: 10,
-            icon: 'javascript',
-            key: 'javascript'
-          }}
-        />
-        <CategoryCard
-          category={{
-            name: 'JavaScript',
-            count: 10,
-            icon: 'javascript',
-            key: 'javascript'
-          }}
-        />
-        <CategoryCard
-          category={{
-            name: 'v',
-            count: 10,
-            icon: 'javascript',
-            key: 'javascript'
-          }}
-        />
-        <CategoryCard
-          category={{
-            name: 'JavaScript',
-            count: 10,
-            icon: 'javascript',
-            key: 'javascript'
-          }}
-        />
-        <CategoryCard
-          category={{
-            name: 'JavaScript',
-            count: 10,
-            icon: 'javascript',
-            key: 'javascript'
-          }}
-        />
+        {categories.map((category) => (
+          <CategoryCard category={category} key={category.key} />
+        ))}
       </div>
     </div>
   );

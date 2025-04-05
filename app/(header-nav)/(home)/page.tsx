@@ -7,16 +7,14 @@ import { getPostManager } from '@/lib/docs-manager';
 export default async function Home() {
   const postManager = await getPostManager();
 
-  const posts = postManager.getAllPosts();
-  console.log('posts', posts);
+  const featuredPosts = postManager.getFeaturedPosts(5);
   const categories = postManager.getAllCategories();
-  console.log('categories', categories);
   return (
     <>
       <Header currentPath="/" />
       <Hero />
-      <FeaturedPosts />
-      <CategoryList />
+      <FeaturedPosts posts={featuredPosts} />
+      <CategoryList categories={categories} />
     </>
   );
 }

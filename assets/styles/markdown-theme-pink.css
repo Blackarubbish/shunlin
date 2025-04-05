@@ -1,0 +1,263 @@
+/* Markdown 粉色主题样式 */
+
+/* 基础文本样式 */
+.markdown-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-color);
+}
+
+.markdown-content p {
+  margin-bottom: 20px;
+}
+
+/* 标题样式 */
+.markdown-content h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 40px 0 20px;
+  color: var(--text-color);
+  border-bottom: 3px solid var(--primary-light);
+  padding-bottom: 10px;
+}
+
+.markdown-content h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 35px 0 20px;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--primary-light);
+  padding-bottom: 8px;
+}
+
+.markdown-content h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 30px 0 15px;
+  color: var(--text-color);
+}
+
+.markdown-content h4 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 25px 0 15px;
+  color: var(--text-color);
+}
+
+.markdown-content h5 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 20px 0 10px;
+  color: var(--text-color);
+}
+
+.markdown-content h6 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 15px 0 10px;
+  color: var(--text-color);
+}
+
+/* 列表样式 */
+.markdown-content ul,
+.markdown-content ol {
+  margin-bottom: 20px;
+  padding-left: 25px;
+}
+
+.markdown-content ul li {
+  list-style-type: disc;
+  margin-bottom: 10px;
+}
+
+.markdown-content ul li ul li {
+  list-style-type: circle;
+}
+
+.markdown-content ul li ul li ul li {
+  list-style-type: square;
+}
+
+.markdown-content ol li {
+  list-style-type: decimal;
+  margin-bottom: 10px;
+}
+
+/* 引用块样式 */
+.markdown-content blockquote {
+  border-left: 4px solid var(--primary-color);
+  padding: 15px 20px;
+  background-color: var(--bg-alt);
+  margin-bottom: 20px;
+  font-style: italic;
+  color: var(--text-secondary);
+  border-radius: 0 8px 8px 0;
+}
+
+.markdown-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* 代码样式 */
+.markdown-content code {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: var(--bg-alt);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--primary-dark);
+}
+
+.markdown-content pre {
+  background-color: var(--bg-alt);
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  display: block;
+  line-height: 1.6;
+}
+
+/* 水平线样式 */
+.markdown-content hr {
+  border: none;
+  height: 2px;
+  background-color: var(--primary-light);
+  margin: 30px 0;
+}
+
+/* 链接样式 */
+.markdown-content a {
+  color: var(--primary-color);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.markdown-content a:hover {
+  color: var(--primary-dark);
+  border-bottom: 1px solid var(--primary-dark);
+}
+
+/* 图片样式 */
+.markdown-content img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: var(--card-shadow);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.markdown-content img:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-hover-shadow);
+}
+
+/* 表格样式 */
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.markdown-content table th {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.markdown-content table tr {
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
+.markdown-content table tr:nth-child(even) {
+  background-color: var(--bg-alt);
+}
+
+.markdown-content table tr:hover {
+  background-color: var(--primary-light);
+}
+
+.markdown-content table td {
+  padding: 12px 15px;
+}
+
+/* 任务列表 */
+.markdown-content .task-list-item {
+  list-style-type: none;
+  margin-left: -20px;
+}
+
+.markdown-content .task-list-item input[type='checkbox'] {
+  margin-right: 10px;
+}
+
+/* 代码高亮 - 粉色主题特有 */
+.markdown-content .hljs-keyword {
+  color: #ff7a9a;
+}
+
+.markdown-content .hljs-string {
+  color: #ff9eb5;
+}
+
+.markdown-content .hljs-comment {
+  color: #999;
+  font-style: italic;
+}
+
+.markdown-content .hljs-function {
+  color: #78c5ff;
+}
+
+.markdown-content .hljs-number {
+  color: #ffd1dd;
+}
+
+/* 粉色主题特有的动画效果 */
+.markdown-content a {
+  position: relative;
+}
+
+.markdown-content a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--primary-color);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease;
+}
+
+.markdown-content a:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* 粉色主题特有的标题装饰 */
+.markdown-content h2::before {
+  content: '♡';
+  color: var(--primary-color);
+  margin-right: 10px;
+  font-weight: normal;
+}

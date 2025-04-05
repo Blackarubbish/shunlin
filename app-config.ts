@@ -2,6 +2,9 @@ import path from 'path';
 
 interface AppConfig {
   title: string;
+  me: {
+    name: string;
+  };
   navList: {
     title: string;
     url: string;
@@ -20,6 +23,9 @@ interface AppConfig {
 
 export const appConfig: AppConfig = {
   title: 'Bocchi Blog',
+  me: {
+    name: 'ShunLin'
+  },
   navList: [
     {
       title: '首页',

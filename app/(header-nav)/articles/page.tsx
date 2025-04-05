@@ -182,7 +182,7 @@ export default async function Articles({
             {filteredArticles.length > 0 ? (
               filteredArticles.map((article, index) => (
                 <div key={index} className="pt-3">
-                  <ArticleCard article={article} />
+                  <ArticleCard post={article} />
                 </div>
               ))
             ) : (

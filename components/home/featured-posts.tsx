@@ -1,44 +1,19 @@
+import { Post } from '@/types';
 import PostCard from '../post-card';
-export default function FeaturedPosts() {
+
+interface Props {
+  posts: Post[];
+}
+export default function FeaturedPosts({ posts }: Props) {
   return (
     <div className="py-14 text-center">
       <h2 className="text-text after:bg-primary after:border-radius-[2px] relative mb-10 inline-block text-[2rem] font-bold after:absolute after:bottom-[-10px] after:left-1/2 after:h-[4px] after:w-[60px] after:transform-[translateX(-50%)] after:content-['']">
         精选文章
       </h2>
       <div className="mb-10 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[30px]">
-        <PostCard
-          article={{
-            title: '这是一篇文章标题',
-            publishDate: '2021-09-01',
-            excerpt: '这是一篇文章摘要',
-            coverImage: '/img/avatar.jpg',
-            tags: ['JavaScript', 'TypeScript'],
-            category: '技术',
-            slug: 'this-is-a-article-title'
-          }}
-        />
-        <PostCard
-          article={{
-            title: '这是一篇文章标题',
-            publishDate: '2021-09-01',
-            excerpt: '这是一篇文章摘要',
-            coverImage: '/img/avatar.jpg',
-            tags: ['JavaScript', 'TypeScript'],
-            category: '技术',
-            slug: 'this-is-a-article-title'
-          }}
-        />
-        <PostCard
-          article={{
-            title: '这是一篇文章标题',
-            publishDate: '2021-09-01',
-            excerpt: '这是一篇文章摘要',
-            coverImage: '/img/avatar.jpg',
-            tags: ['JavaScript', 'TypeScript'],
-            category: '技术',
-            slug: 'this-is-a-article-title'
-          }}
-        />
+        {posts.map((p) => (
+          <PostCard post={p} key={p.slug} />
+        ))}
       </div>
       <div className="relative mt-5 h-14">
         <a
