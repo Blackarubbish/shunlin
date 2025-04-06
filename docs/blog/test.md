@@ -1,7 +1,7 @@
 ---
 title: Advanced Test Markdown File
 tags: ["test", "markdown", "mermaid", "advanced"]
-category: ["example", "testing"]
+category: "programming"
 publishDate: "2023-10-01"
 ---
 

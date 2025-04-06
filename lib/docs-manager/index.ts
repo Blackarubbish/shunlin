@@ -1,4 +1,4 @@
-import { Post, Category } from '@/types';
+import { Post, Category, PostMatter } from '@/types';
 import fg from 'fast-glob';
 import matter from 'gray-matter';
 import slugify from 'slugify';
@@ -7,7 +7,7 @@ import strip from 'strip-markdown';
 import { readFileSync } from 'fs';
 import { parseMarkdown } from '../markdown';
 
-export const defaultCategory = {
+let defaultCategory = {
   name: '未分类',
   key: 'uncategorized',
   icon: 'folder',
@@ -21,11 +21,10 @@ export class BasePostManager {
   private srcDir: string;
 
   private posts: Post[] = [];
-  private postsByCategory: Record<string, Post[]> = {};
   private postsByTag: Record<string, Post[]> = {};
   private postsFilePathRecord: Record<string, string> = {};
   // 添加到 BasePostManager 类中
-  private categoryMetadata: Record<string, Category> = {};
+  private categoryMetadata = new Map<string, Category>();
 
   private isInitialized = false;
   private isLoading = false;
@@ -91,7 +90,7 @@ export class BasePostManager {
    * @param data 文章数据
    * @returns 生成的唯一 slug
    */
-  public generateUniqueSlug(data: Partial<Post>): string {
+  public generateUniqueSlug(data: Partial<PostMatter>): string {
     // 如果已有 slug 则直接返回
     if (data.slug) return data.slug;
 
@@ -106,23 +105,29 @@ export class BasePostManager {
     return defaultCategory;
   }
 
-  private addPostToCategoryRecord(article: Post) {
-    if (this.postsByCategory[article.category]) {
-      this.postsByCategory[article.category].push(article);
-    } else {
-      this.postsByCategory[article.category] = [article];
-    }
+  private reset() {
+    this.posts = [];
+    this.postsByTag = {};
+    this.postsFilePathRecord = {};
+    this.categoryMetadata = new Map<string, Category>();
+    this.isInitialized = false;
+    this.isLoading = false;
+    defaultCategory.count = 0;
   }
 
   public async initialize() {
-    if (this.isInitialized) {
+    if (this.isInitialized && process.env.NODE_ENV === 'production') {
       return;
     }
+    this.reset();
     this.isLoading = true;
-    this.loadPosts();
-    this.loadCategories();
+    await this.loadCategories();
+    await this.loadPosts();
     this.isInitialized = true;
     this.isLoading = false;
+    defaultCategory = {
+      ...defaultCategory
+    };
   }
 
   /**
@@ -131,24 +136,25 @@ export class BasePostManager {
   private async loadCategories(): Promise<void> {
     // 导入分类配置
     try {
+      console.log('开始加载分类数据');
       const data = readFileSync(`${this.srcDir}/data.json`, 'utf-8');
       const parsedData = JSON.parse(data);
       const categories = (parsedData.categories as Category[]) || [];
       for (const c of categories) {
         const { key } = c;
-        this.categoryMetadata[key] = {
+        const data = {
           ...c
         };
-        this.categoryMetadata[key].coverImage = c.coverImage;
-        this.categoryMetadata[key].icon = c.icon;
-        // 计算文章数量
-        this.categoryMetadata[key].count = this.postsByCategory[key]?.length || 0;
+        data.coverImage = c.coverImage;
+        data.icon = c.icon;
+        this.categoryMetadata.set(key, data);
       }
       // 添加默认分类
-      this.categoryMetadata[defaultCategory.key] = {
-        ...defaultCategory,
-        count: this.postsByCategory[defaultCategory.key]?.length || 0
-      };
+      const defaultCategoryKey = defaultCategory.key;
+      if (!this.categoryMetadata.has(defaultCategoryKey)) {
+        this.categoryMetadata.set(defaultCategoryKey, defaultCategory);
+      }
+      console.log('分类数据加载成功', this.categoryMetadata);
     } catch (error) {
       throw new Error('Failed to load categories: ' + error);
     }
@@ -158,7 +164,6 @@ export class BasePostManager {
    * 初始化并加载所有文章
    */
   private async loadPosts(): Promise<void> {
-    console.log('Loading posts from directory:', this.srcDir);
     // 获取所有 Markdown 文件
     const files = fg.sync(`*.md`, {
       ignore: ['**/node_modules/**', '**/public/**'],
@@ -166,18 +171,23 @@ export class BasePostManager {
       absolute: true,
       onlyFiles: true
     });
-
-    console.log('files', files);
-
     for (const file of files) {
       const { data, content } = matter.read(file) as {
-        data: Partial<Post>;
+        data: Partial<PostMatter>;
         content: string;
       };
+
+      // 只展示2个标签
+      if (data.tags && Array.isArray(data.tags) && data.tags.length > 2) {
+        data.tags = data.tags.slice(0, 2);
+      }
 
       if (!data.excerpt) {
         data.excerpt = await this.extractPlainText(content, 200);
       }
+      console.log('postData:', data);
+      const categoryInfo = this.getCategoryInfo(data.category ?? '') ?? defaultCategory;
+      categoryInfo.count = (categoryInfo.count || 0) + 1;
       // 解析文章数据
       const article: Post = {
         title: data.title || '',
@@ -185,13 +195,13 @@ export class BasePostManager {
         excerpt: data.excerpt || '',
         coverImage: data.coverImage || '/img/avatar.jpg',
         tags: data.tags || [],
-        category: data.category || '未分类',
+        category: categoryInfo,
         publishDate: data.publishDate || new Date().toISOString()
       };
+
+      console.log('article:', article);
       // slug关联文件路径
       this.postsFilePathRecord[article.slug] = file;
-
-      this.addPostToCategoryRecord(article);
 
       for (const tag of article.tags) {
         if (!this.postsByTag[tag]) {
@@ -219,20 +229,26 @@ export class BasePostManager {
    * 获取指定分类的所有文章
    */
   public getPostsByCategory(category: string): Post[] {
-    return this.postsByCategory[category] || [];
+    const categoryKey = category || defaultCategory.key;
+    return this.posts.filter((post) => post.category.key === categoryKey);
   }
 
   /**
    * 获取所有分类及其文章数量
    */
   public getAllCategories(): Category[] {
-    return Object.entries(this.postsByCategory).map(([key, posts]) => ({
-      name: key,
-      count: posts.length,
-      icon: 'folder',
-      key: this.generateSlug(key),
-      coverImage: posts[0]?.coverImage || '/img/avatar.jpg'
-    }));
+    const categories = Array.from(this.categoryMetadata.values());
+    // 排序
+    categories.sort((a, b) => {
+      if (!a.order) {
+        a.order = 999;
+      }
+      if (!b.order) {
+        b.order = 999;
+      }
+      return a.order - b.order;
+    });
+    return categories;
   }
 
   /**
@@ -289,7 +305,8 @@ export class BasePostManager {
     );
 
     // 组合精选文章和最新文章
-    return [...featuredPosts, ...recentPosts.slice(0, limit - featuredPosts.length)];
+    const a = [...featuredPosts, ...recentPosts.slice(0, limit - featuredPosts.length)];
+    return a;
   }
 
   public async getPostHtmlContent(slug: string): Promise<string | null> {
@@ -321,7 +338,7 @@ export class BasePostManager {
     }
 
     // 获取与当前文章相同分类的文章（排除当前文章）
-    const categoryPosts = this.getPostsByCategory(currentPost.category).filter(
+    const categoryPosts = this.getPostsByCategory(currentPost.category.key).filter(
       (post) => post.slug !== slug
     );
 
@@ -357,6 +374,33 @@ export class BasePostManager {
       )
       .slice(0, limit);
   }
+
+  public getCategoryInfo(categoryKey: string) {
+    return this.categoryMetadata.get(categoryKey);
+  }
+
+  /**
+   * 搜索文章
+   * @param keyword 搜索关键词
+   * @returns 匹配的文章列表
+   */
+  public searchPosts(keyword: string): Post[] {
+    if (!keyword.trim()) {
+      return [];
+    }
+
+    const lowerKeyword = keyword.toLowerCase();
+
+    return this.posts.filter((post) => {
+      const { title, excerpt } = post;
+
+      // 在标题、摘要中搜索关键词
+      return (
+        title.toLowerCase().includes(lowerKeyword) ||
+        excerpt.toLowerCase().includes(lowerKeyword)
+      );
+    });
+  }
 }
 
 declare const globalThis: {
@@ -364,12 +408,10 @@ declare const globalThis: {
 } & typeof global;
 
 let blogManager: BasePostManager | null = globalThis.blogManagerGlobal ?? null;
-console.log('blogManager', blogManager);
 export async function getPostManager(): Promise<BasePostManager> {
   if (!blogManager) {
     throw new Error('BlogPostManager not initialized. Please call initialize() first.');
   }
-  console.log('BlogPostManager already initialized. Returning existing instance.');
   await blogManager.initialize();
   return blogManager;
 }
@@ -380,6 +422,5 @@ export function initializePostManager(srcDir: string) {
     if (process.env.NODE_ENV !== 'production') {
       globalThis.blogManagerGlobal = blogManager;
     }
-    console.log('BlogPostManager initialized with srcDir:', srcDir);
   }
 }

@@ -19,8 +19,10 @@ export default function PostCard({ post }: Props) {
           height={400}
         />
         <div className="absolute right-3 bottom-3">
-          <Link href={`/categories/`} className="bg-primary rounded-full px-4 py-1.5 text-[0.8rem] font-medium text-white shadow-md">
-            {post.category}
+          <Link
+            href={`/categories/`}
+            className="bg-primary rounded-full px-4 py-1.5 text-[0.8rem] font-medium text-white shadow-md">
+            {post.category.name}
           </Link>
         </div>
       </div>

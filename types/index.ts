@@ -18,7 +18,7 @@ export interface Post {
   excerpt: string;
   coverImage: string;
   tags: string[];
-  category: string;
+  category: Category;
   publishDate: string;
   featured?: boolean;
 }
@@ -31,4 +31,15 @@ export interface Category {
   description?: string;
   coverImage: string;
   order?: number;
+}
+
+export interface PostMatter {
+  title: string;
+  slug: string;
+  excerpt: string;
+  coverImage: string;
+  tags: string[];
+  category: string;
+  publishDate: string;
+  featured?: boolean;
 }

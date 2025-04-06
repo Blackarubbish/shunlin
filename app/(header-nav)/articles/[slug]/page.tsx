@@ -12,8 +12,6 @@ export default async function ArticleDetail({ params }: { params: { slug: string
   // 实际使用时，可以通过params.slug从数据库或CMS获取文章数据
 
   const { slug } = await params;
-  console.log('当前文章slug:', slug);
-
   const postManager = await getPostManager();
 
   const postInstance = postManager.getPostBySlug(slug);

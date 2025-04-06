@@ -13,6 +13,8 @@ const parser = unified()
   .use(remarkGfm) // 支持 GitHub 风格的 Markdown
   .use(remarkFrontmatter, ['yaml']) // 支持 YAML Frontmatter
   .use(remarkRehype) // 转换为 HTML
+  // .use(remarkStaticMermaid)
+  // .use(rehypeMermaid)
   .use(rehypeSlug) // 为标题生成 id
   .use(rehypeAutolinkHeadings, { behavior: 'wrap' }) // 为标题添加链接
   .use(rehypeHighlight) // 支持代码高亮
