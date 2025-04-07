@@ -1,61 +1,21 @@
 import Header from '@/components/header';
-import { BookOpen, Code, Database, Globe, Lightbulb, PenTool } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getPostManager } from '@/lib/docs-manager';
+import { Icon, ICON_MAP, IconName } from '@/components/icons';
+import { BookOpen } from 'lucide-react';
 
-// 模拟分类数据 (添加封面图片)
-// 模拟分类数据 (添加封面图片和描述)
-const categories = [
-  {
-    name: 'JavaScript',
-    count: 12,
-    icon: <Code size={24} />,
-    slug: 'javascript',
-    description: 'Web开发中最流行的编程语言，前端开发的基础。',
-    coverImage: '/images/categories/javascript.jpg'
-  },
-  {
-    name: 'React',
-    count: 8,
-    icon: <Globe size={24} />,
-    slug: 'react',
-    description: '用于构建用户界面的JavaScript库，专注于组件化开发。',
-    coverImage: '/images/categories/react.jpg'
-  },
-  {
-    name: 'Node.js',
-    count: 6,
-    icon: <Database size={24} />,
-    slug: 'nodejs',
-    description: '基于Chrome V8引擎的JavaScript运行环境，用于服务端开发。',
-    coverImage: '/images/categories/nodejs.jpg'
-  },
-  {
-    name: '前端开发',
-    count: 15,
-    icon: <PenTool size={24} />,
-    slug: 'frontend',
-    description: '创建网站用户界面和交互体验的技术与实践。',
-    coverImage: '/images/categories/frontend.jpg'
-  },
-  {
-    name: '后端开发',
-    count: 7,
-    icon: <BookOpen size={24} />,
-    slug: 'backend',
-    description: '处理服务器端逻辑、数据库和API的技术栈。',
-    coverImage: '/images/categories/backend.jpg'
-  },
-  {
-    name: '开发心得',
-    count: 9,
-    icon: <Lightbulb size={24} />,
-    slug: 'experience',
-    description: '分享编程过程中的经验、教训和实用技巧。',
-    coverImage: '/images/categories/experience.jpg'
-  }
-];
-export default function Categories() {
+export default async function Categories() {
+  const blogManager = await getPostManager();
+
+  const categories = blogManager.getAllCategories();
+
+  const renderIcon = (iconKey: string) => {
+    if (iconKey in ICON_MAP) {
+      return <Icon size={26} iconKey={iconKey as IconName} strokeWidth={3} />;
+    }
+    return <Icon size={26} iconKey="Book" strokeWidth={3} />;
+  };
   return (
     <>
       <Header currentPath="/categories" />
@@ -70,22 +30,22 @@ export default function Categories() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (
             <Link
-              key={category.slug}
-              href={`/articles?category=${category.slug}`}
-              className="group overflow-hidden rounded-xl transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg">
+              key={category.key}
+              href={`/articles?category=${category.key}`}
+              className="group overflow-hidden rounded-xl border border-gray-100 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg">
               <div className="relative h-48 w-full">
                 <Image
-                  src={category.coverImage || '/images/categories/default.jpg'}
+                  src={category.coverImage}
                   alt={category.name}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-black/20" /> */}
               </div>
 
               <div className="bg-card-bg relative p-5">
                 <div className="border-card-bg bg-primary absolute -top-8 right-5 flex h-16 w-16 items-center justify-center rounded-full border-4 text-white shadow-md">
-                  {category.icon}
+                  {renderIcon(category.icon || 'Book')}
                 </div>
 
                 <h2 className="text-text mb-1 text-xl font-bold">{category.name}</h2>

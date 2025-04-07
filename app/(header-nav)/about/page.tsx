@@ -1,6 +1,8 @@
+import { appConfig } from '@/app-config';
 import Header from '@/components/header';
-import { Github, Mail, Twitter } from 'lucide-react';
+import { CustomIconNames, CustomIcons } from '@/components/icons';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function About() {
   return (
@@ -19,36 +21,32 @@ export default function About() {
             <Image src="/img/avatar.jpg" alt="Bocchi" fill className="object-cover" />
           </div>
           <div className="max-w-xl">
-            <h2 className="text-text mb-4 text-3xl font-bold">李顺林</h2>
+            <h2 className="text-text mb-4 text-3xl font-bold">{appConfig.me.name}</h2>
             <p className="text-text-secondary mb-6">
-              我是一名热爱技术的全栈开发工程师，专注于Web开发领域。通过这个博客，我希望能够分享我的技术心得、学习经验以及对行业的思考。
+              菜鸡前端开发工程师一枚，抽象大师，轻度二刺螈，正在练习电吉他🎸(不想玩抽象的电吉他选手不是好程序员)。
             </p>
             <p className="text-text-secondary mb-6">
-              目前主要使用的技术栈包括React、Next.js、Node.js和TypeScript。我相信技术应该服务于创造价值，而不仅仅是为了技术而技术。
+              目前主要使用的技术栈包括React、Next.js、Node.js和TypeScript。我相信技术应该服务于创造价值，而不仅仅是为了技术而技术(👈这句话是copilot帮我写的)。
+            </p>
+            <h3 className="text-text/90 mb-4 text-2xl font-bold">关于这个网站</h3>
+            <p className="text-text-secondary mb-6">
+              因为太喜欢《孤独摇滚》所以搭建博客的时候希望以主角团四人的颜色来构建整个网站。使用的是Next.js+本地文件系统管理Markdown的形式来搭建。
             </p>
             <div className="flex flex-wrap gap-4">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-card-bg text-text border-border hover:border-primary hover:text-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300">
-                <Github size={18} />
-                <span>GitHub</span>
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-card-bg text-text border-border hover:border-primary hover:text-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300">
-                <Twitter size={18} />
-                <span>Twitter</span>
-              </a>
-              <a
-                href="mailto:shunlin.li@qq.com"
-                className="bg-card-bg text-text border-border hover:border-primary hover:text-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300">
-                <Mail size={18} />
-                <span>Email</span>
-              </a>
+              {appConfig.me.contact.map((item) => {
+                return (
+                  <Link
+                    className="bg-card-bg text-text border-border hover:border-primary hover:text-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300"
+                    key={item.key}
+                    href={item.link || '/'}>
+                    <CustomIcons
+                      size={24}
+                      name={(item.icon as CustomIconNames) || 'Book2'}
+                    />
+                    <span>{item.title}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -56,20 +54,7 @@ export default function About() {
         <div className="mb-16">
           <h2 className="text-text mb-8 text-center text-2xl font-bold">我的技能</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {[
-              '前端开发',
-              'React',
-              'Next.js',
-              'TypeScript',
-              'Node.js',
-              'Tailwind CSS',
-              'JavaScript',
-              'CSS',
-              'HTML',
-              'Git',
-              'UI/UX',
-              '响应式设计'
-            ].map((skill) => (
+            {appConfig.me.skills?.map((skill) => (
               <div
                 key={skill}
                 className="bg-card-bg border-border hover:border-primary flex items-center justify-center rounded-lg border p-4 text-center font-medium transition-all duration-300">
@@ -82,32 +67,14 @@ export default function About() {
         <div>
           <h2 className="text-text mb-8 text-center text-2xl font-bold">我的经历</h2>
           <div className="flex flex-col gap-6">
-            {[
-              {
-                period: '2022 - 至今',
-                company: '某科技公司',
-                title: '高级前端开发工程师',
-                description:
-                  '负责公司核心产品的前端架构设计和开发，优化用户体验，提升产品性能。'
-              },
-              {
-                period: '2020 - 2022',
-                company: '某互联网公司',
-                title: '前端开发工程师',
-                description: '参与多个Web应用的开发，负责UI组件库的维护和迭代。'
-              },
-              {
-                period: '2018 - 2020',
-                company: '某创业公司',
-                title: '初级前端开发',
-                description: '从事Web应用开发，积累了丰富的实战经验。'
-              }
-            ].map((experience, index) => (
+            {appConfig.me.expirience?.map((experience, index) => (
               <div
                 key={index}
                 className="bg-card-bg border-border hover:border-primary relative rounded-lg border p-6 transition-all duration-300 hover:shadow-md">
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-text text-xl font-bold">{experience.company}</h3>
+                  <h3 className="text-text text-xl font-bold">
+                    {experience.organization}
+                  </h3>
                   <span className="bg-primary-light text-primary rounded-full px-3 py-1 text-sm font-medium">
                     {experience.period}
                   </span>

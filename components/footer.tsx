@@ -45,7 +45,7 @@ export default function Footer() {
         <div>
           <h3 className="mb-5 text-[1.2rem] font-bold">联系方式</h3>
           <ul className="flex flex-col gap-[10px]">
-            {appConfig.contact.map((item) => (
+            {appConfig.me.contact.map((item) => (
               <li key={item.title}>
                 {item.link && (
                   <a

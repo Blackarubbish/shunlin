@@ -12,7 +12,7 @@ let defaultCategory = {
   key: 'uncategorized',
   icon: 'folder',
   description: '未分类的文章',
-  coverImage: '/img/categories/default.jpg',
+  coverImage: '/blog/category/pixeltrue-icons-seo-business-location-3.svg',
   order: 999,
   count: 0
 } as Category;
@@ -165,7 +165,7 @@ export class BasePostManager {
    */
   private async loadPosts(): Promise<void> {
     // 获取所有 Markdown 文件
-    const files = fg.sync(`*.md`, {
+    const files = fg.sync(`**/*.md`, {
       ignore: ['**/node_modules/**', '**/public/**'],
       cwd: this.srcDir,
       absolute: true,

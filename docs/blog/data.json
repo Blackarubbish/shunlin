@@ -3,9 +3,9 @@
     {
       "name": "编程技术",
       "key": "programming",
-      "icon": "code",
+      "icon": "BookOpen",
       "description": "编程语言、框架和开发技巧",
-      "coverImage": "/img/categories/programming.jpg",
+      "coverImage": "/blog/category/pixeltrue-icons-website-design-with-brush-and-paint-bucket.svg",
       "order": 1
     }
   ]
