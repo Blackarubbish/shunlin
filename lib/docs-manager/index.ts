@@ -5,7 +5,7 @@ import slugify from 'slugify';
 import { remark } from 'remark';
 import strip from 'strip-markdown';
 import { readFileSync } from 'fs';
-import { parseMarkdown } from '../markdown';
+import { MarkdownParser, MarkdownRemarkParser } from '../markdown';
 
 let defaultCategory = {
   name: '未分类',
@@ -29,8 +29,11 @@ export class BasePostManager {
   private isInitialized = false;
   private isLoading = false;
 
-  constructor(srcDir: string) {
+  private markdownParser: MarkdownParser;
+
+  constructor(srcDir: string, parser: MarkdownParser) {
     this.srcDir = srcDir;
+    this.markdownParser = parser;
   }
 
   /**
@@ -316,7 +319,7 @@ export class BasePostManager {
     }
     try {
       const fileContent = readFileSync(filePath, 'utf-8');
-      const htmlContent = await parseMarkdown(fileContent);
+      const htmlContent = await this.markdownParser.parseMarkdown(fileContent);
       return htmlContent;
     } catch (error) {
       console.error('Error reading file:', error);
@@ -418,7 +421,10 @@ export async function getPostManager(): Promise<BasePostManager> {
 
 export function initializePostManager(srcDir: string) {
   if (!blogManager) {
-    blogManager = new BasePostManager(srcDir);
+    const markdownParser = new MarkdownRemarkParser({
+      srcDir
+    });
+    blogManager = new BasePostManager(srcDir, markdownParser);
     if (process.env.NODE_ENV !== 'production') {
       globalThis.blogManagerGlobal = blogManager;
     }

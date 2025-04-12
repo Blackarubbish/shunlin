@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { initializePostManager } from '@/lib/docs-manager';
 import { appConfig } from '@/app-config';
+import { ThemeSwitcher } from '@/components/theme-switcher';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
+        <ThemeSwitcher />
       </body>
     </html>
   );

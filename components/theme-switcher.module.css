@@ -1,0 +1,75 @@
+/* 暗夜主题特有的动画效果 */
+.theme-switcher-active--dark {
+  animation: pulse-dark 2s infinite;
+}
+.theme-switcher-active--pink {
+  animation: pulse-pink 2s infinite;
+}
+.theme-switcher-active--red {
+  animation: pulse-red 2s infinite;
+}
+.theme-switcher-active--yellow {
+  animation: pulse-yellow 2s infinite;
+}
+.theme-switcher-active--blue {
+  animation: pulse-blue 2s infinite;
+}
+@keyframes pulse-dark {
+  0% {
+    box-shadow: 0 0 0 0 rgba(157, 78, 221, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(157, 78, 221, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(157, 78, 221, 0);
+  }
+}
+
+@keyframes pulse-pink {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 158, 181, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 158, 181, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 158, 181, 0);
+  }
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 120, 120, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 120, 120, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 120, 120, 0);
+  }
+}
+
+@keyframes pulse-yellow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 216, 120, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 216, 120, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 216, 120, 0);
+  }
+}
+
+@keyframes pulse-blue {
+  0% {
+    box-shadow: 0 0 0 0 rgba(120, 197, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(120, 197, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(120, 197, 255, 0);
+  }
+}

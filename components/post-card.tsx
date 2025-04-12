@@ -1,6 +1,6 @@
 import { Post } from '@/types';
 import Image from 'next/image';
-import { CalendarFilled, ArrowRightOutlined, TagOutlined } from '@ant-design/icons';
+import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import Link from 'next/link';
 
 interface Props {
@@ -45,9 +45,9 @@ export default function PostCard({ post }: Props) {
               <Link
                 href={`/tags/${tag}`}
                 key={index}
-                className="text-text-secondary flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs">
-                <TagOutlined className="text-primary mr-1" />
-                {tag}
+                className="bg-tag flex items-center rounded-md px-2 py-1 text-xs">
+                <Tag size={14} className="text-primary mr-1" />
+                <span className="text-text-secondary">{tag}</span>
               </Link>
             ))}
           </div>
@@ -55,7 +55,7 @@ export default function PostCard({ post }: Props) {
 
         <div className="mt-auto flex items-center justify-between">
           <span className="text-text-tertiary flex items-center text-xs">
-            <CalendarFilled className="text-primary mr-1.5" />
+            <Calendar size={24} className="text-primary mr-1.5" />
             {post.publishDate}
           </span>
 
@@ -63,7 +63,10 @@ export default function PostCard({ post }: Props) {
             href={`/articles/${post.slug}`}
             className="text-primary group group/link flex items-center gap-1.5 text-sm font-semibold transition-all duration-300">
             阅读全文
-            <ArrowRightOutlined className="transition-transform duration-300 group-hover/link:translate-x-1" />
+            <ArrowRight
+              size={16}
+              className="transition-transform duration-300 group-hover/link:translate-x-1"
+            />
           </Link>
         </div>
       </div>

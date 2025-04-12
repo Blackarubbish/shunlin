@@ -1,6 +1,7 @@
 import { cn } from '@/lib';
 import { appConfig } from '@/app-config';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Nav = ({ title, url, isActive }: (typeof appConfig)['navList'][number]) => {
   return (
@@ -27,7 +28,7 @@ const Header = ({ currentPath }: Props) => {
   };
   return (
     <header className="border-border flex flex-col items-center justify-between border-b border-solid py-5 md:flex-row">
-      <div className="flex items-center gap-4">
+      <Link href="/" className="flex items-center gap-4">
         <Image
           src="/img/avatar.jpg"
           alt="Bocchi博客"
@@ -38,7 +39,7 @@ const Header = ({ currentPath }: Props) => {
         <h1 className="text-text text-2xl font-bold">
           Bocchi<span>博客</span>
         </h1>
-      </div>
+      </Link>
       <nav className="items-center md:flex">
         <button className="mobile-menu-toggle">
           <span></span>
