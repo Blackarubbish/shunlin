@@ -71,7 +71,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <p className="text-text text-[0.9rem]">© 2021 Bocchi. All Rights Reserved.</p>
+      <p className="text-center text-[0.9rem]">© 2025 Shunlin. All Rights Reserved.</p>
     </footer>
   );
 }

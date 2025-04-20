@@ -88,6 +88,15 @@ body {
   --primary-dark: #ff7a9a;
   --primary-light: #ffd1dd;
   --secondary-color: #78c5ff;
+
+  --md-theme-color: #ff9eb5;
+  --md-theme-color-light: #ffd1db;
+  --md-theme-color-dark: #d67a8e;
+  --md-theme-color-muted: rgba(255, 158, 181, 0.2);
+  --md-theme-color-border: rgba(255, 158, 181, 0.4);
+  --md-theme-gradient: linear-gradient(135deg, #ff9eb5 0%, #ffb8c9 100%);
+  --md-theme-color-text: #333333;
+  --md-theme-color-bg: #ffffff;
 }
 
 /* 蓝色主题 */
@@ -100,6 +109,15 @@ body {
   --card-shadow: 0 5px 15px rgba(120, 197, 255, 0.1);
   --card-hover-shadow: 0 15px 30px rgba(120, 197, 255, 0.2);
   --transition-curve: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+  --md-theme-color: #78c5ff;
+  --md-theme-color-light: #d1e9ff;
+  --md-theme-color-dark: #4e9fdb;
+  --md-theme-color-muted: rgba(120, 197, 255, 0.2);
+  --md-theme-color-border: rgba(120, 197, 255, 0.4);
+  --theme-gradient: linear-gradient(135deg, #78c5ff 0%, #a5d8ff 100%);
+  --md-theme-color-text: #333333;
+  --md-theme-color-bg: #ffffff;
 }
 
 /* 黄色主题 */
@@ -108,6 +126,15 @@ body {
   --primary-dark: #ffce5a;
   --primary-light: #ffe7b5;
   --secondary-color: #78c5ff;
+
+  --md-theme-color: #ffd878;
+  --md-theme-color-light: #fff2d1;
+  --md-theme-color-dark: #d9b35e;
+  --md-theme-color-muted: rgba(255, 216, 120, 0.2);
+  --md-theme-color-border: rgba(255, 216, 120, 0.4);
+  --theme-gradient: linear-gradient(135deg, #ffd878 0%, #ffe3a3 100%);
+  --md-theme-color-text: #333333;
+  --md-theme-color-bg: #ffffff;
 }
 
 /* 红色主题 */
@@ -116,6 +143,15 @@ body {
   --primary-dark: #ff5a5a;
   --primary-light: #ffb5b5;
   --secondary-color: #78c5ff;
+
+  --md-theme-color: #ff7878;
+  --md-theme-color-light: #ffd1d1;
+  --md-theme-color-dark: #d65e5e;
+  --md-theme-color-muted: rgba(255, 120, 120, 0.2);
+  --md-theme-color-border: rgba(255, 120, 120, 0.4);
+  --theme-gradient: linear-gradient(135deg, #ff7878 0%, #ffa7a7 100%);
+  --md-theme-color-text: #333333;
+  --md-theme-color-bg: #ffffff;
 }
 [data-theme='dark'] {
   --primary-color: #9d4edd;
@@ -145,6 +181,16 @@ body {
   --transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
   --tag-bg: #333333;
+
+
+  --md-theme-color: #9d4edd;
+  --md-theme-color-light: #c39bd3;
+  --md-theme-color-dark: #7b2cbf;
+  --md-theme-color-muted: rgba(157, 78, 221, 0.2);
+  --md-theme-color-border: rgba(157, 78, 221, 0.4);
+  --md-theme-gradient: linear-gradient(135deg, #9d4edd 0%, #b266ff 100%);
+  --md-theme-color-text: #e6e6e6;
+  --md-theme-color-bg: #121212;
 }
 
 @keyframes pulse {

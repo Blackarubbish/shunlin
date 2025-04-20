@@ -1,4 +1,5 @@
 import path from 'path';
+import { Friends } from './types';
 
 interface AppConfig {
   title: string;
@@ -11,6 +12,7 @@ interface AppConfig {
       title: string;
       description: string;
     }[];
+    email?: string;
     avatar?: string;
     contact: {
       title: string;
@@ -35,6 +37,7 @@ export const appConfig: AppConfig = {
   title: 'Bocchi Blog',
   me: {
     name: 'ShunLin',
+    email: 'shunlin.li@qq.com',
     skills: [
       '做好吃的减脂餐🦐',
       '单手颠锅',
@@ -118,3 +121,5 @@ export const appConfig: AppConfig = {
   subGreeting: 'A web developer.',
   srcDir: path.join(process.cwd(), 'docs/blog')
 };
+
+export const friends: Friends[] = [];

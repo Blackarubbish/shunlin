@@ -43,3 +43,10 @@ export interface PostMatter {
   publishDate: string;
   featured?: boolean;
 }
+
+export interface Friends {
+  name: string;
+  url: string;
+  avatar: string;
+  description: string;
+}

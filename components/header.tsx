@@ -27,37 +27,44 @@ const Header = ({ currentPath }: Props) => {
     return currentPath === url;
   };
   return (
-    <header className="border-border flex flex-col items-center justify-between border-b border-solid py-5 md:flex-row">
-      <Link href="/" className="flex items-center gap-4">
-        <Image
-          src="/img/avatar.jpg"
-          alt="Bocchi博客"
-          className="h-12 w-12 rounded-lg object-contain"
-          height={48}
-          width={48}
-        />
-        <h1 className="text-text text-2xl font-bold">
-          Bocchi<span>博客</span>
-        </h1>
-      </Link>
-      <nav className="items-center md:flex">
-        <button className="mobile-menu-toggle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <ul className="flex gap-5">
-          {appConfig.navList.map((item) => (
-            <Nav
-              isActive={isActive(item.url)}
-              key={item.key}
-              title={item.title}
-              url={item.url}
-            />
-          ))}
-        </ul>
-      </nav>
-    </header>
+    <>
+      <header className="bg-background fixed top-0 left-0 z-50 flex w-full items-center justify-center">
+        <div className="w-full px-5 xl:max-w-[1200px]">
+          <div className="border-border shadow-primary/45 shadow-[0 4px 6px -4px rgba(0, 0, 0, 0.1)] flex w-full flex-col items-center justify-between border-b border-solid py-5 md:flex-row">
+            <Link href="/" className="flex items-center gap-4">
+              <Image
+                src="/img/avatar.jpg"
+                alt="Bocchi博客"
+                className="h-12 w-12 rounded-lg object-contain"
+                height={48}
+                width={48}
+              />
+              <h1 className="text-text text-2xl font-bold">
+                Bocchi<span>博客</span>
+              </h1>
+            </Link>
+            <nav className="items-center md:flex">
+              <button className="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+              <ul className="flex gap-5">
+                {appConfig.navList.map((item) => (
+                  <Nav
+                    isActive={isActive(item.url)}
+                    key={item.key}
+                    title={item.title}
+                    url={item.url}
+                  />
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </header>
+      <div className="h-[89px]"></div>
+    </>
   );
 };
 

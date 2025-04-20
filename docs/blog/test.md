@@ -87,7 +87,7 @@ graph TD
 ## Nested List Example
 
 1. First Level
-   - Second Level
+   - SecondLevel
      - Third Level
 
 ## Blockquote Example
@@ -116,3 +116,5 @@ Feel free to modify this file for further testing. It now includes more advanced
 
 - aaa
   - sasdas
+
+![示例图片](/blog/img/avatar.jpg)

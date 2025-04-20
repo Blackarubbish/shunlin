@@ -8,22 +8,50 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-export default async function ArticleDetail({ params }: { params: { slug: string } }) {
+export async function generateStaticParams() {
+  const postManager = await getPostManager();
+  const posts = postManager.getAllPosts();
+  return posts.map((post) => ({
+    params: { slug: post.slug }
+  }));
+}
+
+export default async function ArticleDetail({
+  params
+}: {
+  params: {
+    slug: string;
+  };
+}) {
   // 实际使用时，可以通过params.slug从数据库或CMS获取文章数据
 
-  const { slug } = await params;
+  const { slug } = params;
   const postManager = await getPostManager();
 
   const postInstance = postManager.getPostBySlug(slug);
 
   if (!postInstance) {
-    return <ErrorMessage message="文章不存在" />;
+    return (
+      <>
+        <Header currentPath="/articles" />
+        <div className="py-14">
+          <ErrorMessage message="文章不存在!" />
+        </div>
+      </>
+    );
   }
 
   const htmlContent = await postManager.getPostHtmlContent(postInstance.slug);
 
   if (!htmlContent) {
-    return <ErrorMessage message="查询不到文章内容" />;
+    return (
+      <>
+        <Header currentPath="/articles" />
+        <div className="py-14">
+          <ErrorMessage message="文章内容加载失败" />
+        </div>
+      </>
+    );
   }
 
   const relatiedPosts = postManager.getRelatedPosts(postInstance.slug, 3);

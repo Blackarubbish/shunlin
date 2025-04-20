@@ -157,7 +157,6 @@ export class BasePostManager {
       if (!this.categoryMetadata.has(defaultCategoryKey)) {
         this.categoryMetadata.set(defaultCategoryKey, defaultCategory);
       }
-      console.log('分类数据加载成功', this.categoryMetadata);
     } catch (error) {
       throw new Error('Failed to load categories: ' + error);
     }
@@ -188,7 +187,6 @@ export class BasePostManager {
       if (!data.excerpt) {
         data.excerpt = await this.extractPlainText(content, 200);
       }
-      console.log('postData:', data);
       const categoryInfo = this.getCategoryInfo(data.category ?? '') ?? defaultCategory;
       categoryInfo.count = (categoryInfo.count || 0) + 1;
       // 解析文章数据
@@ -202,7 +200,6 @@ export class BasePostManager {
         publishDate: data.publishDate || new Date().toISOString()
       };
 
-      console.log('article:', article);
       // slug关联文件路径
       this.postsFilePathRecord[article.slug] = file;
 

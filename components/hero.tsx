@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { cn } from '@/lib';
+import Link from 'next/link';
 
 const BTN_CLASS = `px-6 py-3 rounded-3xl font-semibold 
    inline-flex items-center justify-center gap-2 transition-all duration-300 
@@ -19,14 +20,14 @@ const Hero = () => {
           分享生活、技术、音乐、动漫等内容
         </p>
         <div className="flex gap-4">
-          <a
+          <Link
             href="/articles"
             className={cn(
               BTN_CLASS,
               'text-text-btn-text bg-primary hover:bg-primary-dark'
             )}>
             浏览文章
-          </a>
+          </Link>
           <a
             href="/about"
             className={cn(

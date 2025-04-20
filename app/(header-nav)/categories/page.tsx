@@ -19,7 +19,7 @@ export default async function Categories() {
   return (
     <>
       <Header currentPath="/categories" />
-      <div className="py-14">
+      <div className="flex-1 py-14">
         <div className="mb-10 text-center">
           <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">文章分类</h1>
           <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-[1.1rem]">

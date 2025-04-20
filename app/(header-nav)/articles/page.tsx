@@ -59,7 +59,7 @@ export default async function Articles({
   return (
     <>
       <Header currentPath="/articles" />
-      <div className="min-h-[cal(100vh-84px)]">
+      <div className="flex-1">
         <div className="py-14">
           <div className="mb-10 text-center">
             <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">所有文章</h1>
