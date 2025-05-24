@@ -18,7 +18,7 @@ export default async function Articles({
   // eslint-disable-next-line prefer-const
   let { category, searchKey } = await searchParams;
 
-  const postManager = await getPostManager();
+  const postManager = getPostManager();
   const categories = postManager.getAllCategories();
 
   const categoryFilterParam: Pick<Category, 'key' | 'name' | 'count'>[] = [

@@ -46,7 +46,7 @@ export const appConfig: AppConfig = {
   me: {
     name: 'Shunlin',
     email: 'shunlin.li@qq.com',
-    avatar: '/blog/avatar.jpg',
+    avatar: 'https://img.picui.cn/free/2025/05/24/6831dfa1affeb.jpg',
     skills: [
       '做好吃的减脂餐🦐',
       '单手颠锅',

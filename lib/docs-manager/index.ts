@@ -413,15 +413,14 @@ declare const globalThis: {
 } & typeof global;
 
 let blogManager: BasePostManager | null = globalThis.blogManagerGlobal ?? null;
-export async function getPostManager(): Promise<BasePostManager> {
+export function getPostManager(): BasePostManager {
   if (!blogManager) {
     throw new Error('BlogPostManager not initialized. Please call initialize() first.');
   }
-  await blogManager.initialize();
   return blogManager;
 }
 
-export function initializePostManager(srcDir: string) {
+export async function initializePostManager(srcDir: string) {
   if (!blogManager) {
     const markdownParser = new MarkdownRemarkParser({
       srcDir
@@ -430,5 +429,6 @@ export function initializePostManager(srcDir: string) {
     if (process.env.NODE_ENV !== 'production') {
       globalThis.blogManagerGlobal = blogManager;
     }
+    await blogManager.initialize();
   }
 }

@@ -4,9 +4,19 @@ import Image from 'next/image';
 import { getPostManager } from '@/lib/docs-manager';
 import { Icon, ICON_MAP, IconName } from '@/components/icons';
 import { BookOpen } from 'lucide-react';
+import { appConfig } from '@/app-config';
+
+// 强制页面使用静态生成
+export const dynamic = 'force-static';
+
+// 可选：添加生成元数据
+export const metadata = {
+  title: '文章分类 | ' + appConfig.title,
+  description: '浏览所有文章分类，找到你感兴趣的内容'
+};
 
 export default async function Categories() {
-  const blogManager = await getPostManager();
+  const blogManager = getPostManager();
 
   const categories = blogManager.getAllCategories();
 
@@ -23,7 +33,7 @@ export default async function Categories() {
         <div className="mb-10 text-center">
           <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">文章分类</h1>
           <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-[1.1rem]">
-            在这里浏览所有的文章分类，找到你感兴趣的内容
+            从来未曾拥有的总难陷入哀伤和欢愉，从来未曾属于真情的是空幻的物语
           </p>
         </div>
 

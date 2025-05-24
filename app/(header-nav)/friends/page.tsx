@@ -5,6 +5,14 @@ import React from 'react';
 import { appConfig, friends } from '@/app-config';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
+// 强制页面使用静态生成
+export const dynamic = 'force-static';
+
+// 可选：添加生成元数据
+export const metadata = {
+  title: '友链 | ' + appConfig.title,
+  description: '欢迎互换友链，我们一起变强💪'
+};
 export default function Friends() {
   return (
     <>

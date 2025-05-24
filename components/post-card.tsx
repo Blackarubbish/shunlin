@@ -43,7 +43,7 @@ export default function PostCard({ post }: Props) {
         {post.tags && post.tags.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {post.tags.map((tag, index) => (
-              <PostTag name={tag} key={`${tag}-${index}`} href={`/tags/${tag}`} />
+              <PostTag name={tag} key={`${tag}-${index}`} />
             ))}
           </div>
         )}

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: appConfig.description
 };
 
-initializePostManager(appConfig.srcDir);
+await initializePostManager(appConfig.srcDir);
 
 export default async function RootLayout({
   children

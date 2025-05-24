@@ -76,9 +76,6 @@ export const ThemeSwitcher = (props: ThemeSwitcherProps) => {
   const initTheme = () => {
     // 从 localStorage 中获取主题
     const storedTheme = window.localStorage.getItem('theme') as Theme;
-    if (storedTheme !== null && storedTheme === activeTheme) {
-      return; // 如果主题已经是当前主题，则不需要重新设置
-    }
     if (storedTheme) {
       const res = themes.find((item) => item.name === storedTheme); // 检查主题是否存在
       if (!res) {

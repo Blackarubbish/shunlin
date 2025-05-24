@@ -5,20 +5,38 @@ import PostContent from '@/components/post-content';
 import PostTag from '@/components/post-tag';
 import { getPostManager } from '@/lib/docs-manager';
 import { Calendar, Clock, User } from 'lucide-react';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-export default async function ArticleDetail({
-  params
-}: {
+interface Props {
   params: Promise<{ slug: string }>;
-}) {
+}
+const postManager = getPostManager();
+const posts = postManager.getAllPosts();
+
+export function generateStaticParams() {
+  return posts.map((post) => ({
+    slug: post.slug
+  }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // read route params
+  const { slug } = await params;
+
+  const postInstance = postManager.getPostBySlug(slug);
+  return {
+    title: postInstance?.title || '文章详情',
+    description: postInstance?.excerpt || '文章详情页面'
+  };
+}
+export default async function ArticleDetail(Props: Props) {
+  const { params } = Props;
   // 实际使用时，可以通过params.slug从数据库或CMS获取文章数据
 
   const { slug } = await params;
-  const postManager = await getPostManager();
-
   const postInstance = postManager.getPostBySlug(slug);
 
   if (!postInstance) {
@@ -73,7 +91,7 @@ export default async function ArticleDetail({
             </div>
             <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
               {postInstance.tags.map((t, idx) => (
-                <PostTag key={`${t}-${idx}`} name={t} href={`/tags/t`} />
+                <PostTag key={`${t}-${idx}`} name={t} />
               ))}
             </div>
             {postInstance.showCover && (
