@@ -33,14 +33,15 @@ const Header = ({ currentPath }: Props) => {
           <div className="border-border shadow-primary/45 shadow-[0 4px 6px -4px rgba(0, 0, 0, 0.1)] flex w-full flex-col items-center justify-between border-b border-solid py-5 md:flex-row">
             <Link href="/" className="flex items-center gap-4">
               <Image
-                src="/img/avatar.jpg"
-                alt="Bocchi博客"
+                src={appConfig.me.avatar}
+                alt="avatar"
                 className="h-12 w-12 rounded-lg object-contain"
                 height={48}
                 width={48}
               />
               <h1 className="text-text text-2xl font-bold">
-                Bocchi<span>博客</span>
+                <span>{appConfig.me.name}</span>
+                <span className="text-primary ml-1">的小站</span>
               </h1>
             </Link>
             <nav className="items-center md:flex">

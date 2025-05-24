@@ -21,6 +21,8 @@ export interface Post {
   category: Category;
   publishDate: string;
   featured?: boolean;
+  showCover?: boolean;
+  readingTime?: string; // 以分钟为单位的阅读时间字符串
 }
 
 export interface Category {
@@ -42,6 +44,8 @@ export interface PostMatter {
   category: string;
   publishDate: string;
   featured?: boolean;
+  readingTime?: string; // 以分钟为单位的阅读时间字符串
+  showCover?: boolean;
 }
 
 export interface Friends {

@@ -153,7 +153,7 @@
 }
 
 .markdown-body.theme-bocchi code {
-  background-color: var(--theme-color-muted);
+  /* background-color: var(--theme-color-muted); */
   border-radius: 4px;
   padding: 0.2em 0.4em;
   font-family: 'Fira Code', monospace;

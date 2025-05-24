@@ -17,7 +17,7 @@ export default function FeaturedPosts({ posts }: Props) {
       </div>
       <div className="relative mt-5 h-14">
         <a
-          href=""
+          href="/articles"
           className="text-primary border-primary hover:bg-primary inline-flex items-center justify-center gap-2 rounded-3xl border-2 px-6 py-3 font-semibold transition-all duration-300 hover:text-white">
           查看更多文章
         </a>

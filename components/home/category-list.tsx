@@ -11,7 +11,7 @@ const CategoryCard = ({ category }: { category: Category }) => {
   };
   return (
     <Link
-      href={`/categories/${category.key}`}
+      href={`/articles/?category=${category.key}`}
       className="group bg-card-bg shadow-card flex flex-col items-center gap-[15px] rounded-2xl px-5 py-[30px] transition-all duration-300 ease-in-out hover:-translate-y-2.5 hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
       <div className="bg-primary-light text-primary group-hover:bg-primary mb-[10px] flex h-[60px] w-[60px] items-center justify-center rounded-full text-[24px] transition-colors duration-300 group-hover:rotate-6 group-hover:text-white">
         {renderIcon()}

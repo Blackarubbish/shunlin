@@ -3,6 +3,8 @@ import { Friends } from './types';
 
 interface AppConfig {
   title: string;
+  description: string;
+  headerTitle?: string;
   me: {
     name: string;
     skills?: string[];
@@ -13,7 +15,7 @@ interface AppConfig {
       description: string;
     }[];
     email?: string;
-    avatar?: string;
+    avatar: string;
     contact: {
       title: string;
       link?: string;
@@ -28,16 +30,23 @@ interface AppConfig {
     key: string;
     isActive?: boolean;
   }[];
-  greeting: string;
+  greeting: {
+    text: string;
+    colorText: string;
+    sub: string;
+  };
   subGreeting: string;
   srcDir: string;
 }
 
 export const appConfig: AppConfig = {
-  title: 'Bocchi Blog',
+  title: 'SHUNLIN - ShunLin的个人站点',
+  description: 'ShunLin的个人站点, 包含文章、项目和个人信息等内容',
+  headerTitle: 'Shunlin',
   me: {
-    name: 'ShunLin',
+    name: 'Shunlin',
     email: 'shunlin.li@qq.com',
+    avatar: '/blog/avatar.jpg',
     skills: [
       '做好吃的减脂餐🦐',
       '单手颠锅',
@@ -117,8 +126,12 @@ export const appConfig: AppConfig = {
       key: 'friends'
     }
   ],
-  greeting: "Hello, I'm Bocchi.",
-  subGreeting: 'A web developer.',
+  greeting: {
+    text: '你好，我是',
+    colorText: 'Shunlin',
+    sub: '这位博主朋友面善又友善,没事喜欢搞搞新意思🕶'
+  },
+  subGreeting: '这位博主朋友面善又友善,没事喜欢搞搞新意思🕶',
   srcDir: path.join(process.cwd(), 'docs/blog')
 };
 

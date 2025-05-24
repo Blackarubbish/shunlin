@@ -12,7 +12,7 @@ import SearchInput from './input';
 export default async function Articles({
   searchParams
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   // 获取分类参数
   // eslint-disable-next-line prefer-const
@@ -64,7 +64,7 @@ export default async function Articles({
           <div className="mb-10 text-center">
             <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">所有文章</h1>
             <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-[1.1rem]">
-              我可不是乱写的嗷, 这些都是我的精华
+              每一次闭上了眼就想到了你，你像一句美丽的口号挥不去
             </p>
           </div>
           <div className="mb-10 flex gap-3.5">

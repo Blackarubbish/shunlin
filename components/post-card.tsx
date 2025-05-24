@@ -2,6 +2,7 @@ import { Post } from '@/types';
 import Image from 'next/image';
 import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import Link from 'next/link';
+import PostTag from './post-tag';
 
 interface Props {
   post: Post;
@@ -12,7 +13,7 @@ export default function PostCard({ post }: Props) {
     <div className="bg-card-bg shadow-card group hover:border-primary relative top-0 flex flex-col overflow-hidden rounded-2xl border-b-[3px] border-transparent text-left transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:border-b-[3px] hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)]">
       <div className="relative h-56 overflow-hidden">
         <Image
-          src={post.coverImage || '/img/avatar.jpg'}
+          src={post.coverImage}
           className="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
           alt={post.title || 'Article cover'}
           width={600}
@@ -42,13 +43,7 @@ export default function PostCard({ post }: Props) {
         {post.tags && post.tags.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {post.tags.map((tag, index) => (
-              <Link
-                href={`/tags/${tag}`}
-                key={index}
-                className="bg-tag flex items-center rounded-md px-2 py-1 text-xs">
-                <Tag size={14} className="text-primary mr-1" />
-                <span className="text-text-secondary">{tag}</span>
-              </Link>
+              <PostTag name={tag} key={`${tag}-${index}`} href={`/tags/${tag}`} />
             ))}
           </div>
         )}

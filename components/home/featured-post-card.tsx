@@ -2,6 +2,7 @@ import { Article } from '@/types';
 import Image from 'next/image';
 import { CalendarFilled, ArrowRightOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { appConfig } from '@/app-config';
 
 interface Props {
   article: Article;
@@ -12,7 +13,7 @@ export default function FeaturedPostCard({ article }: Props) {
     <article className="bg-card-bg shadow-card group hover:border-primary cursor-pointer overflow-hidden rounded-2xl text-left transition-transform duration-300 ease-in-out hover:-mb-1 hover:-translate-y-2.5 hover:border-b-[3px] hover:border-solid hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)]">
       <div className="h-52 overflow-hidden">
         <Image
-          src="/img/avatar.jpg"
+          src={appConfig.me.avatar}
           className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
           alt="posts-card"
           width={200}

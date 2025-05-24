@@ -17,6 +17,8 @@ let defaultCategory = {
   count: 0
 } as Category;
 
+const DEFAULT_COVER_IMAGE = '/blog/default-cover.svg';
+
 export class BasePostManager {
   private srcDir: string;
 
@@ -150,6 +152,7 @@ export class BasePostManager {
         };
         data.coverImage = c.coverImage;
         data.icon = c.icon;
+        data.count = 0;
         this.categoryMetadata.set(key, data);
       }
       // 添加默认分类
@@ -189,14 +192,17 @@ export class BasePostManager {
       }
       const categoryInfo = this.getCategoryInfo(data.category ?? '') ?? defaultCategory;
       categoryInfo.count = (categoryInfo.count || 0) + 1;
+      const isShowCover = data.showCover || !!data.coverImage;
       // 解析文章数据
       const article: Post = {
         title: data.title || '',
         slug: this.generateUniqueSlug(data),
         excerpt: data.excerpt || '',
-        coverImage: data.coverImage || '/img/avatar.jpg',
+        coverImage: data.coverImage || DEFAULT_COVER_IMAGE,
+        showCover: isShowCover, // 如果使用了默认的封面图，则不显示
         tags: data.tags || [],
         category: categoryInfo,
+        readingTime: data.readingTime,
         publishDate: data.publishDate || new Date().toISOString()
       };
 

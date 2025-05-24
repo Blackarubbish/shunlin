@@ -5,8 +5,16 @@
       "key": "programming",
       "icon": "BookOpen",
       "description": "编程语言、框架和开发技巧",
-      "coverImage": "/blog/category/pixeltrue-icons-website-design-with-brush-and-paint-bucket.svg",
+      "coverImage": "/icons/pixeltrue-icons-website-design-with-brush-and-paint-bucket.svg",
       "order": 1
+    },
+    {
+      "name": "读书笔记",
+      "key": "reading",
+      "icon": "Coffee",
+      "description": "书籍推荐和读书心得",
+      "coverImage": "/icons/category/pixeltrue-icons-receipt-1.svg",
+      "order": 2
     }
   ]
 }

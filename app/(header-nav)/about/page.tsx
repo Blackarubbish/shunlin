@@ -18,7 +18,7 @@ export default function About() {
 
         <div className="mb-16 flex flex-col items-center justify-center gap-10 md:flex-row">
           <div className="relative h-72 w-72 overflow-hidden rounded-xl">
-            <Image src="/img/avatar.jpg" alt="Bocchi" fill className="object-cover" />
+            <Image src={appConfig.me.avatar} alt="Bocchi" fill className="object-cover" />
           </div>
           <div className="max-w-xl">
             <h2 className="text-text mb-4 text-3xl font-bold">{appConfig.me.name}</h2>
@@ -75,7 +75,7 @@ export default function About() {
                   <h3 className="text-text text-xl font-bold">
                     {experience.organization}
                   </h3>
-                  <span className="bg-primary-light text-primary rounded-full px-3 py-1 text-sm font-medium">
+                  <span className="bg-primary-light rounded-full px-3 py-1 text-sm font-medium text-blue-50">
                     {experience.period}
                   </span>
                 </div>

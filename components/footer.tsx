@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-5 p-4">
           <div className="flex items-center justify-center gap-2">
             <Image
-              src="/img/avatar.jpg"
+              src={appConfig.me.avatar}
               width={200}
               height={200}
               alt="Bocchi博客"

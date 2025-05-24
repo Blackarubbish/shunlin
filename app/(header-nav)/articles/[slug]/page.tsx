@@ -2,30 +2,21 @@ import { appConfig } from '@/app-config';
 import ErrorMessage from '@/components/errorMsg';
 import Header from '@/components/header';
 import PostContent from '@/components/post-content';
+import PostTag from '@/components/post-tag';
 import { getPostManager } from '@/lib/docs-manager';
 import { Calendar, Clock, Tag, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-export async function generateStaticParams() {
-  const postManager = await getPostManager();
-  const posts = postManager.getAllPosts();
-  return posts.map((post) => ({
-    params: { slug: post.slug }
-  }));
-}
-
 export default async function ArticleDetail({
   params
 }: {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>;
 }) {
   // 实际使用时，可以通过params.slug从数据库或CMS获取文章数据
 
-  const { slug } = params;
+  const { slug } = await params;
   const postManager = await getPostManager();
 
   const postInstance = postManager.getPostBySlug(slug);
@@ -81,24 +72,20 @@ export default async function ArticleDetail({
               </div>
             </div>
             <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
-              {postInstance.tags.map((t) => (
-                <Link
-                  key={t}
-                  href={`/articles?category=${t.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="bg-primary-light text-primary hover:bg-primary flex items-center gap-1 rounded-full px-3 py-1 text-sm transition-all duration-300 hover:text-white">
-                  <Tag size={14} />
-                  <span>{t}</span>
-                </Link>
+              {postInstance.tags.map((t, idx) => (
+                <PostTag key={`${t}-${idx}`} name={t} href={`/tags/t`} />
               ))}
             </div>
-            <div className="relative mx-auto mb-10 aspect-video w-full max-w-4xl overflow-hidden rounded-xl">
-              <Image
-                src={postInstance.coverImage}
-                alt={postInstance.title}
-                fill
-                className="object-cover"
-              />
-            </div>
+            {postInstance.showCover && (
+              <div className="relative mx-auto mb-10 aspect-video w-full max-w-4xl overflow-hidden rounded-xl">
+                <Image
+                  src={postInstance.coverImage}
+                  alt={postInstance.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
           </div>
 
           {/* 文章内容 */}
