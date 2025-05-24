@@ -141,7 +141,6 @@ export class BasePostManager {
   private async loadCategories(): Promise<void> {
     // 导入分类配置
     try {
-      console.log('开始加载分类数据');
       const data = readFileSync(`${this.srcDir}/data.json`, 'utf-8');
       const parsedData = JSON.parse(data);
       const categories = (parsedData.categories as Category[]) || [];
