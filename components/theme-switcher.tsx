@@ -96,9 +96,6 @@ export const ThemeSwitcher = () => {
     }
   }, [pathname]);
 
-  // 获取当前活跃主题的信息
-  const activeThemeInfo = themes.find((theme) => theme.name === activeTheme) || themes[0];
-
   return (
     <div
       className={cn(
