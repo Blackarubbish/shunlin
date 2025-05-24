@@ -24,6 +24,7 @@ export default function SearchInput() {
     res += `?${queryParam.toString()}`;
     return res;
   };
+
   return (
     <input
       type="text"
@@ -37,7 +38,7 @@ export default function SearchInput() {
           router.push(genPageUrl());
         }
       }}
-      className="bg-input-bg text-text border-border focus:border-primary focus:ring-primary w-full rounded-full border py-3 pr-5 pl-[45px] transition-all duration-300 ease-in-out focus:ring-1 focus:outline-none"
+      className="bg-input-bg text-text border-border focus:border-primary focus:ring-primary w-full rounded-full border py-2.5 pr-5 pl-[45px] text-sm transition-all duration-300 ease-in-out focus:ring-1 focus:outline-none md:py-3 md:text-base"
     />
   );
 }
