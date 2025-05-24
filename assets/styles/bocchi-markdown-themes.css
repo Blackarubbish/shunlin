@@ -1599,12 +1599,10 @@
 .markdown-body.theme-nijika pre:hover,
 .markdown-body.theme-ryo pre:hover,
 .markdown-body.theme-ikuyo pre:hover {
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .markdown-body.theme-dark-night pre:hover {
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
