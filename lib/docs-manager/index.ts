@@ -12,7 +12,7 @@ let defaultCategory = {
   key: 'uncategorized',
   icon: 'folder',
   description: '未分类的文章',
-  coverImage: '/blog/category/pixeltrue-icons-seo-business-location-3.svg',
+  coverImage: '/icon/pixeltrue-icons-seo-business-location-3.svg',
   order: 999,
   count: 0
 } as Category;

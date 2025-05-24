@@ -13,7 +13,7 @@
       "key": "reading",
       "icon": "Coffee",
       "description": "书籍推荐和读书心得",
-      "coverImage": "/icons/category/pixeltrue-icons-receipt-1.svg",
+      "coverImage": "/icons/pixeltrue-icons-receipt-1.svg",
       "order": 2
     }
   ]

@@ -17,7 +17,9 @@ const Hero = () => {
             {appConfig.greeting.colorText}
           </span>
         </h2>
-        <p className="text-text-secondary mb-8 text-[1.2rem]">{appConfig.greeting.sub}</p>
+        <p className="text-text-secondary mb-8 text-center text-[1.2rem]">
+          {appConfig.greeting.sub}
+        </p>
         <div className="flex gap-4">
           <Link
             href="/articles"
