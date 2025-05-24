@@ -34,7 +34,7 @@ export default async function RootLayout({
     <html lang="zh-CN" data-theme={theme}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
-        <ThemeSwitcher />
+        <ThemeSwitcher currentTheme={theme} />
       </body>
     </html>
   );
