@@ -4,7 +4,7 @@ import Header from '@/components/header';
 import PostContent from '@/components/post-content';
 import PostTag from '@/components/post-tag';
 import { getPostManager } from '@/lib/docs-manager';
-import { Calendar, Clock, Tag, User } from 'lucide-react';
+import { Calendar, Clock, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';

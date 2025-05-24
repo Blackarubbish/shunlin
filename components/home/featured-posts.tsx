@@ -1,5 +1,6 @@
 import { Post } from '@/types';
 import PostCard from '../post-card';
+import Link from 'next/link';
 
 interface Props {
   posts: Post[];
@@ -16,11 +17,11 @@ export default function FeaturedPosts({ posts }: Props) {
         ))}
       </div>
       <div className="relative mt-5 h-14">
-        <a
+        <Link
           href="/articles"
           className="text-primary border-primary hover:bg-primary inline-flex items-center justify-center gap-2 rounded-3xl border-2 px-6 py-3 font-semibold transition-all duration-300 hover:text-white">
           查看更多文章
-        </a>
+        </Link>
       </div>
     </div>
   );

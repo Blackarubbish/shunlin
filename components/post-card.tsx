@@ -1,6 +1,6 @@
 import { Post } from '@/types';
 import Image from 'next/image';
-import { Calendar, ArrowRight, Tag } from 'lucide-react';
+import { Calendar, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import PostTag from './post-tag';
 

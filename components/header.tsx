@@ -23,7 +23,6 @@ interface Props {
 }
 const Header = ({ currentPath }: Props) => {
   const isActive = (url: string) => {
-    console.log('isActive', currentPath, url);
     return currentPath === url;
   };
   return (
