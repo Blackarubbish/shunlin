@@ -12,7 +12,7 @@ export default function FeaturedPosts({ posts }: Props) {
         精选文章
       </h2>
       <div className="mb-10 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[30px]">
-        {posts.map((p) => (
+        {posts.slice(0, 3).map((p) => (
           <PostCard post={p} key={p.slug} />
         ))}
       </div>

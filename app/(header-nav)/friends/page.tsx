@@ -4,6 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import { appConfig, friends } from '@/app-config';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import EmailTemplateBox from './email';
 
 // 强制页面使用静态生成
 export const dynamic = 'force-static';
@@ -21,7 +22,7 @@ export default function Friends() {
         <div className="mb-10 text-center">
           <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">友情链接</h1>
           <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-[1.1rem]">
-            欢迎互换友链，我们一起变强💪
+            在每个新的一年三百六十五天 每天进步一点点💪
           </p>
         </div>
 
@@ -57,16 +58,16 @@ export default function Friends() {
         <div className="border-primary-light bg-primary-light/10 mx-auto max-w-2xl rounded-xl border border-dashed p-8 text-center">
           <h2 className="text-text mb-4 text-xl font-bold">想要添加友链？</h2>
           <p className="text-text-secondary mb-6">
-            如果您也是博主或开发者，欢迎与我交换友链。请通过以下方式联系我：
+            欢迎与我交换友链，您可以通过以下方式联系我。
           </p>
           <div className="flex justify-center gap-4">
             <Popover>
               <PopoverTrigger asChild>
-                <div className="bg-primary hover:bg-primary/90 rounded-full px-6 py-2 text-white transition-all duration-300">
+                <div className="bg-primary hover:bg-primary/90 cursor-pointer rounded-full px-6 py-2 text-white transition-all duration-300">
                   发送邮件
                 </div>
               </PopoverTrigger>
-              <PopoverContent side="bottom" align="center">
+              <PopoverContent side="top" align="center">
                 <p className="text-center text-2xl font-bold">
                   {appConfig.me.email || ''}
                 </p>
@@ -74,13 +75,23 @@ export default function Friends() {
             </Popover>
 
             <a
-              href="https://github.com"
+              href={
+                appConfig.me.contact.find((item) => item.key === 'github')?.link || ''
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="bg-card-bg text-text border-border hover:border-primary hover:text-primary rounded-full border px-6 py-2 transition-all duration-300">
               GitHub
             </a>
           </div>
+        </div>
+
+        {/* 新增：友链申请邮件模板板块 */}
+        <div className="border-primary-light bg-primary-light/5 mx-auto mt-8 max-w-2xl rounded-xl border p-8">
+          <h2 className="text-text mb-4 text-center text-xl font-bold">
+            邮件内容辛苦附带上以下信息🧎‍♂️
+          </h2>
+          <EmailTemplateBox />
         </div>
       </div>
     </>

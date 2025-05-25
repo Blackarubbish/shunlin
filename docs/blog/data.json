@@ -1,20 +1,28 @@
 {
   "categories": [
     {
+      "name": "思考与成长",
+      "key": "growth",
+      "icon": "Lightbulb",
+      "description": "我帮大家反思过了，大家不用反思内耗自己了",
+      "coverImage": "/icons/a-091-skill.svg",
+      "order": 1
+    },
+    {
       "name": "编程技术",
       "key": "programming",
       "icon": "BookOpen",
       "description": "编程语言、框架和开发技巧",
       "coverImage": "/icons/pixeltrue-icons-website-design-with-brush-and-paint-bucket.svg",
-      "order": 1
+      "order": 2
     },
     {
       "name": "读书笔记",
       "key": "reading",
       "icon": "Coffee",
-      "description": "书籍推荐和读书心得",
+      "description": "读书与作者跨越时间和地点的一次思想对话,虽然这帮作者有时候挺让人无语的",
       "coverImage": "/icons/pixeltrue-icons-receipt-1.svg",
-      "order": 2
+      "order": 3
     }
   ]
 }

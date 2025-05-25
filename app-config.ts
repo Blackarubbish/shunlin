@@ -60,13 +60,13 @@ export const appConfig: AppConfig = {
       {
         title: '掘金',
         key: 'juejin',
-        link: '/',
+        link: 'https://juejin.cn/user/3035096893641575',
         icon: 'Juejin'
       },
       {
         title: 'GitHub',
         key: 'github',
-        link: '/',
+        link: 'https://github.com/Blackarubbish',
         icon: 'Github'
       },
       {
@@ -78,14 +78,14 @@ export const appConfig: AppConfig = {
       {
         title: 'bilibili',
         key: 'bilibili',
-        link: '/',
+        value: '全是本人黑历史，就不放上来了，想看自己去找吧my friend',
         icon: 'Bilibili'
       }
     ],
     expirience: [
       {
         period: '2023 - 至今',
-        organization: '某科技公司',
+        organization: '武汉某司',
         title: '前端开发工程师',
         description:
           '参与各种前端项目的开发搭建，短暂参与过后端的开发，还使用golang为内部提供了一个开发者工具'
@@ -95,7 +95,7 @@ export const appConfig: AppConfig = {
         organization: '中国地质大学(武汉)',
         title: '本科学习',
         description:
-          '毕业于中国地质大学(武汉)，软件工程专业，大二的时候发现Node.js也太全能了，果断选择JavaScript相关的就业方向'
+          '毕业于中国地质大学(武汉)，软件工程专业，大二的时候入了Nodejs邪教，果断选择JavaScript相关的就业方向'
       }
     ]
   },

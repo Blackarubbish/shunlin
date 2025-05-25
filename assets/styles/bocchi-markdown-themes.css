@@ -70,6 +70,192 @@
   }
 }
 
+/* ===== 列表样式：适用于所有主题 ===== */
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.markdown-body li {
+  margin-bottom: 0.5em;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+/* ===== 无序列表样式 ===== */
+
+/* Bocchi 主题无序列表 */
+.markdown-body ul {
+  list-style: none;
+}
+
+.markdown-body ul li::before {
+  content: '🎵';
+  position: absolute;
+  left: -1.5em;
+  color: var(--theme-color);
+  display: inline-block;
+}
+
+/* ===== 有序列表样式 ===== */
+
+/* Bocchi 主题有序列表 */
+.markdown-body.theme-bocchi ol {
+  list-style: none;
+  counter-reset: item;
+}
+
+.markdown-body.theme-bocchi ol li {
+  counter-increment: item;
+}
+
+.markdown-body.theme-bocchi ol li::before {
+  content: counter(item);
+  position: absolute;
+  left: -1.5em;
+  width: 1.2em;
+  height: 1.2em;
+  background: var(--theme-gradient);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.2em;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Nijika 主题有序列表 */
+.markdown-body.theme-nijika ol {
+  list-style: none;
+  counter-reset: item;
+}
+
+.markdown-body.theme-nijika ol li {
+  counter-increment: item;
+}
+
+.markdown-body.theme-nijika ol li::before {
+  content: counter(item);
+  position: absolute;
+  left: -1.5em;
+  width: 1.2em;
+  height: 1.2em;
+  background: var(--theme-gradient);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.2em;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Ryo 主题有序列表 */
+.markdown-body.theme-ryo ol {
+  list-style: none;
+  counter-reset: item;
+}
+
+.markdown-body.theme-ryo ol li {
+  counter-increment: item;
+}
+
+.markdown-body.theme-ryo ol li::before {
+  content: counter(item);
+  position: absolute;
+  left: -1.5em;
+  width: 1.2em;
+  height: 1.2em;
+  background: var(--theme-gradient);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.2em;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Ikuyo 主题有序列表 */
+.markdown-body.theme-ikuyo ol {
+  list-style: none;
+  counter-reset: item;
+}
+
+.markdown-body.theme-ikuyo ol li {
+  counter-increment: item;
+}
+
+.markdown-body.theme-ikuyo ol li::before {
+  content: counter(item);
+  position: absolute;
+  left: -1.5em;
+  width: 1.2em;
+  height: 1.2em;
+  background: var(--theme-gradient);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.2em;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Dark Night 主题有序列表 */
+.markdown-body.theme-dark-night ol {
+  list-style: none;
+  counter-reset: item;
+}
+
+.markdown-body.theme-dark-night ol li {
+  counter-increment: item;
+}
+
+.markdown-body.theme-dark-night ol li::before {
+  content: counter(item);
+  position: absolute;
+  left: -1.5em;
+  width: 1.2em;
+  height: 1.2em;
+  background: var(--theme-gradient);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.2em;
+  font-weight: bold;
+  font-size: 0.9em;
+  box-shadow: 0 0 8px rgba(157, 78, 221, 0.5);
+}
+
+/* 嵌套列表样式 */
+.markdown-body ul ul,
+.markdown-body ol ol,
+.markdown-body ul ol,
+.markdown-body ol ul {
+  margin: 0.5em 0 0.5em 0.5em;
+}
+
+/* 移动端响应式调整 */
+@media (max-width: 768px) {
+  .markdown-body ul,
+  .markdown-body ol {
+    padding-left: 1.2em;
+  }
+
+  .markdown-body.theme-bocchi ol li::before,
+  .markdown-body.theme-nijika ol li::before,
+  .markdown-body.theme-ryo ol li::before,
+  .markdown-body.theme-ikuyo ol li::before,
+  .markdown-body.theme-dark-night ol li::before,
+  .markdown-body.theme-bocchi ul li::before,
+  .markdown-body.theme-nijika ul li::before,
+  .markdown-body.theme-ryo ul li::before,
+  .markdown-body.theme-ikuyo ul li::before,
+  .markdown-body.theme-dark-night ul li::before {
+    left: -1.2em;
+    font-size: 0.85em;
+  }
+}
+
 /* ===== Hitori Gotoh (Bocchi) Theme - Pink (#FF9EB5) ===== */
 .markdown-body.theme-bocchi {
   --theme-color: #ff9eb5;
@@ -208,10 +394,73 @@
   animation: music-float 3s ease-in-out infinite;
 }
 
-/* Add shimmer effect to task list items */
-.markdown-body.theme-bocchi .task-list-item-checkbox:checked {
+/* 清除任务列表项的默认列表标记 */
+.markdown-body ul.contains-task-list {
+  list-style: none !important;
+  padding-left: 0;
+}
+
+.markdown-body .task-list-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+/* .markdown-body .task-list-item input[type='checkbox'] {
+  left: 0;
+  top: 0.25em;
+  margin: 0;
+  cursor: pointer;
+  height: 1em;
+  width: 1em;
+  margin-right: 0.3em;
+} */
+/* 取消默认列表项标记 */
+.markdown-body ul li.task-list-item::before,
+.markdown-body.theme-bocchi ul li.task-list-item::before,
+.markdown-body.theme-nijika ul li.task-list-item::before,
+.markdown-body.theme-ryo ul li.task-list-item::before,
+.markdown-body.theme-ikuyo ul li.task-list-item::before,
+.markdown-body.theme-dark-night ul li.task-list-item::before,
+.markdown-body.theme-bocchi ol li.task-list-item::before,
+.markdown-body.theme-nijika ol li.task-list-item::before,
+.markdown-body.theme-ryo ol li.task-list-item::before,
+.markdown-body.theme-ikuyo ol li.task-list-item::before,
+.markdown-body.theme-dark-night ol li.task-list-item::before {
+  content: none !important;
+}
+
+/* 首先重置默认样式 */
+.markdown-body .task-list-item input[type='checkbox'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 1em;
+  height: 1em;
+  border: 1px solid var(--theme-color-dark);
+  border-radius: 3px;
+  outline: none;
+  background-color: white;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 0.5em;
+}
+
+/* 设置选中状态样式 */
+.markdown-body .task-list-item input[type='checkbox']:checked {
   background-color: var(--theme-color);
   border-color: var(--theme-color-dark);
+}
+
+/* 添加选中标记 */
+.markdown-body .task-list-item input[type='checkbox']:checked::before {
+  content: '✓';
+  font-size: 0.8em;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .markdown-body.theme-bocchi .task-list-item:hover {

@@ -1,9 +1,10 @@
 import { appConfig } from '@/app-config';
 import Header from '@/components/header';
 import { CustomIconNames, CustomIcons } from '@/components/icons';
+import { Popover, PopoverContent } from '@/components/ui/popover';
+import { PopoverTrigger } from '@radix-ui/react-popover';
 import Image from 'next/image';
 import Link from 'next/link';
-
 
 // 强制页面使用静态生成
 export const dynamic = 'force-static';
@@ -21,7 +22,7 @@ export default function About() {
         <div className="mb-10 text-center">
           <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">关于我</h1>
           <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-[1.1rem]">
-            了解更多关于我的信息和我的技术栈
+            有人在爱丽丝的仙境闲逛 有人学国王穿着新衣裳
           </p>
         </div>
 
@@ -39,11 +40,40 @@ export default function About() {
             </p>
             <h3 className="text-text/90 mb-4 text-2xl font-bold">关于这个网站</h3>
             <p className="text-text-secondary mb-6">
-              由于是《孤独摇滚》的漫画粉所以开发的时候用主角团+贝斯老姐的代表色来配置主题。使用的是Next.js+本地文件系统管理Markdown的形式来搭建。
+              由于是《孤独摇滚》的动漫粉所以开发的时候用主角团+贝斯老姐(暗夜模式)的代表色来配置主题。使用的是Next.js+本地文件系统管理Markdown的形式来搭建。
+              <br />
+              <br />
+              这里有我搭建个人博客的心路历程,如果你刚好无聊没事干可以看看(不建议专门沐浴更衣再来看🫡):
+              <Link
+                className="text-primary hover:underline"
+                href="/articles/buiding-blog-thingking">
+                搭建个人博客的经历和思考
+              </Link>
             </p>
+
             <div className="flex flex-wrap gap-4">
               {appConfig.me.contact.map((item) => {
-                return (
+                return item.value ? (
+                  <Popover key={item.key}>
+                    <PopoverTrigger asChild>
+                      <button className="bg-card-bg text-text border-border hover:border-primary hover:text-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300">
+                        <CustomIcons
+                          size={24}
+                          name={(item.icon as CustomIconNames) || 'Book2'}
+                        />
+                        {item.title}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      side="top"
+                      align="center"
+                      className="w-[200px] sm:w-auto">
+                      <p className="text-center text-lg font-bold break-all md:text-2xl">
+                        {item.value}
+                      </p>
+                    </PopoverContent>
+                  </Popover>
+                ) : (
                   <Link
                     className="bg-card-bg text-text border-border hover:border-primary hover:text-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300"
                     key={item.key}

@@ -1,4 +1,5 @@
 import { Post, Category, PostMatter } from '@/types';
+import pinyin from 'pinyin';
 import fg from 'fast-glob';
 import matter from 'gray-matter';
 import slugify from 'slugify';
@@ -6,6 +7,7 @@ import { remark } from 'remark';
 import strip from 'strip-markdown';
 import { readFileSync } from 'fs';
 import { MarkdownParser, MarkdownRemarkParser } from '../markdown';
+import { DEFAULT_COVER_IMAGE } from '@/consts';
 
 let defaultCategory = {
   name: '未分类',
@@ -16,8 +18,6 @@ let defaultCategory = {
   order: 999,
   count: 0
 } as Category;
-
-const DEFAULT_COVER_IMAGE = '/blog/default-cover.svg';
 
 export class BasePostManager {
   private srcDir: string;
@@ -62,16 +62,23 @@ export class BasePostManager {
    * @returns 生成的 slug
    */
   public generateSlug(title: string): string {
+    // 尝试将中文转为拼音
+    const pinyinText = pinyin(title, {
+      style: pinyin.STYLE_NORMAL,
+      heteronym: false
+    })
+      .flat()
+      .join(' ');
+
     // 配置 slugify 选项
     const options = {
-      replacement: '-', // 替换空格为 '-'
-      remove: /[*+~.()'"!:@]/g, // 移除字符
-      lower: true, // 转换为小写
-      strict: true, // 严格模式，移除特殊字符
-      locale: 'zh-CN' // 中文支持
+      replacement: '-',
+      remove: /[*+~.()'"!:@]/g,
+      lower: true,
+      strict: true
     };
 
-    return slugify(title, options);
+    return slugify(pinyinText, options);
   }
   /**
    * 确保 slug 的唯一性

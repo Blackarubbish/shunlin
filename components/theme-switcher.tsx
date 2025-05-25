@@ -37,22 +37,16 @@ const themes = [
 ] as const;
 type Theme = (typeof themes)[number]['name'];
 
-interface ThemeSwitcherProps {
-  currentTheme?: string;
-}
-
-export const ThemeSwitcher = (props: ThemeSwitcherProps) => {
-  const [activeTheme, setActiveTheme] = useState<Theme>(
-    (props.currentTheme as Theme) || themes[0].name
-  ); // 默认主题为 pink
+export const ThemeSwitcher = () => {
+  const [activeTheme, setActiveTheme] = useState<Theme>(themes[0].name); // 默认主题为 pink
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
 
   // 主题切换函数
   const handleThemeChange = (theme: Theme) => {
-    setActiveTheme(theme);
     document.documentElement.setAttribute('data-theme', theme); // 设置到 HTML 标签
     window.localStorage.setItem('theme', theme); // 保存到 localStorage
+    setActiveTheme(theme);
     const markdownBody = document.querySelector('.markdown-body'); // 设置到 markdown-body
 
     if (markdownBody) {

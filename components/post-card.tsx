@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { Calendar, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import PostTag from './post-tag';
+import { cn } from '@/lib';
+import { DEFAULT_COVER_IMAGE } from '@/consts';
 
 interface Props {
   post: Post;
@@ -14,7 +16,10 @@ export default function PostCard({ post }: Props) {
       <div className="relative h-56 overflow-hidden">
         <Image
           src={post.coverImage}
-          className="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+          className={cn(
+            'h-full w-full transition-transform duration-500 ease-in-out group-hover:scale-110',
+            post.coverImage !== DEFAULT_COVER_IMAGE && 'object-cover'
+          )}
           alt={post.title || 'Article cover'}
           width={600}
           height={400}
@@ -36,7 +41,15 @@ export default function PostCard({ post }: Props) {
           </Link>
         </h3>
 
-        <p className="text-text-secondary mb-4 line-clamp-3 flex-grow text-sm leading-relaxed">
+        <p
+          className="text-text-secondary mb-4 flex-grow overflow-hidden text-sm"
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            lineHeight: '1.5em',
+            maxHeight: '4.5em' // 1.5em × 3 lines
+          }}>
           {post.excerpt}
         </p>
 
