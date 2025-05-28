@@ -73,11 +73,11 @@ sequenceDiagram
 1. Understanding Promises
    - Promise states
    - .then() and .catch() methods
-   
+
 2. Introducing Async/Await
    - Async function declaration
    - Await operator usage
-   
+
 3. Advanced Techniques
    - Parallel execution with Promise.all()
    - Sequential vs concurrent execution
@@ -109,3 +109,19 @@ function getUserData(userId) {
     });
 }
 ```
+
+:::info
+信息
+:::
+
+:::warning
+警告
+:::
+
+:::error
+错误
+:::
+
+:::note
+笔记
+:::

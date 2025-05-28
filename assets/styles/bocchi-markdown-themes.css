@@ -77,11 +77,18 @@
   margin: 1em 0;
 }
 
+
 .markdown-body li {
   margin-bottom: 0.5em;
   position: relative;
   transition: transform 0.2s ease;
 }
+
+.markdown-body ol li::marker {
+  content: "";
+  color: transparent;
+}
+
 
 /* ===== 无序列表样式 ===== */
 
@@ -2055,3 +2062,141 @@ document.addEventListener('DOMContentLoaded', function() {
  *   Your markdown content here
  * </div>
  */
+
+
+ /* Bocchi Admonitions - 基于动漫角色主题的提示框样式 */
+
+/* ===== 基础样式 ===== */
+.markdown-body .admonition {
+  margin: 1.5em 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  animation: fade-in 0.5s ease-out;
+}
+
+.markdown-body .admonition:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.markdown-body .admonition-title {
+  margin: 0 !important;
+  padding: 0.8em 1em;
+  font-weight: 700;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.02em;
+}
+
+.markdown-body .admonition-title::before {
+  margin-right: 0.5em;
+  animation: music-float 3s ease-in-out infinite;
+}
+
+.markdown-body .admonition > *:not(.admonition-title) {
+  padding: 1em 1.2em;
+  margin: 0;
+}
+
+
+.markdown-body .admonition-info .admonition-title::before {
+  content: "💡";
+}
+
+.markdown-body .admonition-warning .admonition-title::before {
+  content: "⚠️";
+}
+
+.markdown-body .admonition-error .admonition-title::before {
+  content: "❌";
+}
+
+.markdown-body .admonition-note .admonition-title::before {
+  content: "📝";
+}
+
+
+/* ===== Bocchi 主题 (粉色) ===== */
+.theme-bocchi .admonition {
+  border: 1px solid var(--theme-color-border);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-bocchi .admonition-title {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+
+/* ===== Nijika 主题 (黄色) ===== */
+.theme-nijika .admonition {
+  border: 1px solid var(--theme-color-border);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-nijika .admonition-title {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+
+
+/* ===== Ryo 主题 (蓝色) ===== */
+.theme-ryo .admonition {
+  border: 1px solid var(--theme-color-border);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-ryo .admonition-title {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+
+/* ===== Ikuyo 主题 (红色) ===== */
+.theme-ikuyo .admonition {
+  border: 1px solid var(--theme-color-border);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-ikuyo .admonition-title {
+  background-color: var(--theme-color-muted);
+  color: var(--theme-color-dark);
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+/* ===== Dark Night 主题 (暗紫色) ===== */
+.theme-dark-night .admonition {
+  border: 1px solid var(--theme-color-border);
+  background-color: rgba(30, 30, 46, 0.6);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark-night .admonition:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark-night .admonition-title {
+  background-color: rgba(157, 78, 221, 0.2);
+  color: var(--theme-color-light);
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .admonition-title {
+    padding: 0.6em 0.8em;
+  }
+  
+  .admonition > *:not(.admonition-title) {
+    padding: 0.8em 1em;
+  }
+}

@@ -23,6 +23,14 @@
       "description": "读书与作者跨越时间和地点的一次思想对话,虽然这帮作者有时候挺让人无语的",
       "coverImage": "/icons/pixeltrue-icons-receipt-1.svg",
       "order": 3
+    },
+    {
+      "name": "前端相关",
+      "key": "frontend",
+      "icon": "Chrome",
+      "description": "前端技术、工具和生态系统的最新动态",
+      "coverImage": "/icons/a-017-solarsystem.svg",
+      "order": 4
     }
   ]
 }

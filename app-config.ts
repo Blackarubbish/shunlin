@@ -76,7 +76,7 @@ export const appConfig: AppConfig = {
         icon: 'Email'
       },
       {
-        title: 'bilibili',
+        title: 'Bilibili',
         key: 'bilibili',
         value: '全是本人黑历史，就不放上来了，想看自己去找吧my friend',
         icon: 'Bilibili'

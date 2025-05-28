@@ -26,7 +26,7 @@ export default function About() {
           </p>
         </div>
 
-        <div className="mb-16 flex flex-col items-center justify-center gap-10 md:flex-row">
+        <div className="mb-16 flex flex-col items-center justify-center gap-10 lg:flex-row">
           <div className="relative h-72 w-72 overflow-hidden rounded-xl">
             <Image src={appConfig.me.avatar} alt="Bocchi" fill className="object-cover" />
           </div>
