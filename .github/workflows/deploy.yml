@@ -87,11 +87,9 @@ jobs:
             # 进入应用目录
             cd ${{ secrets.APP_DIR || '~/sl-blog' }}
 
-            PM2_PATH=${{ secrets.PM2_PATH || '~/.pm2/bin/pm2' }}
-
             # 停止现有 PM2 进程
-            $PM2_PATH stop sl-blog || true
-            $PM2_PATH delete sl-blog || true
+            pm2 stop sl-blog || true
+            pm2 delete sl-blog || true
 
             # 备份当前版本（如果存在）
             if [ -d 'current' ]; then 
@@ -112,8 +110,8 @@ jobs:
             mkdir -p ../logs
 
             # 启动应用
-            $PM2_PATH start ecosystem.config.js
-            $PM2_PATH save
+            pm2 start ecosystem.config.js
+            pm2 save
 
             # 显示运行状态
-            $PM2_PATH list
+            pm2 list
