@@ -115,4 +115,3 @@ jobs:
 
             # 显示运行状态
             pm2 list
-            pm2 info sl-blog
