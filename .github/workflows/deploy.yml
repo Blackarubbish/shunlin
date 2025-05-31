@@ -84,6 +84,9 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            npm --help
             # 进入应用目录
             cd ${{ secrets.APP_DIR || '~/sl-blog' }}
 
