@@ -40,7 +40,7 @@ const Header = ({ currentPath }: Props) => {
               />
               <h1 className="text-text text-2xl font-bold">
                 <span>{appConfig.me.name}</span>
-                <span className="text-primary ml-1">的小站</span>
+                <span className="text-primary ml-1">的秘密基地</span>
               </h1>
             </Link>
             <nav className="items-center md:flex">

@@ -3,6 +3,7 @@ import ErrorMessage from '@/components/errorMsg';
 import Header from '@/components/header';
 import PostContent from '@/components/post-content';
 import PostTag from '@/components/post-tag';
+import { DEFAULT_COVER_IMAGE } from '@/consts';
 import { getPostManager } from '@/lib/docs-manager';
 import { Calendar, Clock, User } from 'lucide-react';
 import { Metadata } from 'next';
@@ -27,11 +28,50 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
   const postInstance = postManager.getPostBySlug(slug);
+
+  if (!postInstance) {
+    return {
+      title: '文章不存在',
+      description: '您访问的文章不存在'
+    };
+  }
+
+  const articleUrl = `${appConfig.siteUrl}/articles/${postInstance.slug}`;
+
   return {
-    title: postInstance?.title || '文章详情',
-    description: postInstance?.excerpt || '文章详情页面'
+    title: `${postInstance.title} | ${appConfig.headerTitle}`,
+    description: postInstance.excerpt,
+    keywords: postInstance.tags,
+    authors: [{ name: appConfig.me.name, url: appConfig.siteUrl }],
+    creator: appConfig.me.name,
+    publisher: appConfig.me.name,
+
+    // Open Graph 优化
+    openGraph: {
+      title: postInstance.title,
+      description: postInstance.excerpt,
+      url: articleUrl,
+      type: 'article',
+      siteName: appConfig.title,
+      locale: 'zh-CN',
+      publishedTime: postInstance.publishDate,
+      modifiedTime: postInstance.publishDate,
+      authors: [appConfig.me.name],
+      tags: postInstance.tags,
+      images: [
+        {
+          url: postInstance.coverImage || DEFAULT_COVER_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: postInstance.title
+        }
+      ]
+    },
+    // 分类信息
+    category: postInstance.category.name
   };
 }
+
 export default async function ArticleDetail(Props: Props) {
   const { params } = Props;
   // 实际使用时，可以通过params.slug从数据库或CMS获取文章数据
@@ -65,9 +105,94 @@ export default async function ArticleDetail(Props: Props) {
 
   const relatiedPosts = postManager.getRelatedPosts(postInstance.slug, 3);
 
+  // 生成结构化数据
+  const articleStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: postInstance.title,
+    description: postInstance.excerpt,
+    image: {
+      '@type': 'ImageObject',
+      url: postInstance.coverImage,
+      width: '1200',
+      height: '630'
+    },
+    author: {
+      '@type': 'Person',
+      name: appConfig.me.name,
+      url: appConfig.siteUrl,
+      image: appConfig.me.avatar
+    },
+    publisher: {
+      '@type': 'Person',
+      name: appConfig.me.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: appConfig.me.avatar
+      }
+    },
+    datePublished: postInstance.publishDate,
+    dateModified: postInstance.publishDate,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${appConfig.siteUrl}/articles/${postInstance.slug}`
+    },
+    keywords: postInstance.tags.join(', '),
+    articleSection: postInstance.category.name,
+    inLanguage: 'zh-CN',
+    url: `${appConfig.siteUrl}/articles/${postInstance.slug}`
+  };
+
+  // 面包屑导航结构化数据
+  const breadcrumbStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: '首页',
+        item: appConfig.siteUrl
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '文章',
+        item: `${appConfig.siteUrl}/articles`
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: postInstance.category.name,
+        item: `${appConfig.siteUrl}/categories/${postInstance.category.key}`
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: postInstance.title,
+        item: `${appConfig.siteUrl}/articles/${postInstance.slug}`
+      }
+    ]
+  };
+
   return (
     <>
       <Header currentPath="/articles" />
+
+      {/* 结构化数据 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleStructuredData)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbStructuredData)
+        }}
+      />
+
       <div className="py-14">
         <article>
           {/* 文章头部信息 */}
@@ -82,11 +207,13 @@ export default async function ArticleDetail(Props: Props) {
               </div>
               <div className="flex items-center gap-1">
                 <Calendar size={16} />
-                <span>{postInstance.publishDate}</span>
+                <time dateTime={postInstance.publishDate}>
+                  {postInstance.publishDate}
+                </time>
               </div>
               <div className="flex items-center gap-1">
                 <Clock size={16} />
-                <span>{10}</span>
+                <span>{postInstance.readingTime || '10分钟'}</span>
               </div>
             </div>
             <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
@@ -101,6 +228,7 @@ export default async function ArticleDetail(Props: Props) {
                   alt={postInstance.title}
                   fill
                   className="object-cover"
+                  priority
                 />
               </div>
             )}

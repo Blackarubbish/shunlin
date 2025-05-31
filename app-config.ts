@@ -5,6 +5,7 @@ interface AppConfig {
   title: string;
   description: string;
   headerTitle?: string;
+  siteUrl: string;
   me: {
     name: string;
     skills?: string[];
@@ -40,7 +41,8 @@ interface AppConfig {
 }
 
 export const appConfig: AppConfig = {
-  title: 'SHUNLIN - ShunLin的个人站点',
+  title: 'SHUNLIN - ShunLin秘密基地',
+  siteUrl: 'https://shunlin.online',
   description: 'ShunLin的个人站点, 包含文章、项目和个人信息等内容',
   headerTitle: 'Shunlin',
   me: {

@@ -44,7 +44,7 @@ const Hero = () => {
           src={appConfig.me.avatar}
           width={200}
           height={200}
-          alt="Bocchi博客"
+          alt="ShunLin的秘密基地"
           className="animate-float max-w-60 rounded-3xl"
         />
       </div>

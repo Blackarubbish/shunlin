@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# 主要站点地图
+Sitemap: https:/shunlin.online/sitemap.xml
+
+# 禁止访问某些路径 (根据需要调整)
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# 允许访问重要页面
+Allow: /articles/
+Allow: /categories/
+Allow: /about/
+Allow: /friends/
+
+# 爬取延迟 (可选，单位：秒)
+Crawl-delay: 1 

@@ -16,8 +16,55 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(appConfig.siteUrl),
   title: appConfig.title,
-  description: appConfig.description
+  description: appConfig.description,
+  keywords: [
+    'Shunlin',
+    '前端开发',
+    'React',
+    'TypeScript',
+    'Node.js',
+    'Golang',
+    '个人博客',
+    '技术文章',
+    'Web开发',
+    '软件工程'
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1
+    }
+  },
+  openGraph: {
+    type: 'website', // 内容类型：网站
+    locale: 'zh_CN', // 语言区域：简体中文
+    url: appConfig.siteUrl, // 网站URL
+    title: appConfig.title, // 分享标题
+    description: appConfig.description, // 分享描述
+    siteName: appConfig.title || 'Shunlin', // 网站名称
+    images: [
+      {
+        url: appConfig.me.avatar,
+        width: 1200,
+        height: 630,
+        alt: `${appConfig.me.name}的头像`
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: appConfig.title,
+    description: appConfig.description,
+    images: [appConfig.me.avatar]
+  },
+  category: '个人博客'
 };
 
 await initializePostManager(appConfig.srcDir);
