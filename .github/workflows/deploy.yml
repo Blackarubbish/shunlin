@@ -39,15 +39,25 @@ jobs:
           # 创建部署目录
           mkdir -p deploy
 
-          # 复制 standalone 构建产物
+          # 复制 standalone 构建产物（这包含了 server.js 和必要的依赖）
           cp -r .next/standalone/* deploy/
+          cp -r .next/standalone/.next/ deploy/.next/
 
-          # 复制静态文件
+          # 在 standalone 模式下，静态文件需要单独复制
+          # 静态文件位于 .next/static，需要复制到 deploy/.next/static
           cp -r .next/static deploy/.next/static
-          cp -r public deploy/public
+
+          # 复制 public 目录（如果存在）
+          if [ -d "public" ]; then
+            cp -r public deploy/public
+          fi
 
           # 复制 package.json（用于 PM2 配置）
           cp package.json deploy/
+
+          # 调试：查看构建产物结构
+          echo "=== Deploy directory structure ==="
+          find deploy -type f | head -20
 
           # 打包部署文件
           tar -czf app-build.tar.gz -C deploy .
