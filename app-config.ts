@@ -51,6 +51,7 @@ export const appConfig: AppConfig = {
       '做好吃的减脂餐🦐',
       '单手颠锅',
       '电吉他🎸',
+      '舞女泪💃',
       'React',
       'TypeScript',
       'Node.js',

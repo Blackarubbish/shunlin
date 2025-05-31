@@ -1,13 +1,13 @@
 ---
-title: Advanced Test Markdown File
-tags: ["test", "markdown", "mermaid", "advanced"]
-category: "programming"
-publishDate: "2023-10-01"
+title: 测试文章
+tags: ['test', 'markdown', 'mermaid', 'advanced']
+category: 'programming'
+publishDate: '2023-10-01'
 ---
 
 ## Features
 
-- Supports **bold** and *italic* text.
+- Supports **bold** and _italic_ text.
 - Includes `inline code` and code blocks.
 - Adds Mermaid diagrams for visual representation.
 - Contains tables and lists for structured data.
@@ -77,12 +77,12 @@ graph TD
 
 ## Table Example
 
-| Feature       | Description                     |
-|---------------|---------------------------------|
-| **Bold Text** | Highlights important content.   |
-| *Italic Text* | Emphasizes specific words.      |
-| `Code`        | Displays inline code snippets.  |
-| Diagrams      | Visualizes workflows or ideas.  |
+| Feature       | Description                    |
+| ------------- | ------------------------------ |
+| **Bold Text** | Highlights important content.  |
+| _Italic Text_ | Emphasizes specific words.     |
+| `Code`        | Displays inline code snippets. |
+| Diagrams      | Visualizes workflows or ideas. |
 
 ## Nested List Example
 
@@ -103,7 +103,6 @@ graph TD
 ## Conclusion
 
 Feel free to modify this file for further testing. It now includes more advanced features like diagrams, tables, and nested lists.
-
 
 ### 测试1
 
