@@ -4,7 +4,7 @@ slug: buiding-blog-thingking
 category: 'growth'
 publishDate: '2025-5-25'
 tags: ['胡说八道', '个人思考']
-coverImage: https://shunlin-blog-1306235438.cos.ap-guangzhou.myqcloud.com/md6832adcb5d86b.webp
+coverImage: /blog/cover/6832adcb5d86b.webp
 featured: true
 ---
 

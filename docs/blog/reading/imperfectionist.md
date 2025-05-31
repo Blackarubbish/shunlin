@@ -4,7 +4,7 @@ slug: How-to-become-an-imperfectionist
 category: 'reading'
 publishDate: '2025-5-27'
 tags: ['读书', '个人思考']
-coverImage: https://shunlin-blog-1306235438.cos.ap-guangzhou.myqcloud.com/md6832adcb5d86b.webp
+coverImage: /blog/cover/6835d4a49222a.webp
 featured: true
 ---
 
