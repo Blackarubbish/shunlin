@@ -1,9 +1,16 @@
 name: Deploy to Server with PM2
 
+# 需要在 GitHub Settings → Secrets and variables → Actions 中配置以下 secrets:
+# - SERVER_HOST: 服务器 IP 地址或域名
+# - SERVER_USER: 服务器用户名
+# - SERVER_SSH_KEY: SSH 私钥
+# - SERVER_PORT: SSH 端口 (可选，默认 22)
+# - APP_DIR: 应用部署目录 (可选，默认 /opt/sl-blog)
+# - PM2_INSTANCES: PM2 实例数 (可选，默认 1)
+# - APP_PORT: 应用端口 (可选，默认 3000)
+
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
 
 env:
@@ -41,6 +48,7 @@ jobs:
 
           # 复制 standalone 构建产物（这包含了 server.js 和必要的依赖）
           cp -r .next/standalone/* deploy/
+          cp ecosystem.config.js deploy/
           cp -r .next/standalone/.next/ deploy/.next/
 
           # 在 standalone 模式下，静态文件需要单独复制
@@ -55,18 +63,56 @@ jobs:
           # 复制 package.json（用于 PM2 配置）
           cp package.json deploy/
 
-          # 调试：查看构建产物结构
-          echo "=== Deploy directory structure ==="
-          find deploy -type f | head -20 2>/dev/null || true
-
           # 打包部署文件
           tar -czf app-build.tar.gz -C deploy .
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Copy build files to server
+        uses: appleboy/scp-action@v0.1.7
         with:
-          name: build-artifacts-${{ github.sha }}
-          path: |
-            app-build.tar.gz
-            deploy/
-          retention-days: 7
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          source: 'app-build.tar.gz'
+          target: ${{ secrets.APP_DIR || '~/sl-blog' }}/
+
+      - name: Deploy and restart application
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            # 进入应用目录
+            cd ${{ secrets.APP_DIR || '~/sl-blog' }}
+
+            # 停止现有 PM2 进程
+            pm2 stop sl-blog || true
+            pm2 delete sl-blog || true
+
+            # 备份当前版本（如果存在）
+            if [ -d 'current' ]; then 
+              rm -rf backup && mv current backup
+            fi
+
+            # 创建新的部署目录
+            mkdir -p current
+
+            # 解压新版本
+            tar -xzf app-build.tar.gz -C current/
+            rm -f app-build.tar.gz
+
+            # 进入应用目录
+            cd current
+
+            # 创建日志目录
+            mkdir -p ../logs
+
+            # 启动应用
+            pm2 start ecosystem.config.js
+            pm2 save
+
+            # 显示运行状态
+            pm2 list
+            pm2 info sl-blog
