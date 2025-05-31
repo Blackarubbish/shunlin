@@ -4,7 +4,7 @@ slug: buiding-blog-thingking
 category: 'growth'
 publishDate: '2025-5-25'
 tags: ['胡说八道', '个人思考']
-coverImage: https://img.picui.cn/free/2025/05/25/6832adcb5d86b.png
+coverImage: https://shunlin-blog-1306235438.cos.ap-guangzhou.myqcloud.com/md6832adcb5d86b.webp
 featured: true
 ---
 
@@ -17,7 +17,7 @@ featured: true
 当我拿着我们大赢特赢的项目拿去面试的时候，没想到在面试官眼里我做的东西连玩具都算不上，顶多算个demo😭。特别受挫，立下的要持续维护这个项目的豪言壮志在面试失败的第二天就放弃了。现在再看看当时做的东西，其实也没那么糟糕，如果能沉下心来持续维护说不定也是一个不错的个人项目。
 
 > 其实看起来还是蛮不错的hhh👇
-> ![初代博客](https://img.picui.cn/free/2025/05/25/68328c4000062.png)
+> ![初代博客](https://shunlin-blog-1306235438.cos.ap-guangzhou.myqcloud.com/mdfist-blog-jietu.png)
 
 人就是很奇怪，如果有一件事情让他特别受挫，那么接下来很长一段时间里他都不愿意再回忆或者再碰这个东西。
 
