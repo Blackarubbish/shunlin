@@ -12,7 +12,8 @@ import {
   LucideProps,
   BookOpen,
   Brain,
-  Lightbulb
+  Lightbulb,
+  Chrome
 } from 'lucide-react';
 import { SVGProps } from 'react';
 
@@ -30,7 +31,8 @@ export const ICON_MAP = {
   Globe,
   BookOpen,
   Brain,
-  Lightbulb
+  Lightbulb,
+  Chrome
 } as const;
 
 export type IconName = keyof typeof ICON_MAP;

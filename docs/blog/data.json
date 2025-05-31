@@ -20,9 +20,17 @@
       "name": "读书笔记",
       "key": "reading",
       "icon": "Coffee",
-      "description": "读书与作者跨越时间和地点的一次思想对话,虽然这帮作者有时候挺让人无语的",
+      "description": "读书与作者跨越时间和地点的一次思想对话,像学生一样写一写读后感能有效保持心理年龄的年轻(我乱编的)",
       "coverImage": "/icons/pixeltrue-icons-receipt-1.svg",
       "order": 3
+    },
+    {
+      "name": "前端相关",
+      "key": "frontend",
+      "icon": "Chrome",
+      "description": "前端技术、工具和生态系统的最新动态",
+      "coverImage": "/icons/a-017-solarsystem.svg",
+      "order": 4
     }
   ]
 }

@@ -60,11 +60,9 @@ export default async function Articles({
     <>
       <Header currentPath="/articles" />
       <div className="flex-1">
-        <div className="px-4 py-8 md:px-8 md:py-14">
+        <div className="px-4 py-14 md:px-8 md:py-14">
           <div className="mb-6 text-center md:mb-10">
-            <h1 className="text-text mb-2 text-2xl font-bold md:mb-3.5 md:text-[2.5rem]">
-              所有文章
-            </h1>
+            <h1 className="text-text mb-2 text-[2.5rem] font-bold md:mb-3.5">所有文章</h1>
             <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-sm md:text-[1.1rem]">
               每一次闭上了眼就想到了你，你像一句美丽的口号挥不去
             </p>

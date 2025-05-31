@@ -51,6 +51,7 @@ export const appConfig: AppConfig = {
       '做好吃的减脂餐🦐',
       '单手颠锅',
       '电吉他🎸',
+      '舞女泪💃',
       'React',
       'TypeScript',
       'Node.js',
@@ -76,7 +77,7 @@ export const appConfig: AppConfig = {
         icon: 'Email'
       },
       {
-        title: 'bilibili',
+        title: 'Bilibili',
         key: 'bilibili',
         value: '全是本人黑历史，就不放上来了，想看自己去找吧my friend',
         icon: 'Bilibili'

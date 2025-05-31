@@ -26,14 +26,14 @@ export default function About() {
           </p>
         </div>
 
-        <div className="mb-16 flex flex-col items-center justify-center gap-10 md:flex-row">
+        <div className="mb-16 flex flex-col items-center justify-center gap-10 lg:flex-row">
           <div className="relative h-72 w-72 overflow-hidden rounded-xl">
             <Image src={appConfig.me.avatar} alt="Bocchi" fill className="object-cover" />
           </div>
           <div className="max-w-xl">
             <h2 className="text-text mb-4 text-3xl font-bold">{appConfig.me.name}</h2>
             <p className="text-text-secondary mb-6">
-              菜鸡前端开发工程师一枚，抽象大师，轻度二刺螈，正在练习电吉他🎸(不想玩抽象的电吉他选手不是好程序员)。
+              菜鸡前端开发工程师一枚，抽象大师，轻度二刺螈。五条人、罗大佑、伍佰的忠实歌迷。正在练习电吉他🎸(不想玩抽象的电吉他选手不是好程序员)。
             </p>
             <p className="text-text-secondary mb-6">
               目前主要使用的技术栈包括React、Next.js、Node.js和TypeScript。我相信技术应该服务于创造价值，而不仅仅是为了技术而技术(👈这句话是copilot帮我写的)。

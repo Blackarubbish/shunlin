@@ -209,7 +209,8 @@ export class BasePostManager {
         tags: data.tags || [],
         category: categoryInfo,
         readingTime: data.readingTime,
-        publishDate: data.publishDate || new Date().toISOString()
+        publishDate: data.publishDate || new Date().toISOString(),
+        featured: data.featured || false
       };
 
       // slug关联文件路径
