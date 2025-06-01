@@ -8,6 +8,17 @@ import ArticleCard from '@/components/post-card';
 import { getPostManager } from '@/lib/docs-manager';
 import { Category, Post } from '@/types';
 import SearchInput from './input';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from '@/components/ui/pagination';
+
+const POSTS_PER_PAGE = 9;
 
 export default async function Articles({
   searchParams
@@ -16,7 +27,9 @@ export default async function Articles({
 }) {
   // 获取分类参数
   // eslint-disable-next-line prefer-const
-  let { category, searchKey } = await searchParams;
+  let { category, searchKey, page } = await searchParams;
+
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const postManager = getPostManager();
   const categories = postManager.getAllCategories();
@@ -29,18 +42,18 @@ export default async function Articles({
     }
   ].concat(categories);
 
-  let posts: Post[] = [];
+  let allPosts: Post[] = [];
   if (!category) {
-    posts = postManager.getAllPosts();
+    allPosts = postManager.getAllPosts();
     category = 'all';
   } else {
-    posts = postManager.getPostsByCategory(category as string);
+    allPosts = postManager.getPostsByCategory(category as string);
   }
   categoryFilterParam[0].count = postManager.getAllPosts().length;
 
   if (searchKey) {
     const lowerSearchKey = (searchKey as string).toLowerCase();
-    posts = posts.filter((post) => {
+    allPosts = allPosts.filter((post) => {
       const { title, excerpt } = post;
       return (
         title.toLowerCase().includes(lowerSearchKey) ||
@@ -49,11 +62,70 @@ export default async function Articles({
     });
   }
 
+  // 计算分页
+  const totalPosts = allPosts.length;
+  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const endIndex = startIndex + POSTS_PER_PAGE;
+  const posts = allPosts.slice(startIndex, endIndex);
+
   const isActive = (categoryKey: string) => {
     if (!category) {
       return categoryKey === 'all';
     }
     return categoryKey === category;
+  };
+
+  // 生成分页链接的辅助函数
+  const generatePaginationUrl = (pageNum: number) => {
+    const params = new URLSearchParams();
+    if (category && category !== 'all') {
+      params.set('category', Array.isArray(category) ? category[0] : category);
+    }
+    if (searchKey) {
+      params.set('searchKey', Array.isArray(searchKey) ? searchKey[0] : searchKey);
+    }
+    if (pageNum > 1) {
+      params.set('page', pageNum.toString());
+    }
+    const queryString = params.toString();
+    return `/articles${queryString ? `?${queryString}` : ''}`;
+  };
+
+  // 生成分页数字数组
+  const generatePaginationNumbers = () => {
+    const numbers = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        numbers.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          numbers.push(i);
+        }
+        numbers.push('ellipsis');
+        numbers.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        numbers.push(1);
+        numbers.push('ellipsis');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          numbers.push(i);
+        }
+      } else {
+        numbers.push(1);
+        numbers.push('ellipsis');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          numbers.push(i);
+        }
+        numbers.push('ellipsis');
+        numbers.push(totalPages);
+      }
+    }
+
+    return numbers;
   };
 
   return (
@@ -116,8 +188,17 @@ export default async function Articles({
             </div>
           </div>
 
+          {/* 文章统计信息 */}
+          {totalPosts > 0 && (
+            <div className="mb-6 text-center">
+              <p className="text-text-secondary text-sm">
+                共找到 {totalPosts} 篇文章，当前显示第 {currentPage} 页
+              </p>
+            </div>
+          )}
+
           {/* 文章列表 */}
-          <div className="-mb-12 mb-3 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3">
+          <div className="mb-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3">
             {posts.length > 0 ? (
               posts.map((p) => <ArticleCard key={p.slug} post={p} />)
             ) : (
@@ -131,6 +212,55 @@ export default async function Articles({
               </div>
             )}
           </div>
+
+          {/* 分页控制器 */}
+          {totalPages > 1 && (
+            <div className="flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  {/* 上一页 */}
+                  {currentPage > 1 && (
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href={generatePaginationUrl(currentPage - 1)}
+                        className="text-text hover:text-primary hover:bg-primary-light/50 border-border"
+                      />
+                    </PaginationItem>
+                  )}
+
+                  {/* 页码 */}
+                  {generatePaginationNumbers().map((pageNum, index) => (
+                    <PaginationItem key={index}>
+                      {pageNum === 'ellipsis' ? (
+                        <PaginationEllipsis className="text-text-secondary" />
+                      ) : (
+                        <PaginationLink
+                          href={generatePaginationUrl(pageNum as number)}
+                          isActive={currentPage === pageNum}
+                          className={cn(
+                            'text-text hover:text-primary hover:bg-primary-light/50 border-border',
+                            currentPage === pageNum &&
+                              'bg-primary hover:bg-primary text-white hover:text-white'
+                          )}>
+                          {pageNum}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  {/* 下一页 */}
+                  {currentPage < totalPages && (
+                    <PaginationItem>
+                      <PaginationNext
+                        href={generatePaginationUrl(currentPage + 1)}
+                        className="text-text hover:text-primary hover:bg-primary-light/50 border-border"
+                      />
+                    </PaginationItem>
+                  )}
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </div>
     </>

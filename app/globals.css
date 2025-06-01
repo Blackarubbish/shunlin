@@ -244,3 +244,26 @@ body {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+
+@keyframes scroll-right-to-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll-container:hover .animate-scroll-right-to-left {
+  animation-play-state: paused;
+}
+
+.animate-scroll-right-to-left {
+  animation: scroll-right-to-left 30s linear infinite;
+}
+
+
+.animate-scroll-right-to-left:hover {
+  animation-play-state: paused;
+}
