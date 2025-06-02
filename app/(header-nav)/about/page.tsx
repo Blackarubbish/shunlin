@@ -12,7 +12,8 @@ export const dynamic = 'force-static';
 // 可选：添加生成元数据
 export const metadata = {
   title: '关于我 | ' + appConfig.title,
-  description: '了解更多关于我的信息和我的技术栈'
+  description:
+    '菜鸡前端开发工程师一枚，抽象大师，轻度二刺螈。五条人、罗大佑、伍佰的忠实歌迷。正在练习电吉他🎸(不想玩抽象的电吉他选手不是好程序员)。'
 };
 export default function About() {
   return (
