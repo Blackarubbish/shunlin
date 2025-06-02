@@ -33,7 +33,7 @@ export default async function Categories() {
         <div className="mb-10 text-center">
           <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">文章分类</h1>
           <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-[1.1rem]">
-            从来未曾拥有的总难陷入哀伤和欢愉，从来未曾属于真情的是空幻的物语
+            春天的风，鲜艳了吗？美丽了吗？不见了吧
           </p>
         </div>
 

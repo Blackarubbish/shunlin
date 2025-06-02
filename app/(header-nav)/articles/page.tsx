@@ -136,7 +136,7 @@ export default async function Articles({
           <div className="mb-6 text-center md:mb-10">
             <h1 className="text-text mb-2 text-[2.5rem] font-bold md:mb-3.5">所有文章</h1>
             <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-sm md:text-[1.1rem]">
-              每一次闭上了眼就想到了你，你像一句美丽的口号挥不去
+              有人在爱丽丝的仙境闲逛 有人学国王穿着新衣裳
             </p>
           </div>
 

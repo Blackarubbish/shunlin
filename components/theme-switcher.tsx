@@ -99,7 +99,7 @@ export const ThemeSwitcher = () => {
   return (
     <div
       className={cn(
-        'fixed z-50 transition-all duration-300',
+        'fixed z-40 transition-all duration-300',
         'md:top-5 md:right-5 md:flex md:flex-col md:gap-2',
         'right-5 bottom-5',
         style.themeSwitcherContainer

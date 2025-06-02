@@ -4,6 +4,7 @@ import Header from '@/components/header';
 import PostContent from '@/components/post-content';
 import PostTag from '@/components/post-tag';
 import { DEFAULT_COVER_IMAGE } from '@/consts';
+import { cn } from '@/lib';
 import { getPostManager } from '@/lib/docs-manager';
 import { Calendar, Clock, User } from 'lucide-react';
 import { Metadata } from 'next';
@@ -103,96 +104,11 @@ export default async function ArticleDetail(Props: Props) {
     );
   }
 
-  const relatiedPosts = postManager.getRelatedPosts(postInstance.slug, 3);
-
-  // 生成结构化数据
-  const articleStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: postInstance.title,
-    description: postInstance.excerpt,
-    image: {
-      '@type': 'ImageObject',
-      url: postInstance.coverImage,
-      width: '1200',
-      height: '630'
-    },
-    author: {
-      '@type': 'Person',
-      name: appConfig.me.name,
-      url: appConfig.siteUrl,
-      image: appConfig.me.avatar
-    },
-    publisher: {
-      '@type': 'Person',
-      name: appConfig.me.name,
-      logo: {
-        '@type': 'ImageObject',
-        url: appConfig.me.avatar
-      }
-    },
-    datePublished: postInstance.publishDate,
-    dateModified: postInstance.publishDate,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${appConfig.siteUrl}/articles/${postInstance.slug}`
-    },
-    keywords: postInstance.tags.join(', '),
-    articleSection: postInstance.category.name,
-    inLanguage: 'zh-CN',
-    url: `${appConfig.siteUrl}/articles/${postInstance.slug}`
-  };
-
-  // 面包屑导航结构化数据
-  const breadcrumbStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: '首页',
-        item: appConfig.siteUrl
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: '文章',
-        item: `${appConfig.siteUrl}/articles`
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: postInstance.category.name,
-        item: `${appConfig.siteUrl}/categories/${postInstance.category.key}`
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: postInstance.title,
-        item: `${appConfig.siteUrl}/articles/${postInstance.slug}`
-      }
-    ]
-  };
+  const relatedPosts = postManager.getRelatedPosts(postInstance.slug, 3);
 
   return (
     <>
       <Header currentPath="/articles" />
-
-      {/* 结构化数据 */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleStructuredData)
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbStructuredData)
-        }}
-      />
-
       <div className="py-14">
         <article>
           {/* 文章头部信息 */}
@@ -227,7 +143,7 @@ export default async function ArticleDetail(Props: Props) {
                   src={postInstance.coverImage}
                   alt={postInstance.title}
                   fill
-                  className="object-cover"
+                  className={cn('object-cover', postInstance.articleCoverClassname)}
                   priority
                 />
               </div>
@@ -241,7 +157,7 @@ export default async function ArticleDetail(Props: Props) {
           <div className="mx-auto max-w-5xl">
             <h2 className="text-text mb-8 text-center text-2xl font-bold">相关文章</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {relatiedPosts.map((post) => (
+              {relatedPosts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/articles/${post.slug}`}
@@ -251,7 +167,10 @@ export default async function ArticleDetail(Props: Props) {
                       src={post.coverImage}
                       alt={post.title}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className={cn(
+                        'object-cover transition-transform duration-300 group-hover:scale-105',
+                        post.cardCoverClassName
+                      )}
                     />
                   </div>
                   <div className="p-4">

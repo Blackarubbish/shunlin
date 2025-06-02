@@ -210,7 +210,9 @@ export class BasePostManager {
         category: categoryInfo,
         readingTime: data.readingTime,
         publishDate: data.publishDate || new Date().toISOString(),
-        featured: data.featured || false
+        featured: data.featured || false,
+        cardCoverClassName: data.cardCoverClassName || '',
+        articleCoverClassname: data.articleCoverClassname || ''
       };
 
       // slug关联文件路径

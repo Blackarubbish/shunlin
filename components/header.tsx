@@ -27,7 +27,7 @@ const Header = ({ currentPath }: Props) => {
   };
   return (
     <>
-      <header className="bg-background fixed top-0 left-0 z-50 flex w-full items-center justify-center">
+      <header className="bg-background fixed top-0 left-0 z-30 flex w-full items-center justify-center">
         <div className="w-full px-5 xl:max-w-[1200px]">
           <div className="border-border shadow-primary/45 shadow-[0 4px 6px -4px rgba(0, 0, 0, 0.1)] flex w-full flex-col items-center justify-between border-b border-solid py-5 md:flex-row">
             <Link href="/" className="flex items-center gap-4">

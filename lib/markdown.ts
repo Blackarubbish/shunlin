@@ -9,6 +9,7 @@ import rehypeHighlight from 'rehype-highlight'; // 支持代码高亮
 import rehypeSlug from 'rehype-slug'; // 为标题生成 id
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'; // 为标题添加链接
 import remarkDirective from 'remark-directive'; // 支持 :::info ::: 语法
+import rehypeRaw from 'rehype-raw'; // 支持原始HTML标签
 import { visit } from 'unist-util-visit'; // 用于遍历语法树
 interface ParserOptions {
   filePath: string;
@@ -33,7 +34,8 @@ export class MarkdownRemarkParser implements MarkdownParser {
       .use(this.remarkAdmonitions) // 自定义插件处理 admonitions
       // .use(this.remarkMoveImages.bind(this)) // 自定义插件处理图片
       .use(remarkFrontmatter, ['yaml']) // 支持 YAML Frontmatter
-      .use(remarkRehype) // 转换为 HTML
+      .use(remarkRehype, { allowDangerousHtml: true }) // 转换为 HTML，允许危险的HTML
+      .use(rehypeRaw) // 处理原始HTML标签
       .use(rehypeSlug) // 为标题生成 id
       .use(rehypeAutolinkHeadings, { behavior: 'wrap' }) // 为标题添加链接
       .use(rehypeHighlight) // 支持代码高亮

@@ -23,6 +23,8 @@ export interface Post {
   featured?: boolean;
   showCover?: boolean;
   readingTime?: string; // 以分钟为单位的阅读时间字符串
+  cardCoverClassName?: string;
+  articleCoverClassname?: string;
 }
 
 export interface Category {
@@ -35,6 +37,7 @@ export interface Category {
   order?: number;
 }
 
+// todo: 需要合并Post和PostMatter, 添加zod校验
 export interface PostMatter {
   title: string;
   slug: string;
@@ -46,6 +49,8 @@ export interface PostMatter {
   featured?: boolean;
   readingTime?: string; // 以分钟为单位的阅读时间字符串
   showCover?: boolean;
+  cardCoverClassName?: string;
+  articleCoverClassname?: string;
 }
 
 export interface Friends {

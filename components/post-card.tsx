@@ -18,7 +18,8 @@ export default function PostCard({ post }: Props) {
           src={post.coverImage}
           className={cn(
             'h-full w-full transition-transform duration-500 ease-in-out group-hover:scale-110',
-            post.coverImage !== DEFAULT_COVER_IMAGE && 'object-cover'
+            post.coverImage !== DEFAULT_COVER_IMAGE && 'object-cover',
+            post.cardCoverClassName
           )}
           alt={post.title || 'Article cover'}
           width={600}

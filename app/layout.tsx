@@ -4,6 +4,7 @@ import './globals.css';
 import { initializePostManager } from '@/lib/docs-manager';
 import { appConfig } from '@/app-config';
 import { ThemeSwitcher } from '@/components/theme-switcher';
+import { BackToTop } from '@/components/back-to-top';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -100,6 +101,7 @@ export default async function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
         <ThemeSwitcher />
+        <BackToTop />
       </body>
     </html>
   );

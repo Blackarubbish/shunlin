@@ -23,7 +23,7 @@ export default function About() {
         <div className="mb-10 text-center">
           <h1 className="text-text mb-3.5 text-[2.5rem] font-bold">关于我</h1>
           <p className="text-text-secondary mx-auto my-0 max-w-[700px] text-[1.1rem]">
-            有人在爱丽丝的仙境闲逛 有人学国王穿着新衣裳
+            问题出现我再告诉大家！
           </p>
         </div>
 

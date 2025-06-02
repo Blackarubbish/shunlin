@@ -1,0 +1,225 @@
+/* 容器浮动动画 */
+.backToTopContainer {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 按钮基础样式 */
+.backToTopButton {
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 悬停时暂停浮动 */
+.backToTopButton:hover + .backToTopContainer,
+.backToTopButton:hover {
+  animation-play-state: paused;
+}
+
+/* 点击时的脉冲效果 */
+.backToTopClicked {
+  animation: clickPulse 0.6s ease-out;
+}
+
+/* 粒子闪烁效果 */
+.sparkleEffect {
+  opacity: 0.7;
+}
+
+.sparkleEffect svg {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.sparkleEffect svg:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sparkleEffect svg:nth-child(2) {
+  animation-delay: 1s;
+}
+
+/* 点击时粒子爆发效果 */
+.sparkleActive svg {
+  animation: sparkleExplode 0.6s ease-out;
+}
+
+/* 箭头图标动画 */
+.chevronIcon {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* 涟漪效果 */
+.rippleEffect {
+  transform: scale(0);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
+}
+
+.rippleActive {
+  animation: ripple 0.7s ease-out;
+}
+
+/* 主题相关的特殊效果 */
+[data-theme='pink'] .backToTopButton {
+  box-shadow: 
+    var(--card-shadow),
+    0 0 20px rgba(255, 158, 181, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='pink'] .backToTopButton:hover {
+  box-shadow: 
+    var(--card-hover-shadow),
+    0 0 30px rgba(255, 158, 181, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+[data-theme='blue'] .backToTopButton {
+  box-shadow: 
+    var(--card-shadow),
+    0 0 20px rgba(120, 197, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='blue'] .backToTopButton:hover {
+  box-shadow: 
+    var(--card-hover-shadow),
+    0 0 30px rgba(120, 197, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+[data-theme='yellow'] .backToTopButton {
+  box-shadow: 
+    var(--card-shadow),
+    0 0 20px rgba(255, 216, 120, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='yellow'] .backToTopButton:hover {
+  box-shadow: 
+    var(--card-hover-shadow),
+    0 0 30px rgba(255, 216, 120, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+[data-theme='red'] .backToTopButton {
+  box-shadow: 
+    var(--card-shadow),
+    0 0 20px rgba(255, 120, 120, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='red'] .backToTopButton:hover {
+  box-shadow: 
+    var(--card-hover-shadow),
+    0 0 30px rgba(255, 120, 120, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+[data-theme='dark'] .backToTopButton {
+  box-shadow: 
+    var(--card-shadow),
+    0 0 20px rgba(157, 78, 221, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme='dark'] .backToTopButton:hover {
+  box-shadow: 
+    var(--card-hover-shadow),
+    0 0 30px rgba(157, 78, 221, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 动画关键帧 */
+@keyframes clickPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--primary-color);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(var(--primary-color), 0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 20px rgba(var(--primary-color), 0);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+@keyframes sparkleExplode {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2) rotate(360deg);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* 浮动动画 - 使用全局定义的 float 动画 */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .backToTopContainer {
+    animation: float 2s ease-in-out infinite;
+  }
+  
+  .backToTopButton {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* 减少动画效果（针对偏好减少动画的用户） */
+@media (prefers-reduced-motion: reduce) {
+  .backToTopContainer,
+  .sparkleEffect svg,
+  .chevronIcon {
+    animation: none;
+  }
+  
+  .backToTopButton {
+    transition: transform 0.1s ease;
+  }
+} 

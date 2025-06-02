@@ -36,7 +36,6 @@ interface AppConfig {
     colorText: string;
     sub: string;
   };
-  subGreeting: string;
   srcDir: string;
 }
 
@@ -132,9 +131,8 @@ export const appConfig: AppConfig = {
   greeting: {
     text: '你好，我是',
     colorText: 'Shunlin',
-    sub: '这位博主朋友面善又友善,没事喜欢搞搞新意思🕶'
+    sub: '这位博主朋友面善又友善🕶'
   },
-  subGreeting: '这位博主朋友面善又友善,没事喜欢搞搞新意思🕶',
   srcDir: path.join(process.cwd(), 'docs/blog')
 };
 
