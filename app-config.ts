@@ -37,9 +37,11 @@ interface AppConfig {
     sub: string;
   };
   srcDir: string;
+  twikooEnvId: string;
 }
 
 export const appConfig: AppConfig = {
+  twikooEnvId: 'https://shunlin.online/comment',
   title: 'SHUNLIN - ShunLin秘密基地',
   siteUrl: 'https://shunlin.online',
   description: 'ShunLin的个人站点, 包含文章、项目和个人信息等内容',

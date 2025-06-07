@@ -1,4 +1,5 @@
 import { appConfig } from '@/app-config';
+import { Comment } from '@/components/comment';
 import ErrorMessage from '@/components/errorMsg';
 import Header from '@/components/header';
 import PostContent from '@/components/post-content';
@@ -184,6 +185,7 @@ export default async function ArticleDetail(Props: Props) {
           </div>
         </article>
       </div>
+      <Comment />
     </>
   );
 }

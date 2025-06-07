@@ -1,4 +1,5 @@
 import { appConfig } from '@/app-config';
+import { Comment } from '@/components/comment';
 import Header from '@/components/header';
 import { CustomIconNames, CustomIcons } from '@/components/icons';
 import { Popover, PopoverContent } from '@/components/ui/popover';
@@ -104,7 +105,7 @@ export default function About() {
           </div>
         </div>
 
-        <div>
+        <div className="mb-16">
           <h2 className="text-text mb-8 text-center text-2xl font-bold">我的经历</h2>
           <div className="flex flex-col gap-6">
             {appConfig.me.expirience?.map((experience, index) => (
@@ -125,6 +126,7 @@ export default function About() {
             ))}
           </div>
         </div>
+        <Comment />
       </div>
     </>
   );
