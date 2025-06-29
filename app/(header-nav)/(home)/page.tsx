@@ -23,7 +23,7 @@ export default async function Home() {
       <Header currentPath="/" />
       <Hero />
       <FeaturedPosts posts={featuredPosts} />
-      <CategoryList categories={categories} />
+      <CategoryList categories={categories} limit={5} />
     </>
   );
 }

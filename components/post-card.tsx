@@ -35,8 +35,8 @@ export default function PostCard({ post }: Props) {
       </div>
 
       <div className="flex flex-grow flex-col p-6">
-        <h3 className="text-text group-hover:text-primary group/head relative mb-3 line-clamp-2 text-xl font-bold transition-colors duration-300">
-          <Link href={`/articles/${post.slug}`} className="relative inline-block">
+        <h3 className="text-text group-hover:text-primary group/head relative mb-3 line-clamp-1 text-xl font-bold transition-colors duration-300">
+          <Link href={`/articles/${post.slug}`} className="relative block">
             {post.title}
             <span className="bg-primary absolute bottom-0 left-0 h-[2px] w-0 transition-all duration-300 group-hover/head:w-full"></span>
           </Link>

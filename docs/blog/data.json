@@ -25,12 +25,20 @@
       "order": 3
     },
     {
+      "name": "瞎折腾",
+      "key": "zheteng",
+      "icon": "Bot",
+      "description": "记录折腾各种环境、工具和平台的过程。just for fun😇",
+      "coverImage": "/icons/a-040-chatbot.svg",
+      "order": 5
+    },
+    {
       "name": "前端相关",
       "key": "frontend",
       "icon": "Chrome",
       "description": "前端技术、工具和生态系统的最新动态",
       "coverImage": "/icons/a-017-solarsystem.svg",
-      "order": 4
+      "order": 6
     }
   ]
 }
