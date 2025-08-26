@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"sl-server/config"
+	"sl-server/utils/response"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -15,7 +16,7 @@ func UploadFile(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
 		config.Logger.Warn("文件上传失败，未找到文件", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": "no file"})
+		response.Error(c, http.StatusBadRequest, "no file")
 		return
 	}
 
@@ -24,10 +25,10 @@ func UploadFile(c *gin.Context) {
 	path := filepath.Join(config.AppConfig.UploadPath, file.Filename)
 	if err := c.SaveUploadedFile(file, path); err != nil {
 		config.Logger.Error("文件保存失败", zap.String("filename", file.Filename), zap.String("path", path), zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file"})
+		response.Error(c, http.StatusInternalServerError, "failed to save file")
 		return
 	}
 
 	config.Logger.Info("文件上传成功", zap.String("filename", file.Filename), zap.String("path", path))
-	c.JSON(http.StatusOK, gin.H{"url": "/uploads/" + file.Filename})
+	response.Success(c, gin.H{"url": "/uploads/" + file.Filename})
 }

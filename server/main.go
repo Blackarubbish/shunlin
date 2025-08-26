@@ -4,9 +4,8 @@ import (
 	"log"
 	"sl-server/config"
 	"sl-server/database"
-	"sl-server/handlers"
-	"sl-server/middleware"
 	"sl-server/models"
+	"sl-server/routes"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -41,16 +40,7 @@ func main() {
 	// 静态文件服务，使用配置中的上传路径
 	r.Static("/uploads", config.AppConfig.UploadPath)
 
-	// Auth
-	r.POST("/register", handlers.Register)
-	r.POST("/login", handlers.Login)
-
-	// Posts
-	r.GET("/posts", handlers.GetPosts)
-	r.POST("/posts", middleware.AuthRequired(), handlers.CreatePost)
-
-	// Upload
-	r.POST("/upload", middleware.AuthRequired(), handlers.UploadFile)
+	routes.RegisterRoutes(r)
 
 	serverAddr := ":" + config.AppConfig.ServerPort
 	config.Logger.Info("服务器启动", zap.String("port", config.AppConfig.ServerPort), zap.String("mode", config.AppConfig.GinMode))

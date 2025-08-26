@@ -5,6 +5,7 @@ import (
 	"sl-server/config"
 	"sl-server/database"
 	"sl-server/models"
+	"sl-server/utils/response"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ func Register(c *gin.Context) {
 	var body models.User
 	if err := c.ShouldBindJSON(&body); err != nil {
 		config.Logger.Warn("用户注册数据绑定失败", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -26,26 +27,26 @@ func Register(c *gin.Context) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
 	if err != nil {
 		config.Logger.Error("密码哈希生成失败", zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "密码处理失败"})
+		response.Error(c, http.StatusInternalServerError, "密码处理失败")
 		return
 	}
 
 	user := models.User{Username: body.Username, Password: string(hash)}
 	if err := database.DB.Create(&user).Error; err != nil {
 		config.Logger.Error("用户创建失败", zap.String("username", body.Username), zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "用户创建失败"})
+		response.Error(c, http.StatusInternalServerError, "用户创建失败")
 		return
 	}
 
 	config.Logger.Info("用户注册成功", zap.String("username", body.Username), zap.Uint("user_id", user.ID))
-	c.JSON(http.StatusOK, gin.H{"message": "user created"})
+	response.Success(c, "user created")
 }
 
 func Login(c *gin.Context) {
 	var body models.User
 	if err := c.ShouldBindJSON(&body); err != nil {
 		config.Logger.Warn("用户登录数据绑定失败", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -54,19 +55,19 @@ func Login(c *gin.Context) {
 	var user models.User
 	if err := database.DB.Where("username = ?", body.Username).First(&user).Error; err != nil {
 		config.Logger.Warn("用户查询失败", zap.String("username", body.Username), zap.Error(err))
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+		response.Error(c, http.StatusUnauthorized, "user not found")
 		return
 	}
 
 	if user.ID == 0 {
 		config.Logger.Warn("用户不存在", zap.String("username", body.Username))
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+		response.Error(c, http.StatusUnauthorized, "user not found")
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		config.Logger.Warn("密码验证失败", zap.String("username", body.Username))
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "wrong password"})
+		response.Error(c, http.StatusUnauthorized, "wrong password")
 		return
 	}
 
@@ -78,10 +79,10 @@ func Login(c *gin.Context) {
 	tokenString, err := token.SignedString(config.GetJWTSecret())
 	if err != nil {
 		config.Logger.Error("JWT token生成失败", zap.String("username", body.Username), zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "token generation failed"})
+		response.Error(c, http.StatusInternalServerError, "token generation failed")
 		return
 	}
 
 	config.Logger.Info("用户登录成功", zap.String("username", body.Username))
-	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+	response.Success(c, gin.H{"token": tokenString})
 }
