@@ -32,7 +32,7 @@ func main() {
 	database.ConnectDB()
 
 	// 自动迁移数据库
-	database.DB.AutoMigrate(&models.User{}, &models.Post{})
+	database.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Post{})
 	config.Logger.Info("数据库迁移完成")
 
 	r := gin.Default()
