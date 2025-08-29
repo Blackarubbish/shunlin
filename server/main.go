@@ -5,6 +5,7 @@ import (
 	"sl-server/config"
 	"sl-server/database"
 	"sl-server/models"
+	"sl-server/pkgs/seeder"
 	"sl-server/routes"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +35,11 @@ func main() {
 	// 自动迁移数据库
 	database.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Post{})
 	config.Logger.Info("数据库迁移完成")
+
+	if err := seeder.RunSeeder(database.DB); err != nil {
+		config.Logger.Fatal("初始化数据失败", zap.Error(err))
+
+	}
 
 	r := gin.Default()
 

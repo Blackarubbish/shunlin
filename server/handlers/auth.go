@@ -5,7 +5,7 @@ import (
 	"sl-server/config"
 	"sl-server/database"
 	"sl-server/models"
-	"sl-server/utils/response"
+	"sl-server/pkgs/response"
 	"time"
 
 	"github.com/gin-gonic/gin"

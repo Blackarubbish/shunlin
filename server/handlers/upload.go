@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"sl-server/config"
-	"sl-server/utils/response"
+	"sl-server/pkgs/response"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
