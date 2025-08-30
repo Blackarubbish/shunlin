@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"sl-server/config"
 	"sl-server/dto"
-	"sl-server/services"
 	"sl-server/pkgs/response"
+	"sl-server/services"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +20,10 @@ func GetPosts(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	query.Normalize()
+
+	config.Logger.Info("获取文章列表请求", zap.Any("query", query))
 
 	data, err := services.GetPosts(query)
 
@@ -67,7 +71,7 @@ func GetOnePost(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	post, err := services.GetOnePost(uint(idUint))
+	post, err := services.GetOnePostByID(uint(idUint))
 	if err != nil {
 		config.Logger.Error("获取文章失败", zap.Error(err))
 		response.Error(c, http.StatusInternalServerError, err.Error())

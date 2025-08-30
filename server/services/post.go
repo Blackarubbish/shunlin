@@ -9,50 +9,73 @@ import (
 	"sl-server/pkgs/utils"
 
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 func CreatePost(postRequest dto.CreatePostRequestDto) (*models.Post, error) {
-	// 创建 Post 模型实例
-	post := models.Post{
-		Title:      postRequest.Title,
-		Content:    postRequest.Content,
-		Slug:       postRequest.Slug,
-		AuthorID:   postRequest.AuthorID,
-		Status:     "draft",
-		CategoryID: postRequest.CategoryID,
-	}
+	var post models.Post
 
-	if err := database.DB.First(&models.User{}, post.AuthorID).Error; err != nil {
-		config.Logger.Error("用户不存在", zap.Error(err))
-		return nil, fmt.Errorf("user not found: %d %v", post.AuthorID, err)
-	}
-
-	if err := database.DB.First(&models.Category{}, post.CategoryID).Error; err != nil {
-		config.Logger.Error("分类不存在", zap.Error(err))
-		return nil, fmt.Errorf("category not found: %d %v", post.CategoryID, err)
-	}
-
-	if post.Slug == "" {
-		// 生成 slug
-		post.Slug = utils.MakeSlug(post.Title)
-
-		posts := []models.Post{}
-		err := database.DB.Where("slug like ?", fmt.Sprintf("%s%%", post.Slug)).Find(&posts).Error
-		if err != nil {
-			config.Logger.Error("查询文章失败", zap.Error(err))
-			return nil, fmt.Errorf("query posts failed: %v", err)
+	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		// 1. 验证用户和分类存在
+		var user models.User
+		if err := tx.First(&user, postRequest.AuthorID).Error; err != nil {
+			return fmt.Errorf("用户不存在: %v", err)
 		}
 
-		if len(posts) > 0 {
-			post.Slug = fmt.Sprintf("%s-%d", post.Slug, len(posts)+1)
+		var category models.Category
+		if err := tx.First(&category, postRequest.CategoryID).Error; err != nil {
+			return fmt.Errorf("分类不存在: %v", err)
 		}
-	} else {
-		post.Slug = utils.FormatSlug(post.Slug)
-	}
 
-	if err := database.DB.Create(&post).Error; err != nil {
+		// 2. 生成或格式化slug
+		slug := postRequest.Slug
+		if slug == "" {
+			slug = utils.MakeSlug(postRequest.Title)
+		} else {
+			slug = utils.FormatSlug(slug)
+		}
+
+		// 3. 在事务中处理slug唯一性（加锁查询）
+		originalSlug := slug
+		for i := 1; ; i++ {
+			var count int64
+			// 使用FOR UPDATE锁定相关记录，防止并发插入
+			if err := tx.Model(&models.Post{}).Where("slug = ?", slug).Count(&count).Error; err != nil {
+				return fmt.Errorf("检查slug失败: %v", err)
+			}
+
+			if count == 0 {
+				break // slug可用
+			}
+
+			// slug已存在，生成新的
+			if i == 1 {
+				slug = fmt.Sprintf("%s-%d", originalSlug, i+1)
+			} else {
+				slug = fmt.Sprintf("%s-%d", originalSlug, i+1)
+			}
+		}
+
+		// 4. 创建文章
+		post = models.Post{
+			Title:      postRequest.Title,
+			Content:    postRequest.Content,
+			Slug:       slug,
+			AuthorID:   postRequest.AuthorID,
+			Status:     "draft",
+			CategoryID: postRequest.CategoryID,
+		}
+
+		if err := tx.Create(&post).Error; err != nil {
+			return fmt.Errorf("创建文章失败: %v", err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
 		config.Logger.Error("创建文章失败", zap.Error(err))
-		return nil, fmt.Errorf("create post failed: %v", err)
+		return nil, err
 	}
 
 	return &post, nil
@@ -60,39 +83,43 @@ func CreatePost(postRequest dto.CreatePostRequestDto) (*models.Post, error) {
 
 func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 	posts := []models.Post{}
-	db := database.DB.Preload("Category")
 
+	// 构建基础查询
+	baseQuery := database.DB.Model(&models.Post{}).Preload("Category")
+
+	// 添加查询条件
 	if query.Status != "" {
-		db = db.Where("status = ?", query.Status)
+		baseQuery = baseQuery.Where("status = ?", query.Status)
 	}
-
 	if query.Title != "" {
-		db = db.Where("title like ?", fmt.Sprintf("%%%s%%", query.Title))
+		baseQuery = baseQuery.Where("title like ?", fmt.Sprintf("%%%s%%", query.Title))
 	}
-
 	if query.Slug != "" {
-		db = db.Where("slug like ?", fmt.Sprintf("%%%s%%", query.Slug))
+		baseQuery = baseQuery.Where("slug like ?", fmt.Sprintf("%%%s%%", query.Slug))
 	}
-
 	if query.CategoryID != 0 {
-		db = db.Where("category_id = ?", query.CategoryID)
+		baseQuery = baseQuery.Where("category_id = ?", query.CategoryID)
 	}
-
 	if query.AuthorID != 0 {
-		db = db.Where("author_id = ?", query.AuthorID)
+		baseQuery = baseQuery.Where("author_id = ?", query.AuthorID)
 	}
 
+	// 获取总数（使用相同的查询条件）
+	var total int64
+	if err := baseQuery.Count(&total).Error; err != nil {
+		config.Logger.Error("获取文章总数失败", zap.Error(err))
+		return nil, fmt.Errorf("get posts count failed: %v", err)
+	}
+
+	// 添加排序和分页
 	if query.SortOrder != "" {
-		db = db.Order("created_at " + query.SortOrder)
+		baseQuery = baseQuery.Order("created_at " + query.SortOrder)
 	}
 
-	if err := db.Offset((query.PageNum - 1) * query.PageSize).Limit(query.PageSize).Find(&posts).Error; err != nil {
+	if err := baseQuery.Offset((query.PageNum - 1) * query.PageSize).Limit(query.PageSize).Find(&posts).Error; err != nil {
 		config.Logger.Error("获取文章列表失败", zap.Error(err))
 		return nil, fmt.Errorf("get posts failed: %v", err)
 	}
-
-	var total int64
-	db.Model(&models.Post{}).Count(&total)
 
 	return &dto.GetPostsResponseDto{
 		Items: posts,
@@ -102,7 +129,7 @@ func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 	}, nil
 }
 
-func GetOnePost(id uint) (*models.Post, error) {
+func GetOnePostByID(id uint) (*models.Post, error) {
 	post := models.Post{}
 	if err := database.DB.Preload("Category").First(&post, id).Error; err != nil {
 		config.Logger.Error("获取文章失败", zap.Error(err))
@@ -112,24 +139,58 @@ func GetOnePost(id uint) (*models.Post, error) {
 }
 
 func UpdatePost(id uint, updatePostRequest dto.UpdatePostRequestDto) (*models.Post, error) {
-	post := models.Post{}
-	if err := database.DB.First(&post, id).Error; err != nil {
-		config.Logger.Error("获取文章失败", zap.Error(err))
-		return nil, fmt.Errorf("get post failed: %v", err)
+	var post models.Post
+
+	// 使用事务确保数据一致性
+	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Preload("Category").First(&post, id).Error; err != nil {
+			return fmt.Errorf("文章不存在: %v", err)
+		}
+
+		if updatePostRequest.CategoryID != 0 && updatePostRequest.CategoryID != post.CategoryID {
+			var category models.Category
+			if err := tx.First(&category, updatePostRequest.CategoryID).Error; err != nil {
+				return fmt.Errorf("分类不存在: %v", err)
+			}
+		}
+
+		if updatePostRequest.AuthorID != 0 && updatePostRequest.AuthorID != post.AuthorID {
+			var user models.User
+			if err := tx.First(&user, updatePostRequest.AuthorID).Error; err != nil {
+				return fmt.Errorf("作者不存在: %v", err)
+			}
+		}
+
+		// 4. 执行更新
+		if err := tx.Model(&post).Updates(updatePostRequest).Error; err != nil {
+			return fmt.Errorf("更新失败: %v", err)
+		}
+
+		if err := tx.Preload("Category").First(&post, id).Error; err != nil {
+			return fmt.Errorf("重新加载失败: %v", err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		config.Logger.Error("更新文章失败", zap.Uint("id", id), zap.Error(err))
+		return nil, err
 	}
 
-	if err := database.DB.Model(&post).Updates(updatePostRequest).Error; err != nil {
-		config.Logger.Error("更新文章失败", zap.Error(err))
-		return nil, fmt.Errorf("update post failed: %v", err)
-	}
+	config.Logger.Info("文章更新成功",
+		zap.Uint("id", post.ID),
+		zap.String("title", post.Title),
+		zap.String("category", post.Category.Name))
 
 	return &post, nil
 }
 
 func DeletePost(id uint) error {
-	if err := database.DB.Delete(&models.Post{}, id).Error; err != nil {
+	post := models.Post{}
+	if err := database.DB.Delete(&post, id).Error; err != nil {
 		config.Logger.Error("删除文章失败", zap.Error(err))
-		return fmt.Errorf("delete post failed: %v", err)
+		return fmt.Errorf("delete post failed: %v id: %d", err, id)
 	}
 	return nil
 }

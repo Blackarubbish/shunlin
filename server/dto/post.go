@@ -28,6 +28,19 @@ type GetPostsQueryDto struct {
 	SortOrder  string `form:"sortOrder" binding:"omitempty,oneof=asc desc"`
 }
 
+// 验证并设置默认值
+func (q *GetPostsQueryDto) Normalize() {
+	if q.PageNum <= 0 {
+		q.PageNum = 1
+	}
+	if q.PageSize <= 0 {
+		q.PageSize = 10
+	}
+	if q.SortOrder == "" {
+		q.SortOrder = "desc"
+	}
+}
+
 type GetPostsResponseDto struct {
 	Items []models.Post `json:"items"`
 	Total int           `json:"total"`
@@ -36,11 +49,10 @@ type GetPostsResponseDto struct {
 }
 
 type UpdatePostRequestDto struct {
-	Title      string `json:"title" binding:"required,min=1,max=200"`
+	Title      string `json:"title"`
 	Content    string `json:"content"`
 	Slug       string `json:"slug"`
 	CategoryID uint   `json:"categoryID"`
 	AuthorID   uint   `json:"authorID"`
+	Status     string `json:"status"`
 }
-
-
