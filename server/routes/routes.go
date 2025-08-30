@@ -27,6 +27,7 @@ func RegisterRoutes(r *gin.Engine) {
 
 		// 分类相关
 		v1.POST("/categories", handlers.CreateCategory)
+		v1.GET("/categories", handlers.GetCategories)
 
 	}
 

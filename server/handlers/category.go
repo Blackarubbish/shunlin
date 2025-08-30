@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 	"sl-server/dto"
-	"sl-server/services"
 	"sl-server/pkgs/response"
+	"sl-server/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,3 +25,11 @@ func CreateCategory(c *gin.Context) {
 	response.Success(c, categoryResponse)
 }
 
+func GetCategories(c *gin.Context) {
+	categories, err := services.GetCategories()
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Success(c, categories)
+}

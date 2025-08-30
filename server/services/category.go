@@ -6,36 +6,29 @@ import (
 	"sl-server/dto"
 	"sl-server/models"
 
-	"github.com/gosimple/slug"
+	"gorm.io/gorm"
 )
 
 func CreateCategory(categoryRequest dto.CategoryRequestDto) (*dto.CategoryResponseDto, error) {
 	category := models.Category{
 		Name:        categoryRequest.Name,
-		Slug:        categoryRequest.Slug,
 		Description: categoryRequest.Description,
 	}
 
-	if category.Slug == "" {
-		category.Slug = slug.Make(category.Name)
-		suffix := 1
-		for {
-			if err := database.DB.Where("slug like ?", fmt.Sprintf("%s%%", category.Slug)).First(&models.Category{}).Error; err != nil {
-				break
-			}
-			category.Slug = fmt.Sprintf("%s-%d", category.Slug, suffix)
-			suffix++
+	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("name = ?", category.Name).FirstOrCreate(&category).Error; err != nil {
+			return err
 		}
-	}
+		return nil
+	})
 
-	if err := database.DB.Where("name = ?", category.Name).FirstOrCreate(&category).Error; err != nil {
-		return nil, err
+	if err != nil {
+		return nil, fmt.Errorf("创建分类失败: %v", err)
 	}
 
 	return &dto.CategoryResponseDto{
 		ID:   category.ID,
 		Name: category.Name,
-		Slug: category.Slug,
 	}, nil
 }
 
@@ -45,4 +38,12 @@ func GetOneByNameOrSlug(name string, slug string) (*models.Category, error) {
 		return nil, err
 	}
 	return &category, nil
+}
+
+func GetCategories() ([]models.Category, error) {
+	var categories []models.Category
+	if err := database.DB.Find(&categories).Error; err != nil {
+		return nil, err
+	}
+	return categories, nil
 }
