@@ -34,6 +34,7 @@ func SeedUser(db *gorm.DB) error {
 	user := models.User{
 		Username: AdminUsername,
 		Password: AdminPassword,
+		Role:     "admin",
 	}
 
 	if err := db.First(&models.User{}, "username = ?", AdminUsername).Error; err == nil {

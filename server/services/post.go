@@ -194,3 +194,101 @@ func DeletePost(id uint) error {
 	}
 	return nil
 }
+
+func GetPublicPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
+	var posts []models.Post
+
+	// 构建基础查询 - 只查询已发布的文章
+	baseQuery := database.DB.Model(&models.Post{}).Preload("Category").Where("status = ?", "published")
+
+	// 添加其他查询条件
+	if query.Title != "" {
+		baseQuery = baseQuery.Where("title LIKE ?", "%"+query.Title+"%")
+	}
+	if query.CategoryID != 0 {
+		baseQuery = baseQuery.Where("category_id = ?", query.CategoryID)
+	}
+
+	// 获取总数
+	var total int64
+	if err := baseQuery.Count(&total).Error; err != nil {
+		config.Logger.Error("获取公开文章总数失败", zap.Error(err))
+		return nil, fmt.Errorf("获取文章总数失败: %v", err)
+	}
+
+	// 添加排序和分页
+	if query.SortOrder == "" {
+		query.SortOrder = "desc"
+	}
+	baseQuery = baseQuery.Order("created_at " + query.SortOrder)
+
+	// 分页查询
+	offset := (query.PageNum - 1) * query.PageSize
+	if err := baseQuery.Offset(offset).Limit(query.PageSize).Find(&posts).Error; err != nil {
+		config.Logger.Error("获取公开文章列表失败", zap.Error(err))
+		return nil, fmt.Errorf("获取文章列表失败: %v", err)
+	}
+
+	return &dto.GetPostsResponseDto{
+		Items: posts,
+		Total: int(total),
+		Page:  query.PageNum,
+		Size:  query.PageSize,
+	}, nil
+}
+
+// GetAdminPosts 获取管理后台文章（管理员使用，可查看所有状态）
+func GetAdminPosts(query dto.GetPostsQueryDto, userRole string, userID uint) (*dto.GetPostsResponseDto, error) {
+	var posts []models.Post
+
+	// 构建基础查询
+	baseQuery := database.DB.Model(&models.Post{}).Preload("Category").Preload("User")
+
+	// 根据用户角色限制查询范围
+	if userRole == "author" {
+		// 普通作者只能看到自己的文章
+		baseQuery = baseQuery.Where("author_id = ?", userID)
+	}
+	// admin 和 editor 可以看到所有文章
+
+	// 添加查询条件
+	if query.Status != "" {
+		baseQuery = baseQuery.Where("status = ?", query.Status)
+	}
+	if query.Title != "" {
+		baseQuery = baseQuery.Where("title LIKE ?", "%"+query.Title+"%")
+	}
+	if query.CategoryID != 0 {
+		baseQuery = baseQuery.Where("category_id = ?", query.CategoryID)
+	}
+	if query.AuthorID != 0 {
+		baseQuery = baseQuery.Where("author_id = ?", query.AuthorID)
+	}
+
+	// 获取总数
+	var total int64
+	if err := baseQuery.Count(&total).Error; err != nil {
+		config.Logger.Error("获取管理文章总数失败", zap.Error(err))
+		return nil, fmt.Errorf("获取文章总数失败: %v", err)
+	}
+
+	// 添加排序和分页
+	if query.SortOrder == "" {
+		query.SortOrder = "desc"
+	}
+	baseQuery = baseQuery.Order("created_at " + query.SortOrder)
+
+	// 分页查询
+	offset := (query.PageNum - 1) * query.PageSize
+	if err := baseQuery.Offset(offset).Limit(query.PageSize).Find(&posts).Error; err != nil {
+		config.Logger.Error("获取管理文章列表失败", zap.Error(err))
+		return nil, fmt.Errorf("获取文章列表失败: %v", err)
+	}
+
+	return &dto.GetPostsResponseDto{
+		Items: posts,
+		Total: int(total),
+		Page:  query.PageNum,
+		Size:  query.PageSize,
+	}, nil
+}

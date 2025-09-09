@@ -1,49 +1,64 @@
+// routes/routes.go - 更新现有文件
 package routes
 
 import (
 	"sl-server/handlers"
+	"sl-server/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(r *gin.Engine) {
 	api := r.Group("/api")
-
 	v1 := api.Group("/v1")
 	{
-		// 用户认证相关
-		v1.POST("/register", handlers.Register)
-		v1.POST("/login", handlers.Login)
-
-		// 媒体文件相关
-		media := v1.Group("/media")
+		// 公开的认证接口
+		auth := v1.Group("/auth")
 		{
-			media.POST("/upload", handlers.UploadFile)             // 单文件上传
-			media.POST("/batch-upload", handlers.BatchUploadFiles) // 批量上传
-			media.GET("/list", handlers.GetMediaList)              // 获取媒体列表
-			media.GET("/:id", handlers.GetMediaByID)               // 获取媒体详情
-			media.PUT("/:id", handlers.UpdateMediaInfo)            // 更新媒体信息
-			media.DELETE("/:id", handlers.DeleteMedia)             // 删除媒体
+			auth.POST("/register", handlers.Register)
+			auth.POST("/login", handlers.Login)
+			auth.POST("/refresh", handlers.RefreshToken)
 		}
 
-		// 兼容旧的上传接口
-		v1.POST("/uploads", handlers.UploadFile)
-
-		// 文章相关
-		posts := v1.Group("/posts")
+		// 需要认证的接口
+		authenticated := v1.Group("")
+		authenticated.Use(middleware.AuthRequired())
 		{
-			posts.GET("", handlers.GetPosts)          // 获取文章列表
-			posts.POST("", handlers.CreatePost)       // 创建文章
-			posts.GET("/:id", handlers.GetOnePost)    // 获取单篇文章
-			posts.PUT("/:id", handlers.UpdatePost)    // 更新文章
-			posts.DELETE("/:id", handlers.DeletePost) // 删除文章
-		}
+			// 用户相关接口
+			user := authenticated.Group("/user")
+			{
+				user.GET("/profile", handlers.GetProfile)
+				user.POST("/change-password", handlers.ChangePassword)
+				user.POST("/logout", handlers.Logout)
+			}
 
-		// 分类相关
-		categories := v1.Group("/categories")
-		{
-			categories.POST("", handlers.CreateCategory) // 创建分类
-			categories.GET("", handlers.GetCategories)   // 获取分类列表
+			// 媒体文件相关 (保持原有的接口)
+			media := authenticated.Group("/media")
+			{
+				media.POST("/upload", handlers.UploadFile)
+				media.POST("/batch-upload", handlers.BatchUploadFiles)
+				media.GET("/list", handlers.GetMediaList)
+				media.GET("/:id", handlers.GetMediaByID)
+				media.PUT("/:id", handlers.UpdateMediaInfo)
+				media.DELETE("/:id", handlers.DeleteMedia)
+			}
+
+			// 文章相关 (保持原有的接口)
+			posts := authenticated.Group("/posts")
+			{
+				posts.GET("", handlers.GetPosts)
+				posts.POST("", handlers.CreatePost)
+				posts.GET("/:id", handlers.GetOnePost)
+				posts.PUT("/:id", handlers.UpdatePost)
+				posts.DELETE("/:id", handlers.DeletePost)
+			}
+
+			// 分类相关 (保持原有的接口)
+			categories := authenticated.Group("/categories")
+			{
+				categories.POST("", handlers.CreateCategory)
+				categories.GET("", handlers.GetCategories)
+			}
 		}
 	}
 }
