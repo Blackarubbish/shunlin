@@ -20,20 +20,27 @@ func RegisterRoutes(r *gin.Engine) {
 			auth.POST("/refresh", handlers.RefreshToken)
 		}
 
-		// 需要认证的接口
-		authenticated := v1.Group("")
-		authenticated.Use(middleware.AuthRequired())
+		// 博客接口, 公开
+		// _ := v1.Group("/blog")
 		{
-			// 用户相关接口
-			user := authenticated.Group("/user")
+			// todo: 博客接口
+
+		}
+
+		// 管理后台接口
+		admin := v1.Group("/admin")
+		admin.Use(middleware.AuthRequired())
+		{
+			// 用户相关
+			user := admin.Group("/user")
 			{
 				user.GET("/profile", handlers.GetProfile)
 				user.POST("/change-password", handlers.ChangePassword)
 				user.POST("/logout", handlers.Logout)
 			}
 
-			// 媒体文件相关 (保持原有的接口)
-			media := authenticated.Group("/media")
+			// 媒体文件
+			media := admin.Group("/media")
 			{
 				media.POST("/upload", handlers.UploadFile)
 				media.POST("/batch-upload", handlers.BatchUploadFiles)
@@ -43,8 +50,8 @@ func RegisterRoutes(r *gin.Engine) {
 				media.DELETE("/:id", handlers.DeleteMedia)
 			}
 
-			// 文章相关 (保持原有的接口)
-			posts := authenticated.Group("/posts")
+			// 文章
+			posts := admin.Group("/posts")
 			{
 				posts.GET("", handlers.GetPosts)
 				posts.POST("", handlers.CreatePost)
@@ -53,8 +60,8 @@ func RegisterRoutes(r *gin.Engine) {
 				posts.DELETE("/:id", handlers.DeletePost)
 			}
 
-			// 分类相关 (保持原有的接口)
-			categories := authenticated.Group("/categories")
+			// 分类
+			categories := admin.Group("/categories")
 			{
 				categories.POST("", handlers.CreateCategory)
 				categories.GET("", handlers.GetCategories)
