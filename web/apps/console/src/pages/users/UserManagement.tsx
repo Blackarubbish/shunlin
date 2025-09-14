@@ -23,7 +23,6 @@ import {
 	Select,
 	Space,
 	Statistic,
-	Switch,
 	Table,
 	Tag,
 	Tooltip,
@@ -142,7 +141,7 @@ export const UserManagement: React.FC = () => {
 			title: "操作",
 			key: "action",
 			width: 150,
-			render: (_, record: User) => (
+			render: (_: any, record: User) => (
 				<Space size="small">
 					<Tooltip title="查看详情">
 						<Button
@@ -289,7 +288,7 @@ export const UserManagement: React.FC = () => {
 
 			setIsModalVisible(false);
 			form.resetFields();
-		} catch (error) {
+		} catch (_error) {
 			message.error("操作失败，请重试");
 		} finally {
 			setLoading(false);
@@ -302,13 +301,13 @@ export const UserManagement: React.FC = () => {
 			const updatedUsers = users.filter((user) => user.id !== userId);
 			setUsers(updatedUsers);
 			message.success("用户删除成功！");
-		} catch (error) {
+		} catch (_error) {
 			message.error("删除失败，请重试");
 		}
 	};
 
 	// 切换用户状态
-	const handleToggleStatus = async (userId: number) => {
+	const _handleToggleStatus = async (userId: number) => {
 		try {
 			const updatedUsers = users.map((user) =>
 				user.id === userId
@@ -319,9 +318,9 @@ export const UserManagement: React.FC = () => {
 						}
 					: user,
 			);
-			setUsers(updatedUsers);
+			setUsers(updatedUsers as User[]);
 			message.success("用户状态更新成功！");
-		} catch (error) {
+		} catch (_error) {
 			message.error("状态更新失败，请重试");
 		}
 	};
@@ -533,3 +532,5 @@ export const UserManagement: React.FC = () => {
 		</div>
 	);
 };
+
+export default UserManagement;

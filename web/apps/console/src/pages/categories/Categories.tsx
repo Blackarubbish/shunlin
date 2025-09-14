@@ -98,7 +98,7 @@ export const Categories: React.FC = () => {
 			title: "操作",
 			key: "action",
 			width: 120,
-			render: (_, record: Category) => (
+			render: (_: any, record: Category) => (
 				<Space size="small">
 					<Tooltip title="编辑分类">
 						<Button
@@ -184,7 +184,7 @@ export const Categories: React.FC = () => {
 
 			setIsModalVisible(false);
 			form.resetFields();
-		} catch (error) {
+		} catch (_error) {
 			message.error("操作失败，请重试");
 		} finally {
 			setLoading(false);
@@ -199,7 +199,7 @@ export const Categories: React.FC = () => {
 			);
 			setCategories(updatedCategories);
 			message.success("分类删除成功！");
-		} catch (error) {
+		} catch (_error) {
 			message.error("删除失败，请重试");
 		}
 	};
@@ -374,3 +374,5 @@ export const Categories: React.FC = () => {
 		</div>
 	);
 };
+
+export default Categories;

@@ -43,12 +43,12 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 	const [tags, setTags] = useState<string[]>([]);
 	const [newTag, setNewTag] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [previewMode, setPreviewMode] = useState(false);
+	const [_previewMode, setPreviewMode] = useState(false);
 
 	// 根据模式和ID加载文章数据
 	useEffect(() => {
 		if (mode === "edit" && id) {
-			const foundPost = mockPosts.find((p) => p.id === parseInt(id));
+			const foundPost = mockPosts.find((p) => p.id === parseInt(id, 10));
 			if (foundPost) {
 				setPost(foundPost);
 				setTags(foundPost.tags);
@@ -110,7 +110,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 			setTimeout(() => {
 				navigate("/posts");
 			}, 1000);
-		} catch (error) {
+		} catch (_error) {
 			message.error("保存失败，请重试");
 		} finally {
 			setLoading(false);
@@ -393,3 +393,5 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 		</div>
 	);
 };
+
+export default PostEditor;

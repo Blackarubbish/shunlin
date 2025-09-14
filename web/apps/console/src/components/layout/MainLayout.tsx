@@ -1,14 +1,10 @@
 import {
 	BellOutlined,
-	DashboardOutlined,
-	FileImageOutlined,
-	FileTextOutlined,
 	LogoutOutlined,
 	MenuFoldOutlined,
 	MenuUnfoldOutlined,
 	SearchOutlined,
 	SettingOutlined,
-	TagsOutlined,
 	UserOutlined,
 } from "@ant-design/icons";
 import {
@@ -23,78 +19,17 @@ import {
 	Typography,
 } from "antd";
 import type React from "react";
-import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { useGlobalMenu } from "@/providers/useGlobalMenu";
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
 
 export const MainLayout: React.FC = () => {
-	const [collapsed, setCollapsed] = useState(false);
-	const [selectedKey, setSelectedKey] = useState("dashboard");
-	const navigate = useNavigate();
-	const location = useLocation();
+	const { menuItems, currentKey, handleItemClick, collapsed, setCollapsed } =
+		useGlobalMenu();
 
-	// 根据当前路径设置选中的菜单项
-	useEffect(() => {
-		const path = location.pathname;
-		if (path.startsWith("/posts")) {
-			if (path === "/posts/create") {
-				setSelectedKey("posts-create");
-			} else if (path.startsWith("/posts/edit")) {
-				setSelectedKey("posts-edit");
-			} else {
-				setSelectedKey("posts-list");
-			}
-		} else if (path === "/dashboard") {
-			setSelectedKey("dashboard");
-		} else if (path === "/categories") {
-			setSelectedKey("categories");
-		} else if (path === "/media") {
-			setSelectedKey("media");
-		} else if (path === "/users") {
-			setSelectedKey("users");
-		}
-	}, [location.pathname]);
-
-	// 侧边栏菜单项
-	const menuItems = [
-		{
-			key: "dashboard",
-			icon: <DashboardOutlined />,
-			label: "仪表盘",
-		},
-		{
-			key: "posts",
-			icon: <FileTextOutlined />,
-			label: "文章管理",
-			children: [
-				{
-					key: "posts-list",
-					label: "文章列表",
-				},
-				{
-					key: "posts-create",
-					label: "创建文章",
-				},
-			],
-		},
-		{
-			key: "categories",
-			icon: <TagsOutlined />,
-			label: "分类管理",
-		},
-		{
-			key: "media",
-			icon: <FileImageOutlined />,
-			label: "媒体文件",
-		},
-		{
-			key: "users",
-			icon: <UserOutlined />,
-			label: "用户管理",
-		},
-	];
+	console.log("menuItems", menuItems);
 
 	// 用户下拉菜单
 	const userMenuItems = [
@@ -118,33 +53,6 @@ export const MainLayout: React.FC = () => {
 			danger: true,
 		},
 	];
-
-	const handleMenuClick = (key: string) => {
-		setSelectedKey(key);
-		// 使用 React Router 进行导航
-		switch (key) {
-			case "dashboard":
-				navigate("/dashboard");
-				break;
-			case "posts-list":
-				navigate("/posts");
-				break;
-			case "posts-create":
-				navigate("/posts/create");
-				break;
-			case "categories":
-				navigate("/categories");
-				break;
-			case "media":
-				navigate("/media");
-				break;
-			case "users":
-				navigate("/users");
-				break;
-			default:
-				break;
-		}
-	};
 
 	const handleUserMenuClick = ({ key }: { key: string }) => {
 		if (key === "logout") {
@@ -182,10 +90,10 @@ export const MainLayout: React.FC = () => {
 				{/* 导航菜单 */}
 				<Menu
 					mode="inline"
-					selectedKeys={[selectedKey]}
+					selectedKeys={[currentKey]}
 					items={menuItems}
 					className="border-none h-[calc(100vh-64px)] overflow-y-auto"
-					onClick={({ key }) => handleMenuClick(key)}
+					onClick={({ key }) => handleItemClick(key)}
 				/>
 			</Sider>
 
@@ -245,7 +153,7 @@ export const MainLayout: React.FC = () => {
 				</Header>
 
 				{/* 主内容区 */}
-				<Content className="p-6 overflow-y-auto">
+				<Content className="p-6 overflow-y-auto h-[calc(100vh-64px)] overflow-auto">
 					<div className="bg-white rounded-lg shadow-sm min-h-[calc(100vh-112px)]">
 						<Outlet />
 					</div>

@@ -1,54 +1,116 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import { MainLayout } from "../components/layout/MainLayout";
-import { Categories } from "../pages/categories/Categories";
-import { Dashboard } from "../pages/dashboard/Dashboard";
-import { MediaLibrary } from "../pages/media/MediaLibrary";
-import { PostEditor } from "../pages/posts/PostEditor";
-import { PostsList } from "../pages/posts/PostsList";
-import { UserManagement } from "../pages/users/UserManagement";
+import { createBrowserRouter } from "react-router-dom";
+import { MainLayout } from "@/components/layout/MainLayout";
+import type { RouteItem } from "@/types";
 
-export const router = createBrowserRouter([
+// biome-ignore lint/suspicious/noExplicitAny: Module conversion utility function
+function convert(m: any) {
+	const { default: Component } = m;
+
+	return {
+		Component,
+	};
+}
+
+export const routes: RouteItem[] = [
+	// 认证相关路由
+	{
+		path: "/login",
+		lazy: () => import("@/pages/auth/Login").then(convert),
+	},
+	{
+		path: "/register",
+		lazy: () => import("@/pages/auth/Register").then(convert),
+	},
+	{
+		path: "/forgot-password",
+		lazy: () => import("@/pages/auth/ForgotPassword").then(convert),
+	},
+	// 主应用路由
 	{
 		path: "/",
 		element: <MainLayout />,
 		children: [
 			{
 				index: true,
-				element: <Navigate to="/dashboard" replace />,
+				lazy: () => import("@/pages/dashboard/Dashboard").then(convert),
 			},
 			{
 				path: "dashboard",
-				element: <Dashboard />,
+				lazy: () => import("@/pages/dashboard/Dashboard").then(convert),
+				handle: {
+					icon: "DashboardOutlined",
+					title: "仪表盘",
+					order: 1,
+				},
 			},
 			{
 				path: "posts",
+				handle: {
+					icon: "FileTextOutlined",
+					title: "文章管理",
+					order: 2,
+				},
 				children: [
 					{
 						index: true,
-						element: <PostsList />,
+						lazy: () => import("@/pages/posts/PostsList").then(convert),
 					},
 					{
 						path: "create",
-						element: <PostEditor mode="create" />,
+						lazy: () => import("@/pages/posts/PostEditor").then(convert),
+						handle: {
+							title: "创建文章",
+							order: 2,
+						},
 					},
 					{
 						path: "edit/:id",
-						element: <PostEditor mode="edit" />,
+						lazy: () => import("@/pages/posts/PostEditor").then(convert),
+						handle: {
+							title: "编辑文章",
+							order: 3,
+						},
 					},
 				],
 			},
 			{
 				path: "categories",
-				element: <Categories />,
+				lazy: () => import("@/pages/categories/Categories").then(convert),
+				handle: {
+					icon: "TagsOutlined",
+					title: "分类管理",
+					order: 2,
+				},
 			},
 			{
 				path: "media",
-				element: <MediaLibrary />,
+				lazy: () => import("@/pages/media/Media").then(convert),
+				handle: {
+					icon: "FileImageOutlined",
+					title: "媒体文件",
+					order: 3,
+				},
 			},
 			{
 				path: "users",
-				element: <UserManagement />,
+				lazy: () => import("@/pages/users/UserManagement").then(convert),
+				handle: {
+					icon: "UserOutlined",
+					title: "用户管理",
+					order: 4,
+				},
+			},
+			{
+				path: "demo/login",
+				lazy: () => import("@/pages/demo/LoginDemo").then(convert),
+				handle: {
+					icon: "LogoutOutlined",
+					title: "登录演示",
+					order: 5,
+				},
 			},
 		],
 	},
-]);
+];
+
+export const router = createBrowserRouter(routes);

@@ -1,5 +1,4 @@
 import {
-	ArrowDownOutlined,
 	ArrowUpOutlined,
 	EditOutlined,
 	EyeOutlined,
@@ -9,7 +8,6 @@ import {
 	UserOutlined,
 } from "@ant-design/icons";
 import {
-	Avatar,
 	Button,
 	Card,
 	Col,
@@ -25,7 +23,7 @@ import {
 import type React from "react";
 import { useNavigate } from "react-router-dom";
 import type { Post } from "../../types";
-import { mockDashboardStats, mockPosts } from "../../utils/mockData";
+import { mockDashboardStats } from "../../utils/mockData";
 
 const { Title, Text } = Typography;
 
@@ -85,7 +83,7 @@ export const Dashboard: React.FC = () => {
 		{
 			title: "操作",
 			key: "action",
-			render: (_, record: Post) => (
+			render: (_: any, record: Post) => (
 				<Button
 					type="text"
 					icon={<EditOutlined />}
@@ -302,3 +300,5 @@ export const Dashboard: React.FC = () => {
 		</div>
 	);
 };
+
+export default Dashboard;

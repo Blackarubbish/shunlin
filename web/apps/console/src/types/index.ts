@@ -1,3 +1,6 @@
+import type { RouteObject } from "react-router-dom";
+import type { IconNameKeysUnion } from "@/components/Icons";
+
 // 用户类型
 export interface User {
 	id: number;
@@ -82,3 +85,13 @@ export interface PaginationParams {
 	sortOrder?: "asc" | "desc";
 	search?: string;
 }
+
+export type RouteItem = RouteObject & {
+	handle?: {
+		title?: string;
+		icon?: IconNameKeysUnion;
+		hidden?: boolean;
+		order?: number;
+	};
+	children?: RouteItem[];
+};

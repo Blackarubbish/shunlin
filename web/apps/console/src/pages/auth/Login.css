@@ -1,0 +1,545 @@
+/* 登录页面样式 - 基于绿色设计系统 */
+
+.login-container {
+	min-height: 100vh;
+	position: relative;
+	background: var(--gradient-surface);
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* 背景装饰 */
+.login-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.bg-decoration {
+	position: absolute;
+	border-radius: var(--radius-full);
+	background: var(--gradient-primary-soft);
+	opacity: 0.6;
+	animation: float 6s ease-in-out infinite;
+}
+
+.bg-decoration-1 {
+	width: 200px;
+	height: 200px;
+	top: 10%;
+	left: 5%;
+	animation-delay: 0s;
+}
+
+.bg-decoration-2 {
+	width: 150px;
+	height: 150px;
+	top: 20%;
+	right: 10%;
+	animation-delay: 1s;
+}
+
+.bg-decoration-3 {
+	width: 100px;
+	height: 100px;
+	bottom: 30%;
+	left: 15%;
+	animation-delay: 2s;
+}
+
+.bg-decoration-4 {
+	width: 120px;
+	height: 120px;
+	bottom: 15%;
+	right: 20%;
+	animation-delay: 3s;
+}
+
+.bg-decoration-5 {
+	width: 80px;
+	height: 80px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	animation-delay: 4s;
+}
+
+@keyframes float {
+	0%,
+	100% {
+		transform: translateY(0px) rotate(0deg);
+		opacity: 0.6;
+	}
+	50% {
+		transform: translateY(-20px) rotate(180deg);
+		opacity: 0.8;
+	}
+}
+
+/* 主要内容区域 */
+.login-content {
+	display: flex;
+	width: 100%;
+	max-width: 1200px;
+	min-height: 600px;
+	background: var(--color-bg-elevated);
+	border-radius: var(--radius-2xl);
+	box-shadow: var(--shadow-xl);
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+	animation: slideInUp 0.8s ease-out;
+}
+
+@keyframes slideInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* 左侧品牌区域 */
+.login-brand {
+	flex: 1;
+	background: var(--gradient-primary);
+	padding: var(--spacing-4xl);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	overflow: hidden;
+}
+
+.login-brand::before {
+	content: "";
+	position: absolute;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	background: radial-gradient(
+		circle,
+		rgba(255, 255, 255, 0.1) 0%,
+		transparent 70%
+	);
+	animation: gentle-pulse 4s ease-in-out infinite;
+}
+
+.brand-content {
+	text-align: center;
+	color: var(--color-text-inverse);
+	position: relative;
+	z-index: 2;
+}
+
+.brand-logo {
+	margin-bottom: var(--spacing-2xl);
+}
+
+.logo-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--spacing-md);
+}
+
+.logo-icon {
+	font-size: 4rem;
+	line-height: 1;
+	filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+	animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+.login-brand .logo-text {
+	color: var(--color-text-inverse);
+	margin: 0;
+	font-weight: var(--font-weight-bold);
+	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand-description {
+	margin-bottom: var(--spacing-3xl);
+}
+
+.login-brand .brand-title {
+	color: var(--color-text-inverse);
+	margin-bottom: var(--spacing-md);
+	font-weight: var(--font-weight-semibold);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.login-brand .brand-subtitle {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: var(--font-size-lg);
+	line-height: var(--line-height-relaxed);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 装饰性插画 */
+.brand-illustration {
+	position: relative;
+	height: 200px;
+	width: 100%;
+}
+
+.illustration-placeholder {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.leaf,
+.sun {
+	position: absolute;
+	font-size: 2rem;
+	animation: gentle-bounce 4s ease-in-out infinite;
+}
+
+.leaf-1 {
+	top: 20%;
+	left: 20%;
+	animation-delay: 0s;
+}
+
+.leaf-2 {
+	top: 60%;
+	right: 30%;
+	animation-delay: 1s;
+}
+
+.leaf-3 {
+	bottom: 20%;
+	left: 40%;
+	animation-delay: 2s;
+}
+
+.sun {
+	top: 10%;
+	right: 20%;
+	animation-delay: 0.5s;
+	filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+/* 右侧表单区域 */
+.login-form-section {
+	flex: 1;
+	padding: var(--spacing-4xl);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.login-form-container {
+	width: 100%;
+	max-width: 400px;
+	padding: var(--spacing-3xl);
+	background: var(--color-bg-elevated);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-md);
+	border: 1px solid var(--color-border-primary);
+}
+
+.form-header {
+	text-align: center;
+	margin-bottom: var(--spacing-3xl);
+}
+
+.login-form-container .form-title {
+	color: var(--color-text-primary);
+	margin-bottom: var(--spacing-sm);
+	font-weight: var(--font-weight-semibold);
+}
+
+.login-form-container .form-subtitle {
+	color: var(--color-text-secondary);
+	font-size: var(--font-size-sm);
+}
+
+/* 表单样式 */
+.login-form {
+	width: 100%;
+}
+
+.login-form .ant-form-item-label > label {
+	color: var(--color-text-primary);
+	font-weight: var(--font-weight-medium);
+	font-size: var(--font-size-sm);
+}
+
+.input-icon {
+	color: var(--color-text-tertiary);
+	font-size: var(--font-size-base);
+}
+
+.enhanced-input {
+	height: 48px;
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--color-border-primary);
+	transition: all var(--transition-base);
+	font-size: var(--font-size-sm);
+}
+
+.enhanced-input:focus,
+.enhanced-input-focused {
+	border-color: var(--color-border-focus);
+	box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.enhanced-input .ant-input {
+	border: none;
+	box-shadow: none;
+}
+
+.enhanced-input .ant-input:focus {
+	box-shadow: none;
+}
+
+/* 表单选项 */
+.login-form .form-options {
+	margin-bottom: var(--spacing-lg);
+}
+
+.options-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.remember-checkbox {
+	color: var(--color-text-secondary);
+	font-size: var(--font-size-sm);
+}
+
+.forgot-link {
+	color: var(--color-primary-600);
+	font-size: var(--font-size-sm);
+	text-decoration: none;
+	transition: color var(--transition-base);
+}
+
+.forgot-link:hover {
+	color: var(--color-primary-700);
+	text-decoration: underline;
+}
+
+/* 登录按钮 */
+.login-button {
+	height: 48px;
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-medium);
+	border-radius: var(--radius-lg);
+	background: var(--gradient-primary);
+	border: none;
+	box-shadow: var(--shadow-primary);
+	transition: all var(--transition-base);
+}
+
+.login-button:hover {
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-primary-lg);
+}
+
+.login-button:active {
+	transform: translateY(0);
+}
+
+/* 分割线 */
+.form-divider {
+	margin: var(--spacing-xl) 0;
+	color: var(--color-text-quaternary);
+	font-size: var(--font-size-xs);
+}
+
+.form-divider .ant-divider-inner-text {
+	color: var(--color-text-quaternary);
+	background: var(--color-bg-elevated);
+	padding: 0 var(--spacing-md);
+}
+
+/* 社交登录 */
+.social-login {
+	margin-bottom: var(--spacing-xl);
+}
+
+.social-button {
+	height: 44px;
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--color-border-primary);
+	background: var(--color-bg-elevated);
+	color: var(--color-text-primary);
+	font-weight: var(--font-weight-medium);
+	transition: all var(--transition-base);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--spacing-sm);
+}
+
+.social-button:hover {
+	border-color: var(--color-border-secondary);
+	background: var(--color-bg-secondary);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-sm);
+}
+
+.social-icon {
+	font-size: var(--font-size-lg);
+}
+
+.google-button:hover {
+	border-color: #4285f4;
+	color: #4285f4;
+}
+
+.github-button:hover {
+	border-color: #333;
+	color: #333;
+}
+
+/* 表单底部 */
+.form-footer {
+	text-align: center;
+	margin-top: var(--spacing-lg);
+}
+
+.register-link {
+	color: var(--color-primary-600);
+	text-decoration: none;
+	font-weight: var(--font-weight-medium);
+	transition: color var(--transition-base);
+}
+
+.register-link:hover {
+	color: var(--color-primary-700);
+	text-decoration: underline;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+	.login-content {
+		flex-direction: column;
+		max-width: 500px;
+		min-height: auto;
+	}
+
+	.login-brand {
+		padding: var(--spacing-2xl);
+		min-height: 300px;
+	}
+
+	.brand-illustration {
+		height: 120px;
+	}
+
+	.leaf,
+	.sun {
+		font-size: 1.5rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.login-container {
+		padding: var(--spacing-md);
+	}
+
+	.login-content {
+		border-radius: var(--radius-lg);
+	}
+
+	.login-brand {
+		padding: var(--spacing-xl);
+		min-height: 250px;
+	}
+
+	.login-form-section {
+		padding: var(--spacing-xl);
+	}
+
+	.login-form-container {
+		padding: var(--spacing-xl);
+	}
+
+	.bg-decoration {
+		display: none;
+	}
+}
+
+@media (max-width: 480px) {
+	.login-brand {
+		padding: var(--spacing-lg);
+		min-height: 200px;
+	}
+
+	.login-form-section {
+		padding: var(--spacing-lg);
+	}
+
+	.login-form-container {
+		padding: var(--spacing-lg);
+	}
+
+	.brand-illustration {
+		height: 80px;
+	}
+
+	.leaf,
+	.sun {
+		font-size: 1.2rem;
+	}
+}
+
+/* 加载状态优化 */
+.login-button.ant-btn-loading {
+	background: var(--color-primary-400);
+}
+
+.login-button.ant-btn-loading:hover {
+	background: var(--color-primary-400);
+	transform: none;
+}
+
+/* 表单验证错误状态 */
+.ant-form-item-has-error .enhanced-input {
+	border-color: var(--color-error);
+}
+
+.ant-form-item-has-error .enhanced-input:focus {
+	border-color: var(--color-error);
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* 成功状态 */
+.ant-form-item-has-success .enhanced-input {
+	border-color: var(--color-success);
+}
+
+.ant-form-item-has-success .enhanced-input:focus {
+	border-color: var(--color-success);
+	box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+/* 动画优化 */
+@media (prefers-reduced-motion: reduce) {
+	.bg-decoration,
+	.logo-icon,
+	.leaf,
+	.sun,
+	.login-content {
+		animation: none;
+	}
+
+	.login-brand::before {
+		animation: none;
+	}
+}

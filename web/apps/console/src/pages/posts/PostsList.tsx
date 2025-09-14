@@ -3,7 +3,6 @@ import {
 	EditOutlined,
 	ExportOutlined,
 	EyeOutlined,
-	FilterOutlined,
 	PlusOutlined,
 	SearchOutlined,
 } from "@ant-design/icons";
@@ -73,7 +72,7 @@ export const PostsList: React.FC = () => {
 						<div className="flex items-center space-x-4 mt-2">
 							<Space size="small">
 								{record.tags.map((tag) => (
-									<Tag key={tag} size="small" color="blue">
+									<Tag key={tag} color="blue">
 										{tag}
 									</Tag>
 								))}
@@ -159,7 +158,7 @@ export const PostsList: React.FC = () => {
 			key: "action",
 			width: 150,
 			fixed: "right" as const,
-			render: (_, record: Post) => (
+			render: (_: any, record: Post) => (
 				<Space size="small">
 					<Tooltip title="查看">
 						<Button
@@ -203,7 +202,7 @@ export const PostsList: React.FC = () => {
 		console.log("查看文章:", record);
 		Modal.info({
 			title: record.title,
-			content: record.content.substring(0, 200) + "...",
+			content: `${record.content.substring(0, 200)}...`,
 			width: 600,
 		});
 	};
@@ -353,3 +352,5 @@ export const PostsList: React.FC = () => {
 		</div>
 	);
 };
+
+export default PostsList;
