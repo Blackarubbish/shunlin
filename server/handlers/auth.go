@@ -21,7 +21,7 @@ func Register(c *gin.Context) {
 	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		config.Logger.Warn("用户注册数据绑定失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ErrorWithDetail(c, response.ErrValidation, err.Error())
 		return
 	}
 
@@ -31,7 +31,7 @@ func Register(c *gin.Context) {
 	var existingUser models.User
 	if err := database.DB.Where("username = ? OR email = ?", req.Username, req.Email).First(&existingUser).Error; err == nil {
 		config.Logger.Warn("用户名或邮箱已存在", zap.String("username", req.Username))
-		response.Error(c, http.StatusConflict, "用户名或邮箱已存在")
+		response.ErrorWithDetail(c, response.ErrUserExists)
 		return
 	}
 
@@ -45,7 +45,7 @@ func Register(c *gin.Context) {
 
 	if err := database.DB.Create(&user).Error; err != nil {
 		config.Logger.Error("用户创建失败", zap.String("username", req.Username), zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, "用户创建失败")
+		response.ErrorWithDetail(c, response.ErrDatabaseError, "用户创建失败")
 		return
 	}
 
@@ -66,7 +66,7 @@ func Login(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		config.Logger.Warn("用户登录数据绑定失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ErrorWithDetail(c, response.ErrValidation, err.Error())
 		return
 	}
 
@@ -76,21 +76,21 @@ func Login(c *gin.Context) {
 	var user models.User
 	if err := database.DB.Where("username = ? OR email = ?", req.Username, req.Username).First(&user).Error; err != nil {
 		config.Logger.Warn("用户查询失败", zap.String("username", req.Username), zap.Error(err))
-		response.Error(c, http.StatusUnauthorized, "用户名或密码错误")
+		response.ErrorWithDetail(c, response.ErrUserOrPasswordWrong, err.Error())
 		return
 	}
 
 	// 检查用户状态
 	if !user.CanLogin() {
 		config.Logger.Warn("用户账户被禁用", zap.String("username", req.Username), zap.String("status", user.Status))
-		response.Error(c, http.StatusForbidden, "账户已被禁用")
+		response.ErrorWithDetail(c, response.ErrForbidden)
 		return
 	}
 
 	// 验证密码
 	if !user.CheckPassword(req.Password) {
 		config.Logger.Warn("密码验证失败", zap.String("username", req.Username))
-		response.Error(c, http.StatusUnauthorized, "用户名或密码错误")
+		response.ErrorWithDetail(c, response.ErrUserOrPasswordWrong)
 		return
 	}
 
@@ -98,7 +98,7 @@ func Login(c *gin.Context) {
 	tokenPair, err := jwtService.GenerateTokenPair(&user)
 	if err != nil {
 		config.Logger.Error("JWT token生成失败", zap.String("username", req.Username), zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, "登录失败")
+		response.ErrorWithDetail(c, response.ErrInternal, err.Error())
 		return
 	}
 

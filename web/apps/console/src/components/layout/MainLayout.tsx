@@ -71,11 +71,11 @@ export const MainLayout: React.FC = () => {
 				collapsible
 				collapsed={collapsed}
 				className="bg-white border-r border-gray-200"
-				width={240}
+				width={300}
 				collapsedWidth={64}
 			>
 				{/* Logo 区域 */}
-				<div className="h-16 flex items-center justify-center border-b border-gray-200">
+				<div className="h-[74px] flex items-center justify-center  border-gray-200">
 					{!collapsed ? (
 						<Title level={4} className="m-0 text-gray-800">
 							博客管理
@@ -92,21 +92,21 @@ export const MainLayout: React.FC = () => {
 					mode="inline"
 					selectedKeys={[currentKey]}
 					items={menuItems}
-					className="border-none h-[calc(100vh-64px)] overflow-y-auto"
+					className="border-none h-[calc(100vh-74px)] overflow-y-auto"
 					onClick={({ key }) => handleItemClick(key)}
 				/>
 			</Sider>
 
 			<Layout>
 				{/* 顶部导航栏 */}
-				<Header className="bg-white border-b border-gray-200 px-4 h-16 flex items-center justify-between">
+				<Header className="bg-white border-b border-gray-200 px-4 h-[74px] flex items-center justify-between">
 					<div className="flex items-center space-x-4">
 						{/* 折叠按钮 */}
 						<Button
 							type="text"
+							size="large"
 							icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
 							onClick={() => setCollapsed(!collapsed)}
-							className="w-8 h-8 flex items-center justify-center"
 						/>
 
 						{/* 搜索框 */}
@@ -114,6 +114,7 @@ export const MainLayout: React.FC = () => {
 							placeholder="搜索文章、分类..."
 							prefix={<SearchOutlined className="text-gray-400" />}
 							className="w-64"
+							size="large"
 							allowClear
 						/>
 					</div>

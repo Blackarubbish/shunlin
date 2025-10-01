@@ -2,140 +2,73 @@ import {
 	EyeInvisibleOutlined,
 	EyeTwoTone,
 	LockOutlined,
-	MailOutlined,
+	UserOutlined,
 } from "@ant-design/icons";
-import {
-	Form,
-	Input,
-	Button,
-	Checkbox,
-	Typography,
-	Space,
-	Divider,
-	message,
-} from "antd";
+import { Button, Checkbox, Form, Input, message } from "antd";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import "./Login.css";
+import { useAuth } from "@/hooks/useAuth";
 
-const { Title, Text } = Typography;
-
-interface LoginFormValues {
+interface LoginForm {
 	email: string;
 	password: string;
 	remember: boolean;
 }
 
-const Login: React.FC = () => {
+export const Login = () => {
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
+	const { login } = useAuth();
 
-	const onFinish = async (values: LoginFormValues) => {
+	const handleLogin = async (values: LoginForm) => {
 		setLoading(true);
 		try {
-			// 模拟登录API调用
-			console.log("登录信息:", values);
-			await new Promise((resolve) => setTimeout(resolve, 1500));
-			message.success("登录成功！");
-			// 这里应该跳转到主页面
-		} catch {
+			login(values);
+		} catch (error) {
+			console.error("登录错误:", error);
 			message.error("登录失败，请检查用户名和密码");
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	const onFinishFailed = (errorInfo: {
-		errorFields: Array<{ name: string[]; errors: string[] }>;
-	}) => {
-		console.log("表单验证失败:", errorInfo);
-	};
-
 	return (
-		<div className="login-container">
-			{/* 背景装饰元素 */}
-			<div className="login-background">
-				<div className="bg-decoration bg-decoration-1"></div>
-				<div className="bg-decoration bg-decoration-2"></div>
-				<div className="bg-decoration bg-decoration-3"></div>
-				<div className="bg-decoration bg-decoration-4"></div>
-				<div className="bg-decoration bg-decoration-5"></div>
-			</div>
-
-			{/* 主要内容区域 */}
-			<div className="login-content">
-				{/* 左侧品牌区域 */}
-				<div className="login-brand">
-					<div className="brand-content">
-						<div className="brand-logo">
-							{/* 这里应该放置品牌Logo，可以是SVG图标或图片 */}
-							<div className="logo-placeholder">
-								{/* 临时Logo占位符 - 可以替换为实际的Logo */}
-								<div className="logo-icon">🌿</div>
-								<Title level={2} className="logo-text">
-									GreenAdmin
-								</Title>
+		<div className="h-screen w-screen bg-gray-50">
+			<div className="flex h-full w-full">
+				{/* 左侧登录表单 */}
+				<div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+					<div className="w-full max-w-md space-y-8">
+						{/* Logo和标题 */}
+						<div className="text-center">
+							<div className="mx-auto h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
+								<span className="text-white text-xl font-bold">S</span>
 							</div>
-						</div>
-						<div className="brand-description">
-							<Title level={3} className="brand-title">
-								欢迎来到现代化管理平台
-							</Title>
-							<Text className="brand-subtitle">
-								体验清新、高效的数据管理解决方案
-							</Text>
-						</div>
-						{/* 装饰性插画区域 */}
-						<div className="brand-illustration">
-							{/* 这里可以放置夏日主题的插画，比如：
-                  - 绿色植物插画
-                  - 夏日风景插画
-                  - 抽象几何图形
-                  暂时用CSS创建简单的装饰图形 */}
-							<div className="illustration-placeholder">
-								<div className="leaf leaf-1">🍃</div>
-								<div className="leaf leaf-2">🌱</div>
-								<div className="leaf leaf-3">🍀</div>
-								<div className="sun">☀️</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* 右侧登录表单区域 */}
-				<div className="login-form-section">
-					<div className="login-form-container elevated-card">
-						<div className="form-header">
-							<Title level={2} className="form-title">
-								登录账户
-							</Title>
-							<Text type="secondary" className="form-subtitle">
-								请输入您的凭据以访问您的账户
-							</Text>
+							<h2 className="text-3xl font-bold text-gray-900 mb-2">
+								欢迎回来
+							</h2>
+							<p className="text-gray-600">请登录您的账户</p>
 						</div>
 
+						{/* 登录表单 */}
 						<Form
 							form={form}
 							name="login"
-							className="login-form"
-							initialValues={{ remember: true }}
-							onFinish={onFinish}
-							onFinishFailed={onFinishFailed}
-							size="large"
+							onFinish={handleLogin}
 							layout="vertical"
+							size="large"
+							className="space-y-4"
 						>
 							<Form.Item
 								name="email"
-								label="邮箱地址"
+								label="邮箱"
 								rules={[
 									{ required: true, message: "请输入邮箱地址" },
 									{ type: "email", message: "请输入有效的邮箱地址" },
 								]}
 							>
 								<Input
-									prefix={<MailOutlined className="input-icon" />}
-									placeholder="请输入邮箱地址"
-									className="enhanced-input"
+									prefix={<UserOutlined className="text-gray-400" />}
+									placeholder="请输入邮箱"
+									className="h-12 rounded-lg"
 								/>
 							</Form.Item>
 
@@ -144,78 +77,115 @@ const Login: React.FC = () => {
 								label="密码"
 								rules={[
 									{ required: true, message: "请输入密码" },
-									{ min: 6, message: "密码至少6位字符" },
+									{ min: 6, message: "密码至少6位" },
 								]}
 							>
 								<Input.Password
-									prefix={<LockOutlined className="input-icon" />}
+									prefix={<LockOutlined className="text-gray-400" />}
 									placeholder="请输入密码"
-									className="enhanced-input"
+									className="h-12 rounded-lg"
 									iconRender={(visible) =>
 										visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
 									}
 								/>
 							</Form.Item>
 
-							<Form.Item className="form-options">
-								<div className="options-row">
-									<Form.Item name="remember" valuePropName="checked" noStyle>
-										<Checkbox className="remember-checkbox">记住我</Checkbox>
-									</Form.Item>
-									<Link to="/forgot-password" className="forgot-link">
-										忘记密码？
-									</Link>
-								</div>
-							</Form.Item>
+							<div className="flex items-center justify-between">
+								<Form.Item name="remember" valuePropName="checked" noStyle>
+									<Checkbox className="text-gray-600">记住我</Checkbox>
+								</Form.Item>
+								<a
+									href="#"
+									className="text-blue-600 hover:text-blue-500 text-sm font-medium"
+								>
+									忘记密码？
+								</a>
+							</div>
 
-							<Form.Item>
+							<Form.Item className="mb-0">
 								<Button
 									type="primary"
 									htmlType="submit"
-									className="primary-button login-button"
 									loading={loading}
-									block
+									className="w-full h-12 rounded-lg bg-blue-600 hover:bg-blue-700 border-0 text-base font-medium"
 								>
 									{loading ? "登录中..." : "登录"}
 								</Button>
 							</Form.Item>
-
-							<Divider className="form-divider">
-								<Text type="secondary">或者</Text>
-							</Divider>
-
-							<div className="social-login">
-								<Space
-									direction="vertical"
-									size="middle"
-									style={{ width: "100%" }}
-								>
-									<Button
-										className="social-button google-button"
-										icon={<span className="social-icon">🔍</span>}
-										block
-									>
-										使用 Google 登录
-									</Button>
-									<Button
-										className="social-button github-button"
-										icon={<span className="social-icon">🐙</span>}
-										block
-									>
-										使用 GitHub 登录
-									</Button>
-								</Space>
-							</div>
-
-							<div className="form-footer">
-								<Text type="secondary">
-									还没有账户？{" "}
-									<Link to="/register" className="register-link">
-										立即注册
-									</Link>
-								</Text>
-							</div>
 						</Form>
+
+						{/* 注册链接 */}
+						<div className="text-center">
+							<span className="text-gray-600">还没有账户？</span>
+							<a
+								href="#"
+								className="ml-1 text-blue-600 hover:text-blue-500 font-medium"
+							>
+								立即注册
+							</a>
+						</div>
+
+						{/* 分割线 */}
+						<div className="relative">
+							<div className="absolute inset-0 flex items-center">
+								<div className="w-full border-t border-gray-300" />
+							</div>
+							<div className="relative flex justify-center text-sm">
+								<span className="px-2 bg-gray-50 text-gray-500">或者使用</span>
+							</div>
+						</div>
+
+						{/* 第三方登录 */}
+						<div className="grid grid-cols-2 gap-3">
+							<Button
+								className="h-12 rounded-lg border-gray-300 hover:border-gray-400"
+								icon={<span className="text-lg">🔍</span>}
+							>
+								Google
+							</Button>
+							<Button
+								className="h-12 rounded-lg border-gray-300 hover:border-gray-400"
+								icon={<span className="text-lg">📱</span>}
+							>
+								GitHub
+							</Button>
+						</div>
+					</div>
+				</div>
+
+				{/* 右侧背景图 */}
+				<div className="hidden lg:flex flex-1 relative overflow-hidden">
+					<div
+						className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800"
+						style={{
+							backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" style="stop-color:%23ffffff;stop-opacity:0.1"/><stop offset="100%" style="stop-color:%23ffffff;stop-opacity:0"/></radialGradient></defs><rect width="100%" height="100%" fill="url(%23a)"/><g fill="none" stroke="%23ffffff" stroke-width="2" opacity="0.1"><circle cx="200" cy="200" r="100"/><circle cx="800" cy="300" r="150"/><circle cx="300" cy="700" r="120"/><circle cx="700" cy="800" r="80"/></g></svg>')`,
+							backgroundSize: "cover",
+							backgroundPosition: "center",
+						}}
+					>
+						<div className="absolute inset-0 bg-black bg-opacity-20" />
+						<div className="relative z-10 flex flex-col justify-center items-center h-full text-white px-12">
+							<div className="text-center max-w-lg">
+								<h1 className="text-4xl font-bold mb-6">开始您的数字化之旅</h1>
+								<p className="text-xl text-blue-100 mb-8 leading-relaxed">
+									连接、创造、分享。在这里发现无限可能，与世界分享您的想法和创意。
+								</p>
+								<div className="flex items-center justify-center space-x-8 text-blue-200">
+									<div className="text-center">
+										<div className="text-2xl font-bold">10K+</div>
+										<div className="text-sm">活跃用户</div>
+									</div>
+									<div className="text-center">
+										<div className="text-2xl font-bold">50K+</div>
+										<div className="text-sm">创作内容</div>
+									</div>
+									<div className="text-center">
+										<div className="text-2xl font-bold">99%</div>
+										<div className="text-sm">满意度</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

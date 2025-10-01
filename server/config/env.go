@@ -25,6 +25,9 @@ type Config struct {
 
 	// 文件上传配置
 	UploadPath string
+
+	// 加密密钥
+	EncryptKey string
 }
 
 var AppConfig *Config
@@ -46,6 +49,7 @@ func LoadConfig() error {
 		JWTSecret:  getEnv("JWT_SECRET", "mysecretkey_please_change_in_production"),
 		LogLevel:   getEnv("LOG_LEVEL", "info"),
 		UploadPath: getEnv("UPLOAD_PATH", "./uploads"),
+		EncryptKey: getEnv("ENCRYPT_KEY", ""),
 	}
 
 	if Logger != nil {
@@ -55,6 +59,7 @@ func LoadConfig() error {
 			zap.String("db_path", AppConfig.DBPath),
 			zap.String("log_level", AppConfig.LogLevel),
 			zap.String("upload_path", AppConfig.UploadPath),
+			// zap.String("encrypt_key", AppConfig.EncryptKey),
 		)
 	}
 
