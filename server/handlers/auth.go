@@ -110,8 +110,9 @@ func Login(c *gin.Context) {
 	config.Logger.Info("用户登录成功", zap.String("username", req.Username))
 
 	loginResponse := dto.LoginResponse{
-		Token:     tokenPair.AccessToken,
-		ExpiresAt: tokenPair.ExpiresAt,
+		Token:        tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+		ExpiresAt:    tokenPair.ExpiresAt,
 		User: dto.UserInfo{
 			ID:       user.ID,
 			Username: user.Username,

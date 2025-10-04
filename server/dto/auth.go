@@ -19,9 +19,10 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Token     string   `json:"token"`
-	ExpiresAt int64    `json:"expires_at"`
-	User      UserInfo `json:"user"`
+	Token        string   `json:"token"`
+	RefreshToken string   `json:"refresh_token"`
+	ExpiresAt    int64    `json:"expires_at"`
+	User         UserInfo `json:"user"`
 }
 
 type RefreshTokenRequest struct {
