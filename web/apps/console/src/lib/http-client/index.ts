@@ -6,9 +6,15 @@ import type {
 } from "axios";
 import axios from "axios";
 
-// HTTP方法类型
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+export const HttpMethod = {
+	GET: "GET",
+	POST: "POST",
+	PUT: "PUT",
+	DELETE: "DELETE",
+	PATCH: "PATCH",
+} as const;
 
+export type HttpMethodUnion = (typeof HttpMethod)[keyof typeof HttpMethod];
 export interface HttpError<T = unknown> {
 	code: number; // 自定义错误码
 	statusCode: number; // 响应状态码
@@ -35,6 +41,7 @@ export type ResponsePlugin = (config: HttpClientOpt) => {
 	) => AxiosResponse | Promise<AxiosResponse>;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	onRejected?: (error: any) => any;
+	key: string;
 };
 
 export type RequestPlugin = (config: HttpClientOpt) => {
@@ -43,12 +50,17 @@ export type RequestPlugin = (config: HttpClientOpt) => {
 	) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	onRejected?: (error: any) => any;
+	key: string;
 };
 
 export const createInstance = (opts: HttpClientOpt) => {
 	const instance = axios.create(opts);
 
 	const plugins = opts.plugins;
+
+	instance.interceptors.request.use((config) => {
+		return config;
+	});
 
 	for (const plugin of plugins.request) {
 		const { onFullfilled, onRejected } = plugin(opts);
@@ -58,8 +70,10 @@ export const createInstance = (opts: HttpClientOpt) => {
 		const { onFullfilled, onRejected } = plugin(opts);
 		instance.interceptors.response.use(onFullfilled, onRejected);
 	}
+
 	return instance;
 };
 
 export * from "./plugins/request-bear";
+export * from "./plugins/request-refresh";
 export * from "./plugins/response-error";

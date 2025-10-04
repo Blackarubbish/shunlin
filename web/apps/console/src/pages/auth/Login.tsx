@@ -5,7 +5,8 @@ import {
 	UserOutlined,
 } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, message } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 interface LoginForm {
@@ -17,7 +18,14 @@ interface LoginForm {
 export const Login = () => {
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
-	const { login } = useAuth();
+	const { login, isAuthenticated } = useAuth();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/");
+		}
+	}, [isAuthenticated, navigate]);
 
 	const handleLogin = async (values: LoginForm) => {
 		setLoading(true);

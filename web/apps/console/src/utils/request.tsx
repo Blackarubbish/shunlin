@@ -1,18 +1,38 @@
 import { QueryClient } from "@tanstack/react-query";
 import type { AxiosRequestConfig } from "axios";
+import { tokenStorage } from "@/hooks/useAuth";
 import {
 	bearerTokenPluginCreator,
 	createInstance,
 	errorHandlerPluginCreator,
+	type HttpMethodUnion,
+	tokenRefreshPluginCreator,
 } from "@/lib/http-client";
+import type { JsonResponse } from "@/types/http";
 
 export const request = createInstance({
 	baseURL: import.meta.env.VITE_API_URL || "/",
 	plugins: {
-		request: [bearerTokenPluginCreator({ token: () => "123" })],
+		request: [
+			bearerTokenPluginCreator({
+				token: (config) => {
+					console.log("config", config);
+					const url = config.url;
+					if (url?.includes("/api/v1/auth/refresh")) {
+						return "";
+					}
+					return tokenStorage.get() || "";
+				},
+			}),
+		],
 		response: [
 			errorHandlerPluginCreator({
 				onError: (error) => {
+					console.error(error);
+				},
+			}),
+			tokenRefreshPluginCreator({
+				onRefreshError: (error) => {
 					console.error(error);
 				},
 			}),
@@ -22,51 +42,21 @@ export const request = createInstance({
 
 export const httpClient = {
 	getRequesterInstance: () => request,
-	get: async <T = unknown>(url: string, config?: AxiosRequestConfig) => {
-		const res = await request.get<T>(url, config);
-		return res.data;
-	},
 
-	post: async <T = unknown, D = unknown>(
+	jsonRequest: async <T, D = unknown>(
 		url: string,
-		data?: D,
-		config?: AxiosRequestConfig<D>,
+		method: HttpMethodUnion,
+		config: AxiosRequestConfig<D>,
 	) => {
-		const res = await request.post<T>(url, data, config);
-		return res.data;
-	},
-
-	put: async <T = unknown, D = unknown>(
-		url: string,
-		data?: D,
-		config?: AxiosRequestConfig<D>,
-	) => {
-		const res = await request.put<T>(url, data, config);
-		return res.data;
-	},
-
-	delete: async <T = unknown>(url: string, config?: AxiosRequestConfig) => {
-		const res = await request.delete<T>(url, config);
-		return res.data;
-	},
-
-	patch: async <T = unknown, D = unknown>(
-		url: string,
-		data?: D,
-		config?: AxiosRequestConfig<D>,
-	) => {
-		const res = await request.patch<T>(url, data, config);
-		return res.data;
+		const res = await request.request<JsonResponse<T>>({
+			url,
+			method,
+			...config,
+		});
+		return res.data.data;
 	},
 
 	request: async <T = unknown, D = unknown>(config: AxiosRequestConfig<D>) => {
-		const res = await request.request<T>(config);
-		return res.data;
-	},
-
-	pureRequest: async <T = unknown, D = unknown>(
-		config: AxiosRequestConfig<D>,
-	) => {
 		const res = await request.request<T>(config);
 		return res;
 	},

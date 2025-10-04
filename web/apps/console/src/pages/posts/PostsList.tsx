@@ -38,6 +38,13 @@ export const PostsList: React.FC = () => {
 	const [statusFilter, setStatusFilter] = useState<string>("");
 	const [categoryFilter, setCategoryFilter] = useState<string>("");
 
+	// const { data, isLoading, error } = usePosts({
+	//   params: {
+	//     pageNum: 1,
+	//     pageSize: 10,
+	//   },
+	// });
+
 	// 过滤后的文章数据
 	const filteredPosts = mockPosts.filter((post) => {
 		const matchesSearch =

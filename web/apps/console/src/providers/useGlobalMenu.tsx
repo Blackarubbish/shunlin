@@ -8,7 +8,7 @@ import Icon from "@/components/Icons";
 // ItemType<MenuItemType>
 // type MenuItem = Required<MenuProps>["items"][number];
 
-type MenuItem = {
+export type MenuItem = {
 	key: string;
 	label: string;
 	icon: React.ReactNode;

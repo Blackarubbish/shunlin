@@ -8,8 +8,6 @@ export interface User {
 	email: string;
 	role: "admin" | "editor";
 	status: "active" | "inactive";
-	createdAt: string;
-	updatedAt: string;
 }
 
 // 文章类型
@@ -95,3 +93,5 @@ export type RouteItem = RouteObject & {
 	};
 	children?: RouteItem[];
 };
+
+export * from "./auth";

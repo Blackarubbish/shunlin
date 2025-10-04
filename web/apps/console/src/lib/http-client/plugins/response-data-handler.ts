@@ -19,6 +19,7 @@ export const responseDataHandlerPluginCreator = (): ResponsePlugin => {
 				};
 				throw err;
 			},
+			key: "responseDataHandler",
 		};
 	};
 };

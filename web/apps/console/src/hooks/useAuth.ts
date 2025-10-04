@@ -1,22 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import authApi from "@/apis/auth";
-import type { LoginForm, LoginResponse, User } from "@/types/auth";
+import { authApi } from "@/apis/auth";
+import { userApi } from "@/apis/user";
+import type { LoginForm, LoginResponse, User } from "@/types";
 
 // Token管理工具
 const TOKEN_KEY = "auth_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
 const USER_KEY = "user_info";
 
-const tokenStorage = {
+export const tokenStorage = {
 	get: () => localStorage.getItem(TOKEN_KEY),
 	set: (token: string) => localStorage.setItem(TOKEN_KEY, token),
 	remove: () => localStorage.removeItem(TOKEN_KEY),
 };
 
-const refreshTokenStorage = {
+export const refreshTokenStorage = {
 	get: () => localStorage.getItem(REFRESH_TOKEN_KEY),
 	set: (token: string) => localStorage.setItem(REFRESH_TOKEN_KEY, token),
 	remove: () => localStorage.removeItem(REFRESH_TOKEN_KEY),
@@ -42,6 +43,10 @@ export const useAuth = () => {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
+	const _refreshTokenInterval = useRef<ReturnType<typeof setInterval> | null>(
+		null,
+	);
+
 	// 获取当前用户信息
 	const {
 		data: user,
@@ -53,9 +58,8 @@ export const useAuth = () => {
 			const token = tokenStorage.get();
 			if (!token) return null;
 
-			// 这里应该调用获取用户信息的API
-			// 暂时返回存储的用户信息
-			return userStorage.get();
+			return userApi.getProfile();
+			// return userStorage.get();
 		},
 		staleTime: 5 * 60 * 1000, // 5分钟内不重新获取
 		retry: false,
@@ -67,12 +71,12 @@ export const useAuth = () => {
 		mutationKey: AUTH_QUERY_KEYS.login,
 		mutationFn: async (loginData: LoginForm): Promise<LoginResponse> => {
 			const response = await authApi.login(loginData);
-			return response as LoginResponse;
+			return response;
 		},
 		onSuccess: (data) => {
 			// 存储token和用户信息
 			tokenStorage.set(data.token);
-			refreshTokenStorage.set(data.refreshToken);
+			refreshTokenStorage.set(data.refresh_token);
 			userStorage.set(data.user);
 
 			// 更新查询缓存
@@ -115,6 +119,25 @@ export const useAuth = () => {
 		},
 	});
 
+	const refreshTokenMutation = useMutation({
+		mutationKey: ["auth", "refresh"],
+		mutationFn: async () => {
+			const refreshTokenValue = refreshTokenStorage.get();
+			if (!refreshTokenValue) {
+				throw new Error("没有refresh token");
+			}
+			return await authApi.refreshToken(refreshTokenValue);
+		},
+		onSuccess: (data) => {
+			tokenStorage.set(data.token);
+			refreshTokenStorage.set(data.refresh_token);
+		},
+		onError: (error) => {
+			console.error("Token刷新失败:", error);
+			logout();
+		},
+	});
+
 	// 登出函数
 	const logout = useCallback(() => {
 		logoutMutation.mutate();
@@ -136,42 +159,6 @@ export const useAuth = () => {
 		return tokenStorage.get();
 	}, []);
 
-	// 刷新token（如果需要的话）
-	const refreshToken = useCallback(async () => {
-		const refreshTokenValue = refreshTokenStorage.get();
-		if (!refreshTokenValue) {
-			logout();
-			return;
-		}
-
-		try {
-			// 这里应该调用刷新token的API
-			// 暂时直接返回
-			return Promise.resolve();
-		} catch (error) {
-			console.error("刷新token失败:", error);
-			logout();
-		}
-	}, [logout]);
-
-	// 自动刷新token
-	useEffect(() => {
-		if (!isAuthenticated) return;
-
-		const token = tokenStorage.get();
-		if (!token) return;
-
-		// 设置定时器，在token过期前刷新
-		const refreshInterval = setInterval(
-			() => {
-				refreshToken();
-			},
-			30 * 60 * 1000,
-		); // 每30分钟检查一次
-
-		return () => clearInterval(refreshInterval);
-	}, [isAuthenticated, refreshToken]);
-
 	// 处理认证错误
 	useEffect(() => {
 		if (userError) {
@@ -179,6 +166,8 @@ export const useAuth = () => {
 			logout();
 		}
 	}, [userError, logout]);
+
+	useEffect(() => {}, []);
 
 	return {
 		// 状态
@@ -191,9 +180,9 @@ export const useAuth = () => {
 		login,
 		logout,
 		getToken,
-		refreshToken,
 
 		// 原始mutation状态（用于更细粒度的控制）
+		refreshTokenMutation,
 		loginMutation,
 		logoutMutation,
 	};

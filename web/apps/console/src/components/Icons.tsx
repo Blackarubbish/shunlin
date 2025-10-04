@@ -3,6 +3,8 @@ import {
 	FileImageOutlined,
 	FileTextOutlined,
 	LogoutOutlined,
+	MenuFoldOutlined,
+	MenuUnfoldOutlined,
 	SettingOutlined,
 	TagsOutlined,
 	UserOutlined,
@@ -17,6 +19,8 @@ const icons = {
 	FileImageOutlined,
 	SettingOutlined,
 	LogoutOutlined,
+	MenuUnfoldOutlined,
+	MenuFoldOutlined,
 };
 
 export type IconNameKeysUnion = keyof typeof icons;

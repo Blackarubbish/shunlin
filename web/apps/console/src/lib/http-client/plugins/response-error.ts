@@ -35,6 +35,7 @@ export const errorHandlerPluginCreator = (
 				onError?.(errorObject);
 				return Promise.reject(errorObject);
 			},
+			key: "responseError",
 		};
 	};
 };
