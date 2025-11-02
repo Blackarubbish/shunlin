@@ -65,6 +65,8 @@ func RegisterRoutes(r *gin.Engine) {
 			{
 				categories.POST("", handlers.CreateCategory)
 				categories.GET("", handlers.GetCategories)
+				categories.PATCH("/:id", handlers.UpdateCategory)
+				categories.DELETE("/:id", handlers.DeleteCategory)
 			}
 		}
 	}

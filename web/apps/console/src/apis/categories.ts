@@ -3,6 +3,7 @@ import type {
 	Category,
 	CategoryListParams,
 	CreateCategoryForm,
+	UpdateCategoryForm,
 } from "@/types/categories";
 import { httpClient } from "@/utils";
 
@@ -27,6 +28,27 @@ export const categoriesApi = {
 			{
 				params,
 			},
+		);
+		return res;
+	},
+
+	// 更新分类
+	updateCategory: async (id: number, data: UpdateCategoryForm) => {
+		const res = await httpClient.jsonRequest<Category>(
+			`/api/v1/admin/categories/${id}`,
+			HttpMethod.PATCH,
+			{
+				data,
+			},
+		);
+		return res;
+	},
+	// 删除分类
+	deleteCategory: async (id: number) => {
+		const res = await httpClient.jsonRequest<{ message: string }>(
+			`/api/v1/admin/categories/${id}`,
+			HttpMethod.DELETE,
+			{},
 		);
 		return res;
 	},

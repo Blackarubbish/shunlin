@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "@/apis/auth";
 import { userApi } from "@/apis/user";
@@ -42,10 +42,6 @@ const AUTH_QUERY_KEYS = {
 export const useAuth = () => {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-
-	const _refreshTokenInterval = useRef<ReturnType<typeof setInterval> | null>(
-		null,
-	);
 
 	// 获取当前用户信息
 	const {
@@ -97,9 +93,8 @@ export const useAuth = () => {
 	const logoutMutation = useMutation({
 		mutationKey: AUTH_QUERY_KEYS.logout,
 		mutationFn: async () => {
-			// 这里应该调用登出API
-			// 暂时只清除本地存储
-			return Promise.resolve();
+			// 调用真实的登出API
+			await userApi.logout();
 		},
 		onSuccess: () => {
 			// 清除所有认证相关数据
@@ -160,12 +155,14 @@ export const useAuth = () => {
 	}, []);
 
 	// 处理认证错误
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (userError) {
 			// 如果获取用户信息失败，可能是token过期
+			console.log("shibai, 退出");
 			logout();
 		}
-	}, [userError, logout]);
+	}, [userError]);
 
 	useEffect(() => {}, []);
 

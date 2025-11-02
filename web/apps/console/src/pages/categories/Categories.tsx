@@ -6,36 +6,67 @@ import {
 	TagsOutlined,
 } from "@ant-design/icons";
 import {
+	App,
 	Button,
 	Card,
 	Col,
 	Form,
 	Input,
 	Modal,
-	message,
 	Popconfirm,
 	Row,
 	Space,
+	Spin,
 	Statistic,
 	Table,
-	Tag,
 	Tooltip,
 	Typography,
 } from "antd";
 import type React from "react";
 import { useState } from "react";
-import type { Category } from "../../types";
-import { mockCategories } from "../../utils/mockData";
+import {
+	useCategories,
+	useCreateCategory,
+	useDeleteCategory,
+	useUpdateCategory,
+} from "@/hooks/useCategories";
+import type { Category } from "@/types";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 export const Categories: React.FC = () => {
-	const [categories, setCategories] = useState<Category[]>(mockCategories);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 	const [form] = Form.useForm();
-	const [loading, setLoading] = useState(false);
+
+	// 使用真实API
+	const { data: categories = [], isLoading, refetch } = useCategories();
+	const { message } = App.useApp();
+	const createCategoryMutation = useCreateCategory({
+		onSuccess: () => {
+			message.success("分类创建成功！");
+		},
+		onError: (error) => {
+			message.error(error.message || "创建分类失败，请重试");
+		},
+	});
+	const updateCategoryMutation = useUpdateCategory({
+		onSuccess: () => {
+			message.success("分类更新成功！");
+		},
+		onError: (error) => {
+			message.error(error.message || "更新分类失败，请重试");
+		},
+	});
+	const deleteCategoryMutation = useDeleteCategory({
+		onSuccess: () => {
+			message.success("分类删除成功！");
+		},
+		onError: (error) => {
+			message.error(error.message || "删除分类失败，请重试");
+		},
+	});
 
 	// 统计数据
 	const totalCategories = categories.length;
@@ -51,21 +82,28 @@ export const Categories: React.FC = () => {
 			title: "分类信息",
 			dataIndex: "name",
 			key: "name",
-			render: (name: string, record: Category) => (
+			render: (name: string) => (
 				<div>
-					<div className="flex items-center space-x-2 mb-1">
-						<TagsOutlined className="text-blue-500" />
-						<Text strong className="text-gray-900">
-							{name}
-						</Text>
-					</div>
-					<Text className="text-sm text-gray-500">{record.description}</Text>
-					<div className="mt-2">
-						<Tag color="blue" className="text-xs">
-							{record.slug}
-						</Tag>
-					</div>
+					<Text strong className="text-gray-900">
+						{name}
+					</Text>
 				</div>
+			),
+		},
+		{
+			title: "别名",
+			dataIndex: "slug",
+			key: "slug",
+			render: (slug: string) => (
+				<Text className="text-sm text-gray-600">{slug}</Text>
+			),
+		},
+		{
+			title: "描述",
+			dataIndex: "description",
+			key: "description",
+			render: (description: string) => (
+				<Text className="text-sm text-gray-600">{description || "-"}</Text>
 			),
 		},
 		{
@@ -76,22 +114,24 @@ export const Categories: React.FC = () => {
 			sorter: (a: Category, b: Category) => a.postCount - b.postCount,
 			render: (postCount: number) => (
 				<div className="text-center">
-					<div className="text-lg font-semibold text-blue-600">{postCount}</div>
+					<div className="text-lg font-semibold text-blue-600">
+						{postCount || 0}
+					</div>
 					<div className="text-xs text-gray-500">篇文章</div>
 				</div>
 			),
 		},
 		{
 			title: "创建时间",
-			dataIndex: "createdAt",
+			dataIndex: "CreatedAt",
 			key: "createdAt",
 			width: 150,
 			sorter: (a: Category, b: Category) =>
-				new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-			render: (createdAt: string) => (
-				<Text className="text-sm text-gray-600">
-					{new Date(createdAt).toLocaleDateString("zh-CN")}
-				</Text>
+				new Date(a.CreatedAt).getTime() - new Date(b.CreatedAt).getTime(),
+			render: (reatedAt: string) => (
+				<span className="text-xs text-gray-500">
+					{new Date(reatedAt).toLocaleDateString("zh-CN")}
+				</span>
 			),
 		},
 		{
@@ -111,7 +151,7 @@ export const Categories: React.FC = () => {
 					<Popconfirm
 						title="确定删除这个分类吗？"
 						description={`分类下有 ${record.postCount} 篇文章，删除后这些文章将变为未分类状态。`}
-						onConfirm={() => handleDelete(record.id)}
+						onConfirm={() => handleDelete(record.ID)}
 						okText="确定"
 						cancelText="取消"
 						disabled={record.postCount > 0}
@@ -124,7 +164,6 @@ export const Categories: React.FC = () => {
 							<Button
 								type="text"
 								icon={<DeleteOutlined />}
-								size="small"
 								danger
 								disabled={record.postCount > 0}
 							/>
@@ -154,53 +193,38 @@ export const Categories: React.FC = () => {
 
 	// 处理表单提交
 	const handleSubmit = async (values: any) => {
-		setLoading(true);
 		try {
 			if (editingCategory) {
-				// 编辑分类
-				const updatedCategories = categories.map((category) =>
-					category.id === editingCategory.id
-						? {
-								...category,
-								...values,
-								updatedAt: new Date().toISOString(),
-							}
-						: category,
-				);
-				setCategories(updatedCategories);
-				message.success("分类更新成功！");
+				await updateCategoryMutation.mutateAsync({
+					id: editingCategory.ID,
+					data: {
+						name: values.name,
+						slug: values.slug,
+						description: values.description,
+					},
+				});
 			} else {
 				// 创建新分类
-				const newCategory: Category = {
-					id: Date.now(), // 实际项目中应该由后端生成
-					...values,
-					postCount: 0,
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString(),
-				};
-				setCategories([...categories, newCategory]);
-				message.success("分类创建成功！");
+				await createCategoryMutation.mutateAsync({
+					name: values.name,
+					slug: values.slug,
+					description: values.description,
+				});
 			}
 
 			setIsModalVisible(false);
 			form.resetFields();
-		} catch (_error) {
-			message.error("操作失败，请重试");
-		} finally {
-			setLoading(false);
+		} catch (error) {
+			console.error("操作失败:", error);
 		}
 	};
 
 	// 删除分类
 	const handleDelete = async (categoryId: number) => {
 		try {
-			const updatedCategories = categories.filter(
-				(category) => category.id !== categoryId,
-			);
-			setCategories(updatedCategories);
-			message.success("分类删除成功！");
-		} catch (_error) {
-			message.error("删除失败，请重试");
+			await deleteCategoryMutation.mutateAsync(categoryId);
+		} catch (error) {
+			console.error("删除失败:", error);
 		}
 	};
 
@@ -226,6 +250,14 @@ export const Categories: React.FC = () => {
 			.replace(/[^\w-]/g, "");
 	};
 
+	if (isLoading) {
+		return (
+			<div className="p-6 flex justify-center items-center min-h-screen">
+				<Spin size="large" tip="加载中..." />
+			</div>
+		);
+	}
+
 	return (
 		<div className="p-6 space-y-6">
 			{/* 页面标题和操作按钮 */}
@@ -240,6 +272,15 @@ export const Categories: React.FC = () => {
 				</div>
 				<Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
 					创建分类
+				</Button>
+				<Button
+					type="primary"
+					onClick={() => {
+						console.log("message", message);
+						message.success("刷新成功！");
+					}}
+				>
+					刷新
 				</Button>
 			</div>
 
@@ -282,7 +323,7 @@ export const Categories: React.FC = () => {
 				<Table
 					columns={columns}
 					dataSource={categories}
-					rowKey="id"
+					rowKey="ID"
 					pagination={{
 						total: categories.length,
 						pageSize: 10,
@@ -356,7 +397,7 @@ export const Categories: React.FC = () => {
 						/>
 					</Form.Item>
 
-					<div className="flex justify-end space-x-3 pt-4 border-t">
+					<div className="flex justify-end space-x-3 pt-4">
 						<Button
 							onClick={() => {
 								setIsModalVisible(false);
@@ -365,7 +406,14 @@ export const Categories: React.FC = () => {
 						>
 							取消
 						</Button>
-						<Button type="primary" htmlType="submit" loading={loading}>
+						<Button
+							type="primary"
+							htmlType="submit"
+							loading={
+								createCategoryMutation.isPending ||
+								updateCategoryMutation.isPending
+							}
+						>
 							{editingCategory ? "更新分类" : "创建分类"}
 						</Button>
 					</div>

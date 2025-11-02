@@ -30,13 +30,13 @@ export interface Post {
 
 // 分类类型
 export interface Category {
-	id: number;
+	ID: number;
 	name: string;
-	description: string;
+	description?: string;
 	slug: string;
 	postCount: number;
-	createdAt: string;
-	updatedAt: string;
+	CreatedAt: string;
+	UpdatedAt: string;
 }
 
 // 媒体文件类型

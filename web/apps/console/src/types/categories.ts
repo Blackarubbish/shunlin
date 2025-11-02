@@ -1,22 +1,24 @@
 // 分类相关类型定义
 export interface Category {
-	id: number;
+	ID: number;
 	name: string;
 	slug: string;
 	description?: string;
-	parentId?: number;
-	parent?: Category;
-	children?: Category[];
 	postCount: number;
-	createdAt: string;
-	updatedAt: string;
+	CreatedAt: string;
+	UpdatedAt: string;
 }
 
 export interface CreateCategoryForm {
 	name: string;
+	slug: string;
+	description?: string;
+}
+
+export interface UpdateCategoryForm {
+	name?: string;
 	slug?: string;
 	description?: string;
-	parentId?: number;
 }
 
 export interface CategoryListParams {
