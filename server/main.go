@@ -6,9 +6,12 @@ import (
 	"sl-server/database"
 	"sl-server/models"
 	"sl-server/pkgs/seeder"
+	"sl-server/pkgs/validate"
 	"sl-server/routes"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 )
 
@@ -36,11 +39,17 @@ func main() {
 	database.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Post{}, &models.Media{})
 	config.Logger.Info("数据库迁移完成")
 
+	// 初始化数据
 	if err := seeder.RunSeeder(database.DB); err != nil {
 		config.Logger.Fatal("初始化数据失败", zap.Error(err))
-
 	}
 
+	// 初始化验证器
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		validate.BindingValidator(v)
+	}
+
+	// 初始化路由
 	r := gin.Default()
 
 	// 静态文件服务，使用配置中的上传路径

@@ -1,8 +1,6 @@
-// handlers/auth.go - 更新现有文件
 package handlers
 
 import (
-	"net/http"
 	"sl-server/config"
 	"sl-server/database"
 	"sl-server/dto"
@@ -21,7 +19,7 @@ func Register(c *gin.Context) {
 	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		config.Logger.Warn("用户注册数据绑定失败", zap.Error(err))
-		response.ErrorWithDetail(c, response.ErrValidation, err.Error())
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
@@ -31,7 +29,7 @@ func Register(c *gin.Context) {
 	var existingUser models.User
 	if err := database.DB.Where("username = ? OR email = ?", req.Username, req.Email).First(&existingUser).Error; err == nil {
 		config.Logger.Warn("用户名或邮箱已存在", zap.String("username", req.Username))
-		response.ErrorWithDetail(c, response.ErrUserExists)
+		response.Error(c, response.ErrUserExists.Error())
 		return
 	}
 
@@ -45,7 +43,7 @@ func Register(c *gin.Context) {
 
 	if err := database.DB.Create(&user).Error; err != nil {
 		config.Logger.Error("用户创建失败", zap.String("username", req.Username), zap.Error(err))
-		response.ErrorWithDetail(c, response.ErrDatabaseError, "用户创建失败")
+		response.Error(c, response.ErrUserCreateFailed.WithCause(err.Error()))
 		return
 	}
 
@@ -66,7 +64,7 @@ func Login(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		config.Logger.Warn("用户登录数据绑定失败", zap.Error(err))
-		response.ErrorWithDetail(c, response.ErrValidation, err.Error())
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
@@ -76,21 +74,21 @@ func Login(c *gin.Context) {
 	var user models.User
 	if err := database.DB.Where("username = ? OR email = ?", req.Username, req.Username).First(&user).Error; err != nil {
 		config.Logger.Warn("用户查询失败", zap.String("username", req.Username), zap.Error(err))
-		response.ErrorWithDetail(c, response.ErrUserOrPasswordWrong, err.Error())
+		response.Error(c, response.ErrUserOrPasswordWrong.Error())
 		return
 	}
 
 	// 检查用户状态
 	if !user.CanLogin() {
 		config.Logger.Warn("用户账户被禁用", zap.String("username", req.Username), zap.String("status", user.Status))
-		response.ErrorWithDetail(c, response.ErrForbidden)
+		response.Error(c, response.ErrAccountDisabled.Error())
 		return
 	}
 
 	// 验证密码
 	if !user.CheckPassword(req.Password) {
 		config.Logger.Warn("密码验证失败", zap.String("username", req.Username))
-		response.ErrorWithDetail(c, response.ErrUserOrPasswordWrong)
+		response.Error(c, response.ErrUserOrPasswordWrong.Error())
 		return
 	}
 
@@ -98,7 +96,7 @@ func Login(c *gin.Context) {
 	tokenPair, err := jwtService.GenerateTokenPair(&user)
 	if err != nil {
 		config.Logger.Error("JWT token生成失败", zap.String("username", req.Username), zap.Error(err))
-		response.ErrorWithDetail(c, response.ErrInternal, err.Error())
+		response.Error(c, response.ErrInternal.WithCause(err.Error()))
 		return
 	}
 
@@ -128,14 +126,15 @@ func Login(c *gin.Context) {
 func RefreshToken(c *gin.Context) {
 	var req dto.RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		config.Logger.Warn("refresh token validation failed", zap.Error(err))
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
 	tokenPair, err := jwtService.RefreshAccessToken(req.RefreshToken)
 	if err != nil {
 		config.Logger.Warn("刷新令牌失败", zap.Error(err))
-		response.Error(c, http.StatusUnauthorized, "无效的刷新令牌")
+		response.Error(c, response.ErrTokenInvalid.WithCause(err.Error()))
 		return
 	}
 
@@ -146,7 +145,7 @@ func RefreshToken(c *gin.Context) {
 func Logout(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
-		response.Error(c, http.StatusUnauthorized, "未授权")
+		response.Error(c, response.ErrUnauthorized.Error())
 		return
 	}
 
@@ -162,25 +161,26 @@ func Logout(c *gin.Context) {
 func ChangePassword(c *gin.Context) {
 	var req dto.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		config.Logger.Warn("change password validation failed", zap.Error(err))
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
 	userID, exists := c.Get("user_id")
 	if !exists {
-		response.Error(c, http.StatusUnauthorized, "未授权")
+		response.Error(c, response.ErrUnauthorized.Error())
 		return
 	}
 
 	var user models.User
 	if err := database.DB.First(&user, userID).Error; err != nil {
-		response.Error(c, http.StatusNotFound, "用户不存在")
+		response.Error(c, response.ErrUserNotFound.WithID(userID))
 		return
 	}
 
 	// 验证旧密码
 	if !user.CheckPassword(req.OldPassword) {
-		response.Error(c, http.StatusBadRequest, "旧密码错误")
+		response.Error(c, response.ErrUserPasswordWrong.Error())
 		return
 	}
 
@@ -188,7 +188,7 @@ func ChangePassword(c *gin.Context) {
 	user.Password = req.NewPassword
 	if err := database.DB.Save(&user).Error; err != nil {
 		config.Logger.Error("密码更新失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, "密码更新失败")
+		response.Error(c, response.ErrUserUpdateFailed.WithCause(err.Error()))
 		return
 	}
 
@@ -203,13 +203,13 @@ func ChangePassword(c *gin.Context) {
 func GetProfile(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
-		response.Error(c, http.StatusUnauthorized, "未授权")
+		response.Error(c, response.ErrUnauthorized.Error())
 		return
 	}
 
 	var user models.User
 	if err := database.DB.First(&user, userID).Error; err != nil {
-		response.Error(c, http.StatusNotFound, "用户不存在")
+		response.Error(c, response.ErrUserNotFound.WithID(userID))
 		return
 	}
 

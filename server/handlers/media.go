@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"net/http"
 	"sl-server/config"
 	"sl-server/dto"
 	"sl-server/pkgs/response"
@@ -20,7 +19,7 @@ func UploadFile(c *gin.Context) {
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
 		config.Logger.Warn("未找到上传文件", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, "请选择要上传的文件")
+		response.Error(c, response.ErrMediaFileNotFound.Error())
 		return
 	}
 
@@ -32,7 +31,7 @@ func UploadFile(c *gin.Context) {
 	result, err := services.UploadFile(fileHeader, userID)
 	if err != nil {
 		config.Logger.Error("文件上传失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.Error(c, err)
 		return
 	}
 
@@ -50,13 +49,13 @@ func BatchUploadFiles(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
 		config.Logger.Warn("解析表单失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, "解析表单失败")
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
 	files := form.File["files"]
 	if len(files) == 0 {
-		response.Error(c, http.StatusBadRequest, "请选择要上传的文件")
+		response.Error(c, response.ErrMediaFileNotFound.Error())
 		return
 	}
 
@@ -65,7 +64,7 @@ func BatchUploadFiles(c *gin.Context) {
 	result, err := services.BatchUpload(files, userID)
 	if err != nil {
 		config.Logger.Error("批量上传失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.Error(c, err)
 		return
 	}
 
@@ -80,7 +79,8 @@ func BatchUploadFiles(c *gin.Context) {
 func GetMediaList(c *gin.Context) {
 	var query dto.MediaQueryDto
 	if err := c.ShouldBindQuery(&query); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		config.Logger.Warn("get media list validation failed", zap.Error(err))
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
@@ -89,7 +89,7 @@ func GetMediaList(c *gin.Context) {
 	result, err := services.GetMediaList(query)
 	if err != nil {
 		config.Logger.Error("获取媒体列表失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.Error(c, err)
 		return
 	}
 
@@ -101,14 +101,15 @@ func GetMediaByID(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		response.Error(c, http.StatusBadRequest, "无效的媒体ID")
+		config.Logger.Warn("get media by id validation failed", zap.Error(err))
+		response.Error(c, response.ErrMediaInvalidID.WithCause(err.Error()))
 		return
 	}
 
 	media, err := services.GetMediaByID(uint(id))
 	if err != nil {
 		config.Logger.Error("获取媒体信息失败", zap.Error(err))
-		response.Error(c, http.StatusNotFound, err.Error())
+		response.Error(c, err)
 		return
 	}
 
@@ -120,7 +121,8 @@ func DeleteMedia(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		response.Error(c, http.StatusBadRequest, "无效的媒体ID")
+		config.Logger.Warn("delete media validation failed", zap.Error(err))
+		response.Error(c, response.ErrMediaInvalidID.WithCause(err.Error()))
 		return
 	}
 
@@ -129,7 +131,7 @@ func DeleteMedia(c *gin.Context) {
 
 	if err := services.DeleteMedia(uint(id), userID); err != nil {
 		config.Logger.Error("删除媒体失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.Error(c, err)
 		return
 	}
 
@@ -141,7 +143,8 @@ func UpdateMediaInfo(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		response.Error(c, http.StatusBadRequest, "无效的媒体ID")
+		config.Logger.Warn("update media validation failed", zap.Error(err))
+		response.Error(c, response.ErrMediaInvalidID.WithCause(err.Error()))
 		return
 	}
 
@@ -151,7 +154,8 @@ func UpdateMediaInfo(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, "参数错误")
+		config.Logger.Warn("update media data binding failed", zap.Error(err))
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
@@ -160,7 +164,7 @@ func UpdateMediaInfo(c *gin.Context) {
 	media, err := services.UpdateMediaInfo(uint(id), userID, req.Description, req.Alt)
 	if err != nil {
 		config.Logger.Error("更新媒体信息失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.Error(c, err)
 		return
 	}
 

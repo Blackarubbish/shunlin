@@ -16,3 +16,8 @@ type Post struct {
 	Category   Category `gorm:"foreignKey:CategoryID"`
 	Tag        string   `json:"tag" gorm:"type:json"`
 }
+
+const (
+	PostStatusDraft     = "draft"
+	PostStatusPublished = "published"
+)

@@ -3,6 +3,7 @@ package middleware
 
 import (
 	"net/http"
+	"sl-server/config"
 	"sl-server/consts"
 	"sl-server/database"
 	"sl-server/models"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 var jwtService = services.NewJWTService()
@@ -32,6 +34,7 @@ func AuthRequired() gin.HandlerFunc {
 		// 将用户信息存储到上下文中
 		c.Set("user_id", claims.UserID)
 		c.Set("username", claims.Username)
+		config.Logger.Info("auth required success", zap.Any("claims", claims))
 		c.Next()
 	}
 }

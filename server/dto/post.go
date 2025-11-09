@@ -7,7 +7,6 @@ type CreatePostRequestDto struct {
 	Content    string `json:"content" binding:"required"`
 	Slug       string `json:"slug"`
 	CategoryID uint   `json:"categoryID" binding:"required"`
-	AuthorID   uint   `json:"authorID" binding:"required"`
 }
 
 type CreatePostResponseDto struct {

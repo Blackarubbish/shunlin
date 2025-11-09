@@ -6,27 +6,39 @@ import (
 	"sl-server/database"
 	"sl-server/dto"
 	"sl-server/models"
+	resp "sl-server/pkgs/response"
 	"sl-server/pkgs/utils"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-func CreatePost(postRequest dto.CreatePostRequestDto) (*models.Post, error) {
+func CreatePost(c *gin.Context, postRequest dto.CreatePostRequestDto) (*models.Post, error) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		return nil, resp.ErrInternal.WithCause("user_id not found")
+	}
+
 	var post models.Post
 
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
 		// 1. 验证用户和分类存在
 		var user models.User
-		if err := tx.First(&user, postRequest.AuthorID).Error; err != nil {
-			return fmt.Errorf("用户不存在: %v", err)
+		if err := tx.First(&user, userID).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				return resp.ErrUserNotFound.WithID(userID)
+			}
+			return resp.ErrInternal.WithCause(err.Error())
 		}
 
 		var category models.Category
 		if err := tx.First(&category, postRequest.CategoryID).Error; err != nil {
-			return fmt.Errorf("分类不存在: %v", err)
+			if err == gorm.ErrRecordNotFound {
+				return resp.ErrCategoryNotFound.WithID(postRequest.CategoryID)
+			}
+			return resp.ErrInternal.WithCause(err.Error())
 		}
-
 		// 2. 生成或格式化slug
 		slug := postRequest.Slug
 		if slug == "" {
@@ -35,25 +47,9 @@ func CreatePost(postRequest dto.CreatePostRequestDto) (*models.Post, error) {
 			slug = utils.FormatSlug(slug)
 		}
 
-		// 3. 在事务中处理slug唯一性（加锁查询）
-		originalSlug := slug
-		for i := 1; ; i++ {
-			var count int64
-			// 使用FOR UPDATE锁定相关记录，防止并发插入
-			if err := tx.Model(&models.Post{}).Where("slug = ?", slug).Count(&count).Error; err != nil {
-				return fmt.Errorf("检查slug失败: %v", err)
-			}
-
-			if count == 0 {
-				break // slug可用
-			}
-
-			// slug已存在，生成新的
-			if i == 1 {
-				slug = fmt.Sprintf("%s-%d", originalSlug, i+1)
-			} else {
-				slug = fmt.Sprintf("%s-%d", originalSlug, i+1)
-			}
+		// 3. 检查slug是否唯一
+		if err := tx.Where("slug = ?", slug).First(&models.Post{}).Error; err == nil {
+			return resp.ErrPostSlugNotUnique.WithDetail(map[string]interface{}{"slug": slug})
 		}
 
 		// 4. 创建文章
@@ -61,20 +57,19 @@ func CreatePost(postRequest dto.CreatePostRequestDto) (*models.Post, error) {
 			Title:      postRequest.Title,
 			Content:    postRequest.Content,
 			Slug:       slug,
-			AuthorID:   postRequest.AuthorID,
-			Status:     "draft",
-			CategoryID: postRequest.CategoryID,
+			AuthorID:   uint(userID.(uint)),
+			Status:     models.PostStatusDraft,
+			CategoryID: uint(postRequest.CategoryID),
 		}
 
 		if err := tx.Create(&post).Error; err != nil {
-			return fmt.Errorf("创建文章失败: %v", err)
+			return resp.ErrCreatePostFailed.WithCause(err.Error())
 		}
 
 		return nil
 	})
 
 	if err != nil {
-		config.Logger.Error("创建文章失败", zap.Error(err))
 		return nil, err
 	}
 
@@ -107,8 +102,8 @@ func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 	// 获取总数（使用相同的查询条件）
 	var total int64
 	if err := baseQuery.Count(&total).Error; err != nil {
-		config.Logger.Error("获取文章总数失败", zap.Error(err))
-		return nil, fmt.Errorf("get posts count failed: %v", err)
+		config.Logger.Error("get posts count failed", zap.Error(err))
+		return nil, resp.ErrGetPostsCountFailed.WithCause(err.Error())
 	}
 
 	// 添加排序和分页
@@ -117,8 +112,8 @@ func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 	}
 
 	if err := baseQuery.Offset((query.PageNum - 1) * query.PageSize).Limit(query.PageSize).Find(&posts).Error; err != nil {
-		config.Logger.Error("获取文章列表失败", zap.Error(err))
-		return nil, fmt.Errorf("get posts failed: %v", err)
+		config.Logger.Error("get posts data failed", zap.Error(err))
+		return nil, resp.ErrGetPostsFailed.WithCause(err.Error())
 	}
 
 	return &dto.GetPostsResponseDto{
@@ -132,8 +127,11 @@ func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 func GetOnePostByID(id uint) (*models.Post, error) {
 	post := models.Post{}
 	if err := database.DB.Preload("Category").First(&post, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, resp.ErrPostNotFound.WithID(id)
+		}
 		config.Logger.Error("获取文章失败", zap.Error(err))
-		return nil, fmt.Errorf("get post failed: %v", err)
+		return nil, resp.ErrInternal.WithCause(err.Error())
 	}
 	return &post, nil
 }
@@ -144,30 +142,39 @@ func UpdatePost(id uint, updatePostRequest dto.UpdatePostRequestDto) (*models.Po
 	// 使用事务确保数据一致性
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Preload("Category").First(&post, id).Error; err != nil {
-			return fmt.Errorf("文章不存在: %v", err)
+			if err == gorm.ErrRecordNotFound {
+				return resp.ErrPostNotFound.WithID(id)
+			}
+			return resp.ErrInternal.WithCause(err.Error())
 		}
 
 		if updatePostRequest.CategoryID != 0 && updatePostRequest.CategoryID != post.CategoryID {
 			var category models.Category
 			if err := tx.First(&category, updatePostRequest.CategoryID).Error; err != nil {
-				return fmt.Errorf("分类不存在: %v", err)
+				if err == gorm.ErrRecordNotFound {
+					return resp.ErrCategoryNotFound.WithID(updatePostRequest.CategoryID)
+				}
+				return resp.ErrInternal.WithCause(err.Error())
 			}
 		}
 
 		if updatePostRequest.AuthorID != 0 && updatePostRequest.AuthorID != post.AuthorID {
 			var user models.User
 			if err := tx.First(&user, updatePostRequest.AuthorID).Error; err != nil {
-				return fmt.Errorf("作者不存在: %v", err)
+				if err == gorm.ErrRecordNotFound {
+					return resp.ErrUserNotFound.WithID(updatePostRequest.AuthorID)
+				}
+				return resp.ErrInternal.WithCause(err.Error())
 			}
 		}
 
 		// 4. 执行更新
 		if err := tx.Model(&post).Updates(updatePostRequest).Error; err != nil {
-			return fmt.Errorf("更新失败: %v", err)
+			return resp.ErrUpdatePostFailed.WithCause(err.Error())
 		}
 
 		if err := tx.Preload("Category").First(&post, id).Error; err != nil {
-			return fmt.Errorf("重新加载失败: %v", err)
+			return resp.ErrInternal.WithCause(err.Error())
 		}
 
 		return nil
@@ -188,9 +195,17 @@ func UpdatePost(id uint, updatePostRequest dto.UpdatePostRequestDto) (*models.Po
 
 func DeletePost(id uint) error {
 	post := models.Post{}
+	if err := database.DB.First(&post, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return resp.ErrPostNotFound.WithID(id)
+		}
+		config.Logger.Error("查询文章失败", zap.Error(err))
+		return resp.ErrInternal.WithCause(err.Error())
+	}
+
 	if err := database.DB.Delete(&post, id).Error; err != nil {
 		config.Logger.Error("删除文章失败", zap.Error(err))
-		return fmt.Errorf("delete post failed: %v id: %d", err, id)
+		return resp.ErrDeletePostFailed.WithCause(err.Error())
 	}
 	return nil
 }
@@ -213,7 +228,7 @@ func GetPublicPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error
 	var total int64
 	if err := baseQuery.Count(&total).Error; err != nil {
 		config.Logger.Error("获取公开文章总数失败", zap.Error(err))
-		return nil, fmt.Errorf("获取文章总数失败: %v", err)
+		return nil, resp.ErrGetPostsCountFailed.WithCause(err.Error())
 	}
 
 	// 添加排序和分页
@@ -226,7 +241,7 @@ func GetPublicPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error
 	offset := (query.PageNum - 1) * query.PageSize
 	if err := baseQuery.Offset(offset).Limit(query.PageSize).Find(&posts).Error; err != nil {
 		config.Logger.Error("获取公开文章列表失败", zap.Error(err))
-		return nil, fmt.Errorf("获取文章列表失败: %v", err)
+		return nil, resp.ErrGetPostsFailed.WithCause(err.Error())
 	}
 
 	return &dto.GetPostsResponseDto{
@@ -269,7 +284,7 @@ func GetAdminPosts(query dto.GetPostsQueryDto, userRole string, userID uint) (*d
 	var total int64
 	if err := baseQuery.Count(&total).Error; err != nil {
 		config.Logger.Error("获取管理文章总数失败", zap.Error(err))
-		return nil, fmt.Errorf("获取文章总数失败: %v", err)
+		return nil, resp.ErrGetPostsCountFailed.WithCause(err.Error())
 	}
 
 	// 添加排序和分页
@@ -282,7 +297,7 @@ func GetAdminPosts(query dto.GetPostsQueryDto, userRole string, userID uint) (*d
 	offset := (query.PageNum - 1) * query.PageSize
 	if err := baseQuery.Offset(offset).Limit(query.PageSize).Find(&posts).Error; err != nil {
 		config.Logger.Error("获取管理文章列表失败", zap.Error(err))
-		return nil, fmt.Errorf("获取文章列表失败: %v", err)
+		return nil, resp.ErrGetPostsFailed.WithCause(err.Error())
 	}
 
 	return &dto.GetPostsResponseDto{
