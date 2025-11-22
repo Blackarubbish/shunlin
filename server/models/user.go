@@ -9,15 +9,15 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	Username     string     `gorm:"unique;not null;size:50"`
-	Password     string     `gorm:"not null;size:255" json:"-"`
-	Email        string     `gorm:"unique;size:100"`
-	Status       string     `gorm:"default:'active';size:20"` // active, inactive, banned
-	LastLoginAt  *time.Time `gorm:"null"`
-	LoginCount   int        `gorm:"default:0"`
-	RefreshToken string     `gorm:"size:500" json:"-"`
-	Role         string     `gorm:"default:'guest';size:20"` // guest, user, admin
+	BaseModel
+	Username     string     `json:"username" gorm:"unique;not null;size:50"`
+	Password     string     `json:"-" gorm:"not null;size:255"`
+	Email        string     `json:"email" gorm:"unique;size:100"`
+	Status       string     `json:"status" gorm:"default:'active';size:20"` // active, inactive, banned
+	LastLoginAt  *time.Time `json:"last_login_at" gorm:"null"`
+	LoginCount   int        `json:"login_count" gorm:"default:0"`
+	RefreshToken string     `json:"-" gorm:"size:500"`
+	Role         string     `json:"role" gorm:"default:'guest';size:20"` // guest, user, admin
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {

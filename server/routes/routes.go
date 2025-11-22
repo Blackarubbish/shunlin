@@ -19,7 +19,6 @@ func RegisterRoutes(r *gin.Engine) {
 			auth.POST("/login", handlers.Login)
 			auth.POST("/refresh", handlers.RefreshToken)
 		}
-
 		// 博客接口, 公开
 		// _ := v1.Group("/blog")
 		{
@@ -65,6 +64,7 @@ func RegisterRoutes(r *gin.Engine) {
 			{
 				categories.POST("", handlers.CreateCategory)
 				categories.GET("", handlers.GetCategories)
+				categories.GET("/:id", handlers.GetCategoryByID)
 				categories.PATCH("/:id", handlers.UpdateCategory)
 				categories.DELETE("/:id", handlers.DeleteCategory)
 			}

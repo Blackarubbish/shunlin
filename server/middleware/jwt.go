@@ -18,6 +18,17 @@ var jwtService = services.NewJWTService()
 
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		config.Logger.Info("AuthRequired", zap.Any("config", config.AppConfig.SkipAuth))
+		// 开发环境下跳过认证
+		if config.AppConfig.SkipAuth {
+			config.Logger.Info("跳过认证校验（开发模式）")
+			// 注入一个默认的测试用户信息
+			c.Set("user_id", uint(1))
+			c.Set("username", "dev_user")
+			c.Next()
+			return
+		}
+
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, consts.AuthorizationPrefix) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "缺少访问令牌"})

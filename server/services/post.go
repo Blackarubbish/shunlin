@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreatePost(c *gin.Context, postRequest dto.CreatePostRequestDto) (*models.Post, error) {
+func CreatePost(c *gin.Context, postRequest dto.CreatePostRequestDto) (*dto.CreatePostResponseDto, error) {
 	userID, exists := c.Get("user_id")
 	if !exists {
 		return nil, resp.ErrInternal.WithCause("user_id not found")
@@ -73,17 +73,24 @@ func CreatePost(c *gin.Context, postRequest dto.CreatePostRequestDto) (*models.P
 		return nil, err
 	}
 
-	return &post, nil
+	return &dto.CreatePostResponseDto{
+		ID:       post.ID,
+		Title:    post.Title,
+		Content:  post.Content,
+		Slug:     post.Slug,
+		AuthorID: post.AuthorID,
+		Category: post.Category,
+	}, nil
 }
 
 func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
-	posts := []models.Post{}
+	var posts []models.Post
 
-	// 构建基础查询
+	// 构建基础查询 - 排除 content 字段以提高性能
 	baseQuery := database.DB.Model(&models.Post{}).Preload("Category")
 
 	// 添加查询条件
-	if query.Status != "" {
+	if query.Status != 0 {
 		baseQuery = baseQuery.Where("status = ?", query.Status)
 	}
 	if query.Title != "" {
@@ -116,15 +123,32 @@ func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 		return nil, resp.ErrGetPostsFailed.WithCause(err.Error())
 	}
 
+	// 转换为 DTO
+	items := make([]dto.PostListItemDto, len(posts))
+	for i, post := range posts {
+		items[i] = dto.PostListItemDto{
+			ID:         post.ID,
+			CreatedAt:  post.CreatedAt,
+			UpdatedAt:  post.UpdatedAt,
+			Title:      post.Title,
+			Slug:       post.Slug,
+			Status:     post.Status,
+			AuthorID:   post.AuthorID,
+			CategoryID: post.CategoryID,
+			Category:   post.Category,
+			Tag:        post.Tag,
+		}
+	}
+
 	return &dto.GetPostsResponseDto{
-		Items: posts,
+		Items: items,
 		Total: int(total),
 		Page:  query.PageNum,
 		Size:  query.PageSize,
 	}, nil
 }
 
-func GetOnePostByID(id uint) (*models.Post, error) {
+func GetOnePostByID(id uint) (*dto.GetOnePostResponseDto, error) {
 	post := models.Post{}
 	if err := database.DB.Preload("Category").First(&post, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -133,10 +157,21 @@ func GetOnePostByID(id uint) (*models.Post, error) {
 		config.Logger.Error("获取文章失败", zap.Error(err))
 		return nil, resp.ErrInternal.WithCause(err.Error())
 	}
-	return &post, nil
+	return &dto.GetOnePostResponseDto{
+		ID:         post.ID,
+		CreatedAt:  post.CreatedAt,
+		UpdatedAt:  post.UpdatedAt,
+		Title:      post.Title,
+		Slug:       post.Slug,
+		Status:     post.Status,
+		AuthorID:   post.AuthorID,
+		CategoryID: post.CategoryID,
+		Category:   post.Category,
+		Content:    post.Content,
+	}, nil
 }
 
-func UpdatePost(id uint, updatePostRequest dto.UpdatePostRequestDto) (*models.Post, error) {
+func UpdatePost(id uint, updatePostRequest dto.UpdatePostRequestDto) (*dto.UpdatePostResponseDto, error) {
 	var post models.Post
 
 	// 使用事务确保数据一致性
@@ -190,7 +225,18 @@ func UpdatePost(id uint, updatePostRequest dto.UpdatePostRequestDto) (*models.Po
 		zap.String("title", post.Title),
 		zap.String("category", post.Category.Name))
 
-	return &post, nil
+	return &dto.UpdatePostResponseDto{
+		ID:         post.ID,
+		CreatedAt:  post.CreatedAt,
+		UpdatedAt:  post.UpdatedAt,
+		Title:      post.Title,
+		Slug:       post.Slug,
+		Status:     post.Status,
+		AuthorID:   post.AuthorID,
+		CategoryID: post.CategoryID,
+		Category:   post.Category,
+		Content:    post.Content,
+	}, nil
 }
 
 func DeletePost(id uint) error {
@@ -213,8 +259,11 @@ func DeletePost(id uint) error {
 func GetPublicPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 	var posts []models.Post
 
-	// 构建基础查询 - 只查询已发布的文章
-	baseQuery := database.DB.Model(&models.Post{}).Preload("Category").Where("status = ?", "published")
+	// 构建基础查询 - 只查询已发布的文章，排除 content 字段
+	baseQuery := database.DB.Model(&models.Post{}).
+		Select("id", "created_at", "updated_at", "deleted_at", "title", "slug", "status", "author_id", "category_id", "tag").
+		Preload("Category").
+		Where("status = ?", models.PostStatusPublished)
 
 	// 添加其他查询条件
 	if query.Title != "" {
@@ -244,8 +293,25 @@ func GetPublicPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error
 		return nil, resp.ErrGetPostsFailed.WithCause(err.Error())
 	}
 
+	// 转换为 DTO
+	items := make([]dto.PostListItemDto, len(posts))
+	for i, post := range posts {
+		items[i] = dto.PostListItemDto{
+			ID:         post.ID,
+			CreatedAt:  post.CreatedAt,
+			UpdatedAt:  post.UpdatedAt,
+			Title:      post.Title,
+			Slug:       post.Slug,
+			Status:     post.Status,
+			AuthorID:   post.AuthorID,
+			CategoryID: post.CategoryID,
+			Category:   post.Category,
+			Tag:        post.Tag,
+		}
+	}
+
 	return &dto.GetPostsResponseDto{
-		Items: posts,
+		Items: items,
 		Total: int(total),
 		Page:  query.PageNum,
 		Size:  query.PageSize,
@@ -256,8 +322,10 @@ func GetPublicPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error
 func GetAdminPosts(query dto.GetPostsQueryDto, userRole string, userID uint) (*dto.GetPostsResponseDto, error) {
 	var posts []models.Post
 
-	// 构建基础查询
-	baseQuery := database.DB.Model(&models.Post{}).Preload("Category").Preload("User")
+	// 构建基础查询 - 排除 content 字段
+	baseQuery := database.DB.Model(&models.Post{}).
+		Select("id", "created_at", "updated_at", "deleted_at", "title", "slug", "status", "author_id", "category_id", "tag").
+		Preload("Category")
 
 	// 根据用户角色限制查询范围
 	if userRole == "author" {
@@ -267,7 +335,7 @@ func GetAdminPosts(query dto.GetPostsQueryDto, userRole string, userID uint) (*d
 	// admin 和 editor 可以看到所有文章
 
 	// 添加查询条件
-	if query.Status != "" {
+	if query.Status != 0 {
 		baseQuery = baseQuery.Where("status = ?", query.Status)
 	}
 	if query.Title != "" {
@@ -300,8 +368,25 @@ func GetAdminPosts(query dto.GetPostsQueryDto, userRole string, userID uint) (*d
 		return nil, resp.ErrGetPostsFailed.WithCause(err.Error())
 	}
 
+	// 转换为 DTO
+	items := make([]dto.PostListItemDto, len(posts))
+	for i, post := range posts {
+		items[i] = dto.PostListItemDto{
+			ID:         post.ID,
+			CreatedAt:  post.CreatedAt,
+			UpdatedAt:  post.UpdatedAt,
+			Title:      post.Title,
+			Slug:       post.Slug,
+			Status:     post.Status,
+			AuthorID:   post.AuthorID,
+			CategoryID: post.CategoryID,
+			Category:   post.Category,
+			Tag:        post.Tag,
+		}
+	}
+
 	return &dto.GetPostsResponseDto{
-		Items: posts,
+		Items: items,
 		Total: int(total),
 		Page:  query.PageNum,
 		Size:  query.PageSize,

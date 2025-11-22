@@ -28,6 +28,9 @@ type Config struct {
 
 	// 加密密钥
 	EncryptKey string
+
+	// 开发环境配置
+	SkipAuth bool // 开发环境下跳过认证
 }
 
 var AppConfig *Config
@@ -50,6 +53,7 @@ func LoadConfig() error {
 		LogLevel:   getEnv("LOG_LEVEL", "info"),
 		UploadPath: getEnv("UPLOAD_PATH", "./uploads"),
 		EncryptKey: getEnv("ENCRYPT_KEY", ""),
+		SkipAuth:   getEnvAsBool("SKIP_AUTH", false),
 	}
 
 	if Logger != nil {
@@ -59,6 +63,7 @@ func LoadConfig() error {
 			zap.String("db_path", AppConfig.DBPath),
 			zap.String("log_level", AppConfig.LogLevel),
 			zap.String("upload_path", AppConfig.UploadPath),
+			zap.Bool("skip_auth", AppConfig.SkipAuth),
 			// zap.String("encrypt_key", AppConfig.EncryptKey),
 		)
 	}

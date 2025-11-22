@@ -97,3 +97,20 @@ func DeleteCategory(c *gin.Context) {
 	}
 	response.Success(c, nil)
 }
+
+func GetCategoryByID(c *gin.Context) {
+	id := c.Param("id")
+	idUint, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		config.Logger.Warn("get category by id validation failed", zap.Error(err))
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
+		return
+	}
+	category, err := services.GetCategoryByID(uint(idUint))
+	if err != nil {
+		config.Logger.Error("get category by id failed", zap.Error(err))
+		response.Error(c, err)
+		return
+	}
+	response.Success(c, category)
+}

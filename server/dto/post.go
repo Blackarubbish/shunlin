@@ -1,6 +1,9 @@
 package dto
 
-import "sl-server/models"
+import (
+	"sl-server/models"
+	"time"
+)
 
 type CreatePostRequestDto struct {
 	Title      string `json:"title" binding:"required,min=1,max=200"`
@@ -10,10 +13,12 @@ type CreatePostRequestDto struct {
 }
 
 type CreatePostResponseDto struct {
-	ID      uint   `json:"id"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Slug    string `json:"slug"`
+	ID       uint            `json:"id"`
+	Title    string          `json:"title"`
+	Content  string          `json:"content"`
+	Slug     string          `json:"slug"`
+	AuthorID uint            `json:"authorID"`
+	Category models.Category `json:"category"`
 }
 
 type GetPostsQueryDto struct {
@@ -23,7 +28,7 @@ type GetPostsQueryDto struct {
 	AuthorID   uint   `form:"authorID" binding:"omitempty,min=1"`
 	PageNum    int    `form:"pageNum" binding:"omitempty,min=1"`
 	PageSize   int    `form:"pageSize" binding:"omitempty,min=1,max=100"`
-	Status     string `form:"status" binding:"omitempty,oneof=draft published"`
+	Status     int    `form:"status" binding:"omitempty,oneof=0 1"` // 0=草稿 1=已发布
 	SortOrder  string `form:"sortOrder" binding:"omitempty,oneof=asc desc"`
 }
 
@@ -40,11 +45,25 @@ func (q *GetPostsQueryDto) Normalize() {
 	}
 }
 
+// PostListItemDto 文章列表项（不包含完整内容）
+type PostListItemDto struct {
+	ID         uint            `json:"id"`
+	CreatedAt  time.Time       `json:"created_at"`
+	UpdatedAt  time.Time       `json:"updated_at"`
+	Title      string          `json:"title"`
+	Slug       string          `json:"slug"`
+	Status     int             `json:"status"` // 0=草稿 1=已发布
+	AuthorID   uint            `json:"author_id"`
+	CategoryID uint            `json:"category_id"`
+	Category   models.Category `json:"category"`
+	Tag        string          `json:"tag"`
+}
+
 type GetPostsResponseDto struct {
-	Items []models.Post `json:"items"`
-	Total int           `json:"total"`
-	Page  int           `json:"page"`
-	Size  int           `json:"size"`
+	Items []PostListItemDto `json:"items"`
+	Total int               `json:"total"`
+	Page  int               `json:"page"`
+	Size  int               `json:"size"`
 }
 
 type UpdatePostRequestDto struct {
@@ -53,5 +72,31 @@ type UpdatePostRequestDto struct {
 	Slug       string `json:"slug"`
 	CategoryID uint   `json:"categoryID"`
 	AuthorID   uint   `json:"authorID"`
-	Status     string `json:"status"`
+	Status     int    `json:"status"` // 0=草稿 1=已发布
+}
+
+type GetOnePostResponseDto struct {
+	ID         uint            `json:"id"`
+	CreatedAt  time.Time       `json:"created_at"`
+	UpdatedAt  time.Time       `json:"updated_at"`
+	Title      string          `json:"title"`
+	Slug       string          `json:"slug"`
+	Status     int             `json:"status"` // 0=草稿 1=已发布
+	AuthorID   uint            `json:"author_id"`
+	CategoryID uint            `json:"category_id"`
+	Category   models.Category `json:"category"`
+	Content    string          `json:"content"`
+}
+
+type UpdatePostResponseDto struct {
+	ID         uint            `json:"id"`
+	CreatedAt  time.Time       `json:"created_at"`
+	UpdatedAt  time.Time       `json:"updated_at"`
+	Title      string          `json:"title"`
+	Slug       string          `json:"slug"`
+	Status     int             `json:"status"` // 0=草稿 1=已发布
+	AuthorID   uint            `json:"author_id"`
+	CategoryID uint            `json:"category_id"`
+	Category   models.Category `json:"category"`
+	Content    string          `json:"content"`
 }

@@ -59,12 +59,47 @@ func GetOneByNameOrSlug(name string, slug string) (*models.Category, error) {
 
 func GetCategories(query dto.GetCategoriesQueryDto) (*dto.GetCategoriesResponseDto, error) {
 	var categories []models.Category
-	if err := database.DB.Find(&categories).Error; err != nil {
+
+	// 构建基础查询
+	baseQuery := database.DB.Model(&models.Category{})
+
+	// 添加筛选条件
+	if query.Name != "" {
+		baseQuery = baseQuery.Where("name LIKE ?", "%"+query.Name+"%")
+	}
+	if query.Slug != "" {
+		baseQuery = baseQuery.Where("slug = ?", query.Slug)
+	}
+
+	// 获取总数（在分页前）
+	var total int64
+	if err := baseQuery.Count(&total).Error; err != nil {
 		return nil, resp.ErrInternal.WithCause(err.Error())
 	}
+
+	// 设置默认值
+	if query.Page <= 0 {
+		query.Page = 1
+	}
+	if query.Size <= 0 {
+		query.Size = 10
+	}
+	if query.SortOrder == "" {
+		query.SortOrder = "desc"
+	}
+
+	// 添加排序
+	baseQuery = baseQuery.Order("created_at " + query.SortOrder)
+
+	// 分页查询
+	offset := (query.Page - 1) * query.Size
+	if err := baseQuery.Offset(offset).Limit(query.Size).Find(&categories).Error; err != nil {
+		return nil, resp.ErrInternal.WithCause(err.Error())
+	}
+
 	return &dto.GetCategoriesResponseDto{
 		Items: categories,
-		Total: len(categories),
+		Total: int(total),
 		Page:  query.Page,
 		Size:  query.Size,
 	}, nil
@@ -126,4 +161,16 @@ func DeleteCategory(id uint) error {
 
 		return nil
 	})
+}
+
+// GetCategoryByID 根据ID获取单个分类
+func GetCategoryByID(id uint) (*models.Category, error) {
+	var category models.Category
+	if err := database.DB.First(&category, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, resp.ErrCategoryNotFound.WithID(id)
+		}
+		return nil, resp.ErrInternal.WithCause(err.Error())
+	}
+	return &category, nil
 }

@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type Media struct {
-	gorm.Model
+	BaseModel
 	OriginalName string `json:"original_name" gorm:"not null"`          // 原始文件名
 	Filename     string `json:"filename" gorm:"not null;unique"`        // 存储的文件名（重命名后）
 	Filepath     string `json:"filepath" gorm:"not null"`               // 文件路径
@@ -19,5 +17,5 @@ type Media struct {
 	Hash         string `json:"hash" gorm:"not null"`                   // 文件hash
 
 	// 关联
-	User User `gorm:"foreignKey:UploadedBy"`
+	User User `json:"user" gorm:"foreignKey:UploadedBy"`
 }
