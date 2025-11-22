@@ -23,12 +23,8 @@ func UploadFile(c *gin.Context) {
 		return
 	}
 
-	// 2. 获取用户ID（从JWT或session中获取）
-	// 这里暂时硬编码，实际应该从认证中间件获取
-	userID := uint(1) // TODO: 从认证中间件获取真实用户ID
-
 	// 3. 调用服务层处理上传
-	result, err := services.UploadFile(fileHeader, userID)
+	result, err := services.UploadFile(c, fileHeader)
 	if err != nil {
 		config.Logger.Error("文件上传失败", zap.Error(err))
 		response.Error(c, err)
@@ -43,37 +39,37 @@ func UploadFile(c *gin.Context) {
 }
 
 // BatchUploadFiles 批量文件上传
-func BatchUploadFiles(c *gin.Context) {
-	config.Logger.Info("批量文件上传请求")
+// func BatchUploadFiles(c *gin.Context) {
+// 	config.Logger.Info("批量文件上传请求")
 
-	form, err := c.MultipartForm()
-	if err != nil {
-		config.Logger.Warn("解析表单失败", zap.Error(err))
-		response.Error(c, response.ErrValidation.WithCause(err.Error()))
-		return
-	}
+// 	form, err := c.MultipartForm()
+// 	if err != nil {
+// 		config.Logger.Warn("解析表单失败", zap.Error(err))
+// 		response.Error(c, response.ErrValidation.WithCause(err.Error()))
+// 		return
+// 	}
 
-	files := form.File["files"]
-	if len(files) == 0 {
-		response.Error(c, response.ErrMediaFileNotFound.Error())
-		return
-	}
+// 	files := form.File["files"]
+// 	if len(files) == 0 {
+// 		response.Error(c, response.ErrMediaFileNotFound.Error())
+// 		return
+// 	}
 
-	userID := uint(1) // TODO: 从认证中间件获取
+// 	userID := uint(1) // TODO: 从认证中间件获取
 
-	result, err := services.BatchUpload(files, userID)
-	if err != nil {
-		config.Logger.Error("批量上传失败", zap.Error(err))
-		response.Error(c, err)
-		return
-	}
+// 	result, err := services.BatchUpload(files, userID)
+// 	if err != nil {
+// 		config.Logger.Error("批量上传失败", zap.Error(err))
+// 		response.Error(c, err)
+// 		return
+// 	}
 
-	config.Logger.Info("批量上传完成",
-		zap.Int("success", result.SuccessCount),
-		zap.Int("error", result.ErrorCount))
+// 	config.Logger.Info("批量上传完成",
+// 		zap.Int("success", result.SuccessCount),
+// 		zap.Int("error", result.ErrorCount))
 
-	response.Success(c, result)
-}
+// 	response.Success(c, result)
+// }
 
 // GetMediaList 获取媒体列表
 func GetMediaList(c *gin.Context) {

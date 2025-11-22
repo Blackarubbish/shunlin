@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateCategory(categoryRequest dto.CategoryRequestDto) (*dto.CategoryResponseDto, error) {
+func CreateCategory(categoryRequest dto.CreateCategoryRequestDto) (*dto.CreateCategoryResponseDto, error) {
 	category := models.Category{
 		Name:        categoryRequest.Name,
 		Description: categoryRequest.Description,
@@ -39,7 +39,7 @@ func CreateCategory(categoryRequest dto.CategoryRequestDto) (*dto.CategoryRespon
 		return nil, err
 	}
 
-	return &dto.CategoryResponseDto{
+	return &dto.CreateCategoryResponseDto{
 		ID:   category.ID,
 		Name: category.Name,
 		Slug: category.Slug,
@@ -81,8 +81,8 @@ func GetCategories(query dto.GetCategoriesQueryDto) (*dto.GetCategoriesResponseD
 	if query.Page <= 0 {
 		query.Page = 1
 	}
-	if query.Size <= 0 {
-		query.Size = 10
+	if query.PageSize <= 0 {
+		query.PageSize = 10
 	}
 	if query.SortOrder == "" {
 		query.SortOrder = "desc"
@@ -92,20 +92,20 @@ func GetCategories(query dto.GetCategoriesQueryDto) (*dto.GetCategoriesResponseD
 	baseQuery = baseQuery.Order("created_at " + query.SortOrder)
 
 	// 分页查询
-	offset := (query.Page - 1) * query.Size
-	if err := baseQuery.Offset(offset).Limit(query.Size).Find(&categories).Error; err != nil {
+	offset := (query.Page - 1) * query.PageSize
+	if err := baseQuery.Offset(offset).Limit(query.PageSize).Find(&categories).Error; err != nil {
 		return nil, resp.ErrInternal.WithCause(err.Error())
 	}
 
 	return &dto.GetCategoriesResponseDto{
-		Items: categories,
-		Total: int(total),
-		Page:  query.Page,
-		Size:  query.Size,
+		Items:    categories,
+		Total:    int(total),
+		Page:     query.Page,
+		PageSize: query.PageSize,
 	}, nil
 }
 
-func UpdateCategory(id uint, categoryRequest dto.UpdateCategoryRequestDto) (*dto.CategoryResponseDto, error) {
+func UpdateCategory(id uint, categoryRequest dto.UpdateCategoryRequestDto) (*dto.UpdateCategoryResponseDto, error) {
 	var category models.Category
 	if err := database.DB.First(&category, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -122,7 +122,7 @@ func UpdateCategory(id uint, categoryRequest dto.UpdateCategoryRequestDto) (*dto
 		return nil, resp.ErrCategoryUpdateFailed.WithCause(err.Error())
 	}
 
-	return &dto.CategoryResponseDto{
+	return &dto.UpdateCategoryResponseDto{
 		ID:   category.ID,
 		Name: category.Name,
 	}, nil
@@ -164,7 +164,7 @@ func DeleteCategory(id uint) error {
 }
 
 // GetCategoryByID 根据ID获取单个分类
-func GetCategoryByID(id uint) (*models.Category, error) {
+func GetCategoryByID(id uint) (*dto.GetOneCategoryResponseDto, error) {
 	var category models.Category
 	if err := database.DB.First(&category, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -172,5 +172,12 @@ func GetCategoryByID(id uint) (*models.Category, error) {
 		}
 		return nil, resp.ErrInternal.WithCause(err.Error())
 	}
-	return &category, nil
+	return &dto.GetOneCategoryResponseDto{
+		ID:          category.ID,
+		Name:        category.Name,
+		Slug:        category.Slug,
+		Description: category.Description,
+		CreatedAt:   category.CreatedAt,
+		UpdatedAt:   category.UpdatedAt,
+	}, nil
 }

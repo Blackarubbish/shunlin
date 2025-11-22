@@ -42,7 +42,7 @@ func RegisterRoutes(r *gin.Engine) {
 			media := admin.Group("/media")
 			{
 				media.POST("/upload", handlers.UploadFile)
-				media.POST("/batch-upload", handlers.BatchUploadFiles)
+				// media.POST("/batch-upload", handlers.BatchUploadFiles)
 				media.GET("/list", handlers.GetMediaList)
 				media.GET("/:id", handlers.GetMediaByID)
 				media.PUT("/:id", handlers.UpdateMediaInfo)

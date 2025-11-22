@@ -13,7 +13,7 @@ import (
 )
 
 func CreateCategory(c *gin.Context) {
-	var categoryRequest dto.CategoryRequestDto
+	var categoryRequest dto.CreateCategoryRequestDto
 	if err := c.ShouldBindJSON(&categoryRequest); err != nil {
 		validateErrors, ok := err.(validator.ValidationErrors)
 		if ok {

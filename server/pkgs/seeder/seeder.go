@@ -105,7 +105,7 @@ func SeedUser(db *gorm.DB) error {
 
 func SeedCategory(db *gorm.DB) error {
 
-	services.CreateCategory(dto.CategoryRequestDto{
+	services.CreateCategory(dto.CreateCategoryRequestDto{
 		Name:        "默认分类",
 		Slug:        "default",
 		Description: "默认分类",

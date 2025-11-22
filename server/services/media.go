@@ -12,12 +12,21 @@ import (
 	"sl-server/pkgs/response"
 	"sl-server/pkgs/upload"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 // UploadFile 上传单个文件
-func UploadFile(fileHeader *multipart.FileHeader, userID uint) (*dto.UploadResponseDto, error) {
+func UploadFile(c *gin.Context, fileHeader *multipart.FileHeader) (*dto.UploadResponseDto, error) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		return nil, response.ErrInternal.WithCause("user_id not found")
+	}
+	userIDUint := uint(userID.(uint))
+	if userIDUint == 0 {
+		return nil, response.ErrInternal.WithCause("user_id is 0")
+	}
 	var media models.Media
 
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
@@ -68,7 +77,7 @@ func UploadFile(fileHeader *multipart.FileHeader, userID uint) (*dto.UploadRespo
 			MimeType:     mimeType,
 			Filesize:     fileHeader.Size,
 			Extension:    extension,
-			UploadedBy:   userID,
+			UploadedBy:   userIDUint,
 			Status:       "active",
 		}
 
@@ -90,7 +99,7 @@ func UploadFile(fileHeader *multipart.FileHeader, userID uint) (*dto.UploadRespo
 		zap.String("filename", media.Filename),
 		zap.String("original", media.OriginalName),
 		zap.Int64("size", media.Filesize),
-		zap.Uint("user_id", userID))
+		zap.Uint("user_id", userIDUint))
 
 	return &dto.UploadResponseDto{
 		ID:           media.ID,
@@ -202,47 +211,47 @@ func DeleteMedia(id uint, userID uint) error {
 }
 
 // BatchUpload 批量上传文件
-func BatchUpload(files []*multipart.FileHeader, userID uint) (*dto.BatchUploadResponseDto, error) {
-	if len(files) == 0 {
-		return nil, response.ErrMediaFileNotFound.Error()
-	}
+// func BatchUpload(files []*multipart.FileHeader, userID uint) (*dto.BatchUploadResponseDto, error) {
+// 	if len(files) == 0 {
+// 		return nil, response.ErrMediaFileNotFound.Error()
+// 	}
 
-	// 限制批量上传数量
-	if len(files) > 10 {
-		return nil, response.ErrMediaBatchUploadLimit.WithDetail(map[string]interface{}{
-			"count": len(files),
-			"limit": 10,
-		})
-	}
+// 	// 限制批量上传数量
+// 	if len(files) > 10 {
+// 		return nil, response.ErrMediaBatchUploadLimit.WithDetail(map[string]interface{}{
+// 			"count": len(files),
+// 			"limit": 10,
+// 		})
+// 	}
 
-	var results []dto.UploadResponseDto
-	var errors []string
+// 	var results []dto.UploadResponseDto
+// 	var errors []string
 
-	for _, fileHeader := range files {
-		result, err := UploadFile(fileHeader, userID)
-		if err != nil {
-			errorMsg := fmt.Sprintf("%s: %s", fileHeader.Filename, err.Error())
-			errors = append(errors, errorMsg)
-			config.Logger.Warn("批量上传中的文件失败",
-				zap.String("filename", fileHeader.Filename),
-				zap.Error(err))
-			continue
-		}
-		results = append(results, *result)
-	}
+// 	for _, fileHeader := range files {
+// 		result, err := UploadFile(c, fileHeader)
+// 		if err != nil {
+// 			errorMsg := fmt.Sprintf("%s: %s", fileHeader.Filename, err.Error())
+// 			errors = append(errors, errorMsg)
+// 			config.Logger.Warn("批量上传中的文件失败",
+// 				zap.String("filename", fileHeader.Filename),
+// 				zap.Error(err))
+// 			continue
+// 		}
+// 		results = append(results, *result)
+// 	}
 
-	config.Logger.Info("批量上传完成",
-		zap.Int("total", len(files)),
-		zap.Int("success", len(results)),
-		zap.Int("failed", len(errors)))
+// 	config.Logger.Info("批量上传完成",
+// 		zap.Int("total", len(files)),
+// 		zap.Int("success", len(results)),
+// 		zap.Int("failed", len(errors)))
 
-	return &dto.BatchUploadResponseDto{
-		SuccessCount: len(results),
-		ErrorCount:   len(errors),
-		Results:      results,
-		Errors:       errors,
-	}, nil
-}
+// 	return &dto.BatchUploadResponseDto{
+// 		SuccessCount: len(results),
+// 		ErrorCount:   len(errors),
+// 		Results:      results,
+// 		Errors:       errors,
+// 	}, nil
+// }
 
 // UpdateMediaInfo 更新媒体信息
 func UpdateMediaInfo(id uint, userID uint, description, alt string) (*models.Media, error) {

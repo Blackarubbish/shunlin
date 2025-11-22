@@ -15,7 +15,6 @@ type Media struct {
 	Description  string `json:"description"`                            // 文件描述
 	Alt          string `json:"alt"`                                    // 图片alt文本
 	Hash         string `json:"hash" gorm:"not null"`                   // 文件hash
-
 	// 关联
 	User User `json:"user" gorm:"foreignKey:UploadedBy"`
 }
