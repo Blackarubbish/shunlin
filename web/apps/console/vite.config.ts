@@ -13,7 +13,7 @@ export default defineConfig({
 		open: true,
 		cors: true,
 		proxy: {
-			"/api": "http://localhost:8880",
+			"/api": "http://localhost:8822",
 		},
 	},
 	resolve: {

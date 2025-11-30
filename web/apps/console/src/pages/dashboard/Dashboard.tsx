@@ -23,13 +23,95 @@ import {
 import type React from "react";
 import { useNavigate } from "react-router-dom";
 import type { Post } from "../../types";
-import { mockDashboardStats } from "../../utils/mockData";
+
+// import { mockDashboardStats } from "../../utils/mockData";
 
 const { Title, Text } = Typography;
 
 export const Dashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const stats = mockDashboardStats;
+
+	// 临时数据占位
+	const stats = {
+		totalPosts: 156,
+		publishedPosts: 128,
+		totalCategories: 12,
+		totalMediaFiles: 342,
+		recentPosts: [
+			{
+				id: "1",
+				title: "React 18 新特性详解",
+				author: "张三",
+				createdAt: "2024-11-25",
+				category: "前端开发",
+				status: "published",
+				viewCount: 1250,
+			},
+			{
+				id: "2",
+				title: "TypeScript 高级类型系统",
+				author: "李四",
+				createdAt: "2024-11-24",
+				category: "编程语言",
+				status: "published",
+				viewCount: 980,
+			},
+			{
+				id: "3",
+				title: "前端性能优化实战",
+				author: "王五",
+				createdAt: "2024-11-23",
+				category: "前端开发",
+				status: "draft",
+				viewCount: 650,
+			},
+			{
+				id: "4",
+				title: "Node.js 微服务架构",
+				author: "赵六",
+				createdAt: "2024-11-22",
+				category: "后端开发",
+				status: "published",
+				viewCount: 520,
+			},
+			{
+				id: "5",
+				title: "GraphQL 完整指南",
+				author: "张三",
+				createdAt: "2024-11-20",
+				category: "后端开发",
+				status: "archived",
+				viewCount: 430,
+			},
+		],
+		popularPosts: [
+			{
+				id: "1",
+				title: "深入理解 JavaScript 闭包",
+				viewCount: 15680,
+			},
+			{
+				id: "2",
+				title: "CSS Grid 布局完全指南",
+				viewCount: 12340,
+			},
+			{
+				id: "3",
+				title: "Vue 3 Composition API 实战",
+				viewCount: 10250,
+			},
+			{
+				id: "4",
+				title: "Docker 容器化部署实践",
+				viewCount: 8960,
+			},
+			{
+				id: "5",
+				title: "MongoDB 数据库设计",
+				viewCount: 7820,
+			},
+		],
+	};
 
 	// 最近文章表格列定义
 	const recentPostsColumns = [

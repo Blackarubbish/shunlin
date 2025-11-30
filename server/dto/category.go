@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"sl-server/models"
 	"time"
 )
 
@@ -26,11 +25,21 @@ type GetOneCategoryResponseDto struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+type CategoryItem struct {
+	ID          uint      `json:"id"`
+	Name        string    `json:"name"`
+	Slug        string    `json:"slug"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	PostCount   int       `json:"postCount"`
+}
+
 type GetCategoriesResponseDto struct {
-	Items    []models.Category `json:"items"`
-	Total    int               `json:"total"`
-	Page     int               `json:"page"`
-	PageSize int               `json:"pageSize"`
+	Items    []CategoryItem `json:"items"`
+	Total    int            `json:"total"`
+	Page     int            `json:"page"`
+	PageSize int            `json:"pageSize"`
 }
 
 type GetCategoriesQueryDto struct {

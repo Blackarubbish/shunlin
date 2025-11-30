@@ -2,6 +2,7 @@
 package routes
 
 import (
+	"net/http"
 	"sl-server/handlers"
 	"sl-server/middleware"
 
@@ -70,4 +71,8 @@ func RegisterRoutes(r *gin.Engine) {
 			}
 		}
 	}
+	// 健康检查
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	})
 }

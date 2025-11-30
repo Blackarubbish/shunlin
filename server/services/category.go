@@ -97,8 +97,26 @@ func GetCategories(query dto.GetCategoriesQueryDto) (*dto.GetCategoriesResponseD
 		return nil, resp.ErrInternal.WithCause(err.Error())
 	}
 
+	var postCount int64
+	if err := database.DB.Model(&models.Post{}).Where("category_id = ?", categories[0].ID).Count(&postCount).Error; err != nil {
+		return nil, resp.ErrInternal.WithCause(err.Error())
+	}
+
+	items := make([]dto.CategoryItem, len(categories))
+	for i, category := range categories {
+		items[i] = dto.CategoryItem{
+			ID:          category.ID,
+			Name:        category.Name,
+			Slug:        category.Slug,
+			Description: category.Description,
+			CreatedAt:   category.CreatedAt,
+			UpdatedAt:   category.UpdatedAt,
+			PostCount:   int(postCount),
+		}
+	}
+
 	return &dto.GetCategoriesResponseDto{
-		Items:    categories,
+		Items:    items,
 		Total:    int(total),
 		Page:     query.Page,
 		PageSize: query.PageSize,
