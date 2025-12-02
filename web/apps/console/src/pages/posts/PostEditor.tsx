@@ -57,8 +57,9 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 	);
 
 	// 获取分类列表
-	const { data: categories = [], isLoading: isLoadingCategories } =
+	const { data: categoriesData, isLoading: isLoadingCategories } =
 		useCategories();
+	const categories = categoriesData?.items || [];
 
 	// 创建和更新文章的mutations
 	const createPostMutation = useCreatePost();
@@ -303,7 +304,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 							>
 								<Select placeholder="选择一个分类">
 									{categories.map((category) => (
-										<Select.Option key={category.ID} value={category.ID}>
+										<Select.Option key={category.id} value={category.id}>
 											{category.name}
 										</Select.Option>
 									))}

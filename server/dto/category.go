@@ -7,7 +7,7 @@ import (
 type CreateCategoryRequestDto struct {
 	Name        string `json:"name" binding:"required,min=1,max=200"`
 	Slug        string `json:"slug" binding:"required,slug"`
-	Description string `json:"description" binding:"required,min=1,max=300"`
+	Description string `json:"description" binding:"omitempty,min=1,max=300"`
 }
 
 type UpdateCategoryRequestDto struct {

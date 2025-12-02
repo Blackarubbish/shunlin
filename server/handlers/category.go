@@ -4,6 +4,7 @@ import (
 	"sl-server/config"
 	"sl-server/dto"
 	"sl-server/pkgs/response"
+	"sl-server/pkgs/validate"
 	"sl-server/services"
 	"strconv"
 
@@ -15,14 +16,13 @@ import (
 func CreateCategory(c *gin.Context) {
 	var categoryRequest dto.CreateCategoryRequestDto
 	if err := c.ShouldBindJSON(&categoryRequest); err != nil {
-		validateErrors, ok := err.(validator.ValidationErrors)
-		if ok {
-			config.Logger.Warn("create category validation failed", zap.Error(validateErrors))
-			response.Error(c, response.ErrValidation.WithDetail(map[string]interface{}{"cause": validateErrors.Error()}))
+		if _, ok := err.(validator.ValidationErrors); ok {
+			config.Logger.Warn("create category validation failed", zap.Error(err))
+			response.Error(c, response.ErrValidation.WithDetail(map[string]interface{}{"cause": validate.FormatValidationError(err)}))
 			return
 		}
 		config.Logger.Warn("create category data binding failed", zap.Error(err))
-		response.Error(c, response.ErrValidation.WithDetail(map[string]interface{}{"cause": err.Error()}))
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 
@@ -63,14 +63,13 @@ func UpdateCategory(c *gin.Context) {
 	}
 	var updateCategoryRequest dto.UpdateCategoryRequestDto
 	if err := c.ShouldBindJSON(&updateCategoryRequest); err != nil {
-		validateErrors, ok := err.(validator.ValidationErrors)
-		if ok {
-			config.Logger.Warn("update category validation failed", zap.Error(validateErrors))
-			response.Error(c, response.ErrValidation.WithDetail(map[string]interface{}{"cause": validateErrors.Error()}))
+		if _, ok := err.(validator.ValidationErrors); ok {
+			config.Logger.Warn("update category validation failed", zap.Error(err))
+			response.Error(c, response.ErrValidation.WithDetail(map[string]interface{}{"cause": validate.FormatValidationError(err)}))
 			return
 		}
 		config.Logger.Warn("update category data binding failed", zap.Error(err))
-		response.Error(c, response.ErrValidation.WithDetail(map[string]interface{}{"cause": err.Error()}))
+		response.Error(c, response.ErrValidation.WithCause(err.Error()))
 		return
 	}
 	categoryResponse, err := services.UpdateCategory(uint(idUint), updateCategoryRequest)
