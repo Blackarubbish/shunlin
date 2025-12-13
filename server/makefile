@@ -4,10 +4,10 @@ APP_NAME=sl-blog-server
 all: run
 
 run:
-	go run ./main.go
+	go run ./cmd/server/main.go
 
 build:
-	go build -o $(APP_NAME) ./
+	go build -o $(APP_NAME) ./cmd/server
 
 test:
 	go test ./... -v

@@ -98,9 +98,9 @@ export const PostsList: React.FC = () => {
         <div className="flex items-center space-x-2">
           <Avatar
             size={24}
-            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${author}`}
+            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${author || 'anonymous'}`}
           />
-          <span className="text-sm">{author}</span>
+          <span className="text-sm">{author || '未知作者'}</span>
         </div>
       ),
     },
@@ -109,7 +109,7 @@ export const PostsList: React.FC = () => {
       dataIndex: "category",
       key: "category",
       width: 100,
-      render: (category: string) => <Tag color="purple">{category}</Tag>,
+      render: (category: string) => <Tag color="purple">{category || '未分类'}</Tag>,
     },
     {
       title: "状态",

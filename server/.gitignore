@@ -1,4 +1,11 @@
 .env
 *.db
 
+# Runtime data
+data/
+!data/.gitkeep
+
+# Build output
+sl-server
+
 local/
