@@ -37,7 +37,7 @@ interface HttpClientOpt extends CreateAxiosDefaults {
 
 export type ResponsePlugin = (config: HttpClientOpt) => {
 	onFullfilled?: (
-		response: AxiosResponse,
+		response: AxiosResponse
 	) => AxiosResponse | Promise<AxiosResponse>;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	onRejected?: (error: any) => any;
@@ -46,7 +46,7 @@ export type ResponsePlugin = (config: HttpClientOpt) => {
 
 export type RequestPlugin = (config: HttpClientOpt) => {
 	onFullfilled?: (
-		config: InternalAxiosRequestConfig,
+		config: InternalAxiosRequestConfig
 	) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	onRejected?: (error: any) => any;

@@ -12,7 +12,6 @@ interface MainSideBarProps extends ComponentProps<typeof Sider> {
 	handleItemClick: (key: string) => void;
 }
 
-
 const { Title } = Typography;
 
 export const MainSideBar = (props: MainSideBarProps) => {

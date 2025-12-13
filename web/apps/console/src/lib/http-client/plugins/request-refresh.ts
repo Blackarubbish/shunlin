@@ -13,7 +13,7 @@ interface TokenRefreshPluginCreatorOpt {
 
 // 在 response-error.ts 中添加
 export const tokenRefreshPluginCreator = (
-	opts: TokenRefreshPluginCreatorOpt,
+	opts: TokenRefreshPluginCreatorOpt
 ): ResponsePlugin => {
 	const { onRefreshError, onRefreshSuccess } = opts;
 	// 是否开始刷新, 默认是 true
@@ -34,7 +34,7 @@ export const tokenRefreshPluginCreator = (
 							tokenStorage.set(response.token);
 							refreshTokenStorage.set(response.refresh_token);
 							originalRequest.headers.Authorization = concatBearerHeaderValue(
-								response.token,
+								response.token
 							);
 							onRefreshSuccess?.(response);
 							return axios(originalRequest);

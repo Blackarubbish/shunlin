@@ -270,7 +270,7 @@ export const UserManagement: React.FC = () => {
 								...values,
 								updatedAt: new Date().toISOString(),
 							}
-						: user,
+						: user
 				);
 				setUsers(updatedUsers);
 				message.success("用户信息更新成功！");
@@ -316,7 +316,7 @@ export const UserManagement: React.FC = () => {
 							status: user.status === "active" ? "inactive" : "active",
 							updatedAt: new Date().toISOString(),
 						}
-					: user,
+					: user
 			);
 			setUsers(updatedUsers as User[]);
 			message.success("用户状态更新成功！");

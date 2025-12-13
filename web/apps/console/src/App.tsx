@@ -5,6 +5,7 @@ import { router } from "./router";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GlobalMenuProvider } from "./providers/useGlobalMenu";
+import { themeConfig } from "./theme";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -20,26 +21,7 @@ const queryClient = new QueryClient({
 function App() {
 	return (
 		<StyleProvider layer>
-			<ConfigProvider
-				theme={{
-					token: {
-						// Seed Token，影响范围大
-						colorPrimary: "#00b96b",
-						borderRadius: 6,
-					},
-					components: {
-						Layout: {
-							headerHeight: 76,
-						},
-						Modal: {
-							zIndexBase: 1000, // Modal 的基础 z-index
-						},
-						Message: {
-							zIndexPopup: 1010, // Message 的 z-index 高于 Modal
-						},
-					},
-				}}
-			>
+			<ConfigProvider theme={themeConfig}>
 				<AntdApp>
 					<GlobalMenuProvider>
 						<QueryClientProvider client={queryClient}>

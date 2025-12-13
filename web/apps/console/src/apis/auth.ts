@@ -17,7 +17,7 @@ export const authApi = {
 					username: data.email,
 					password: hashPassword(data.password),
 				},
-			},
+			}
 		);
 		return res;
 	},
@@ -32,7 +32,7 @@ export const authApi = {
 					email: data.email,
 					password: hashPassword(data.password),
 				},
-			},
+			}
 		);
 		return res;
 	},
@@ -45,7 +45,7 @@ export const authApi = {
 				data: {
 					refresh_token: refreshToken,
 				},
-			},
+			}
 		);
 		return res;
 	},

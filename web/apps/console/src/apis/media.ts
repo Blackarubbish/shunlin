@@ -23,7 +23,7 @@ export const mediaApi = {
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
-			},
+			}
 		);
 		return res;
 	},
@@ -43,7 +43,7 @@ export const mediaApi = {
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
-			},
+			}
 		);
 		return res;
 	},
@@ -55,7 +55,7 @@ export const mediaApi = {
 			HttpMethod.GET,
 			{
 				params,
-			},
+			}
 		);
 		return res;
 	},
@@ -65,7 +65,7 @@ export const mediaApi = {
 		const res = await httpClient.jsonRequest<MediaFile>(
 			`/api/v1/admin/media/${id}`,
 			HttpMethod.GET,
-			{},
+			{}
 		);
 		return res;
 	},
@@ -77,7 +77,7 @@ export const mediaApi = {
 			HttpMethod.PUT,
 			{
 				data,
-			},
+			}
 		);
 		return res;
 	},
@@ -87,7 +87,7 @@ export const mediaApi = {
 		const res = await httpClient.jsonRequest<{ message: string }>(
 			`/api/v1/admin/media/${id}`,
 			HttpMethod.DELETE,
-			{},
+			{}
 		);
 		return res;
 	},

@@ -7,7 +7,7 @@ interface BearerTokenPluginCreatorOpt {
 }
 
 export const bearerTokenPluginCreator = (
-	opts: BearerTokenPluginCreatorOpt,
+	opts: BearerTokenPluginCreatorOpt
 ): RequestPlugin => {
 	const { token } = opts;
 	console.log("token1111", token);
@@ -17,7 +17,7 @@ export const bearerTokenPluginCreator = (
 			onFullfilled: (config) => {
 				console.log("config3333", config);
 				config.headers.Authorization = concatBearerHeaderValue(
-					typeof token === "function" ? token(config) : token,
+					typeof token === "function" ? token(config) : token
 				);
 				return config;
 			},

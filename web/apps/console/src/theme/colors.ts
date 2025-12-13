@@ -1,0 +1,73 @@
+// 颜色系统定义
+export const colors = {
+	primary: "#635BFF",
+	secondary: "#16CDC7",
+	primaryEmphasis: "#5249fe",
+	secondaryEmphasis: "#1cc3bd",
+	lightPrimary: "#635BFF40",
+	lightSecondary: "#16CDC740",
+	info: "#46CAEB",
+	success: "#36c96c",
+	warning: "#f8c20a",
+	error: "#FF6692",
+	lightSuccess: "#2EA95C40",
+	lightError: "#FF669260",
+	lightInfo: "#46caeb40",
+	lightWarning: "#F8C20A40",
+	white: "#fff",
+	dark: "#1F2A3D",
+	border: "#e0e6eb",
+	borderGray: "#f3f3f4",
+	darkBorder: "#333F55",
+	link: "#2a3547",
+	muted: "#EFF4FA",
+	darkMuted: "#2A3851",
+	darkLink: "#29343d",
+	lightGray: "#F4F7FB",
+	lightHover: "#f6f7f9",
+	darkGray: "#1A2537",
+	sky: "#0A2540",
+	errorEmphasis: "#d9577c",
+	warningEmphasis: "#d3a509",
+	successEmphasis: "#2ea95c",
+	infoEmphasis: "#3cacc8",
+	surfaceLd: "#ffffff",
+	bodyText: "#98A4AE",
+} as const;
+
+// 为了在 CSS 中使用，导出 CSS 变量
+export const cssVariables = `
+  --color-primary: ${colors.primary};
+  --color-secondary: ${colors.secondary};
+  --color-primary-emphasis: ${colors.primaryEmphasis};
+  --color-secondary-emphasis: ${colors.secondaryEmphasis};
+  --color-lightprimary: ${colors.lightPrimary};
+  --color-lightsecondary: ${colors.lightSecondary};
+  --color-info: ${colors.info};
+  --color-success: ${colors.success};
+  --color-warning: ${colors.warning};
+  --color-error: ${colors.error};
+  --color-lightsuccess: ${colors.lightSuccess};
+  --color-lighterror: ${colors.lightError};
+  --color-lightinfo: ${colors.lightInfo};
+  --color-lightwarning: ${colors.lightWarning};
+  --color-white: ${colors.white};
+  --color-dark: ${colors.dark};
+  --color-border: ${colors.border};
+  --color-bordergray: ${colors.borderGray};
+  --color-darkborder: ${colors.darkBorder};
+  --color-link: ${colors.link};
+  --color-muted: ${colors.muted};
+  --color-darkmuted: ${colors.darkMuted};
+  --color-darklink: ${colors.darkLink};
+  --color-lightgray: ${colors.lightGray};
+  --color-lighthover: ${colors.lightHover};
+  --color-darkgray: ${colors.darkGray};
+  --color-sky: ${colors.sky};
+  --color-error-emphasis: ${colors.errorEmphasis};
+  --color-warning-emphasis: ${colors.warningEmphasis};
+  --color-success-emphasis: ${colors.successEmphasis};
+  --color-info-emphasis: ${colors.infoEmphasis};
+  --color-surface-ld: ${colors.surfaceLd};
+  --color-bodytext: ${colors.bodyText};
+`;

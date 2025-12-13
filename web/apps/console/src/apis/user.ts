@@ -8,7 +8,7 @@ export const userApi = {
 		const res = await httpClient.jsonRequest<User>(
 			"/api/v1/admin/user/profile",
 			HttpMethod.GET,
-			{},
+			{}
 		);
 		return res;
 	},
@@ -23,7 +23,7 @@ export const userApi = {
 					current_password: hashPassword(data.currentPassword),
 					new_password: hashPassword(data.newPassword),
 				},
-			},
+			}
 		);
 		return res;
 	},
@@ -33,7 +33,7 @@ export const userApi = {
 		const res = await httpClient.jsonRequest<{ message: string }>(
 			"/api/v1/admin/user/logout",
 			HttpMethod.POST,
-			{},
+			{}
 		);
 		return res;
 	},

@@ -34,6 +34,7 @@ export interface PostListResponse {
 
 export interface CreatePostForm {
   title: string;
+  slug: string;
   content: string;
   excerpt?: string;
   status: "published" | "draft" | "archived";
@@ -43,6 +44,7 @@ export interface CreatePostForm {
 
 export interface UpdatePostForm {
   title?: string;
+  slug?: string;
   content?: string;
   excerpt?: string;
   status?: "published" | "draft" | "archived";

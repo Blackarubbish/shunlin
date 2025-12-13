@@ -109,7 +109,9 @@ const LoginDemo = () => {
 				>
 					<Paragraph style={{ margin: 0, color: "var(--color-text-success)" }}>
 						💡 <strong>提示</strong>
-						：登录页面已经集成到路由系统中，您可以直接访问 <code>/login</code>{" "}
+						：登录页面已经集成到路由系统中，您可以直接访问 <code>
+							/login
+						</code>{" "}
 						路径查看效果。
 					</Paragraph>
 				</div>

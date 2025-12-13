@@ -87,7 +87,7 @@ const GlobalMenuContext = createContext<GlobalMenuContextType>({
 
 export const searchItemByKey = (
 	key: string,
-	items: MenuItem[],
+	items: MenuItem[]
 ): MenuItem | undefined => {
 	if (items.length === 0) return;
 	for (const item of items) {
@@ -107,7 +107,7 @@ export const searchItemByKey = (
 
 export const searchItemByPath = (
 	path: string,
-	items: MenuItem[],
+	items: MenuItem[]
 ): MenuItem | undefined => {
 	if (items.length === 0) return;
 	for (const item of items) {

@@ -12,7 +12,7 @@ interface ErrorHandlerPluginCreatorOpt {
 	onError?: (error: HttpError) => void;
 }
 export const errorHandlerPluginCreator = (
-	opts: ErrorHandlerPluginCreatorOpt = {},
+	opts: ErrorHandlerPluginCreatorOpt = {}
 ): ResponsePlugin => {
 	const { onError } = opts;
 	return () => {

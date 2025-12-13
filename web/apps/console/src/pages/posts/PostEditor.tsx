@@ -1,9 +1,4 @@
-import {
-	EyeOutlined,
-	SaveOutlined,
-	SendOutlined,
-	TagOutlined,
-} from "@ant-design/icons";
+import { EyeOutlined, SaveOutlined, SendOutlined } from "@ant-design/icons";
 import {
 	Button,
 	Card,
@@ -14,10 +9,9 @@ import {
 	Select,
 	Space,
 	Spin,
-	Switch,
-	Tag,
 	Typography,
 } from "antd";
+import { pinyin } from "pinyin-pro";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -28,11 +22,7 @@ import { useCreatePost, usePost, useUpdatePost } from "../../hooks/usePosts";
 const { Text } = Typography;
 const { TextArea } = Input;
 
-interface PostEditorProps {
-	mode: "create" | "edit";
-}
-
-export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
+export const PostEditor: React.FC = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const [form] = Form.useForm();
@@ -41,6 +31,9 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 	const [_previewMode, setPreviewMode] = useState(false);
 	const [_publishDrawerOpen, setPublishDrawerOpen] = useState(false);
 	const [content, setContent] = useState("");
+
+	// 根据 URL 中是否有 id 来判断是创建还是编辑模式
+	const mode = id ? "edit" : "create";
 
 	const [drawerOpts, setDrawerOpts] = useState<{
 		open: boolean;
@@ -53,7 +46,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 	// 使用真实API获取文章数据 (编辑模式)
 	const { data: post, isLoading: isLoadingPost } = usePost(
 		Number(id),
-		mode === "edit" && !!id,
+		mode === "edit" && !!id
 	);
 
 	// 获取分类列表
@@ -72,6 +65,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 			setContent(post.content);
 			form.setFieldsValue({
 				title: post.title,
+				slug: generateSlug(post.title), // 从标题生成 slug
 				excerpt: post.excerpt,
 				categoryId: post.categoryId,
 				status: post.status,
@@ -86,7 +80,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 	}, [mode, post, form]);
 
 	// 处理标签添加
-	const handleAddTag = () => {
+	const _handleAddTag = () => {
 		if (newTag && !tags.includes(newTag)) {
 			setTags([...tags, newTag]);
 			setNewTag("");
@@ -94,15 +88,42 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 	};
 
 	// 处理标签删除
-	const handleRemoveTag = (tagToRemove: string) => {
+	const _handleRemoveTag = (tagToRemove: string) => {
 		setTags(tags.filter((tag) => tag !== tagToRemove));
+	};
+
+	// 生成 slug - 使用 pinyin-pro 自动转换中文为拼音
+	const generateSlug = (title: string) => {
+		if (!title) return "";
+
+		// 使用 pinyin-pro 转换中文为拼音
+		const pinyinStr = pinyin(title, {
+			toneType: "none", // 不带声调
+			type: "string", // 返回字符串
+			separator: "-", // 中文字之间用连字符分隔
+			pattern: "pinyin", // 只转换中文，保留其他字符
+			nonZh: "consecutive", // 保留非中文字符
+		});
+
+		return pinyinStr
+			.toLowerCase()
+			.replace(/\s+/g, "-") // 空格转为连字符
+			.replace(/[^\w-]/g, "") // 移除非字母数字和连字符的字符
+			.replace(/-+/g, "-") // 多个连字符合并为一个
+			.replace(/^-|-$/g, ""); // 移除开头和结尾的连字符
 	};
 
 	// 处理表单提交
 	const handleSubmit = async (values: Record<string, unknown>) => {
 		try {
+			if (!content || content.trim() === "") {
+				message.error("请输入文章内容");
+				return;
+			}
+
 			const postData = {
 				title: values.title as string,
+				slug: values.slug as string,
 				content,
 				excerpt: values.excerpt as string,
 				status: values.status as "published" | "draft" | "archived",
@@ -272,7 +293,28 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 									placeholder="输入一个吸引人的标题..."
 									size="large"
 									className="text-lg"
+									onChange={(e) => {
+										// 自动生成 slug 并设置到表单
+										const slug = generateSlug(e.target.value);
+										form.setFieldsValue({ slug });
+									}}
 								/>
+							</Form.Item>
+
+							{/* 文章别名(slug) */}
+							<Form.Item
+								name="slug"
+								label="文章别名 (URL)"
+								rules={[
+									{ required: true, message: "请输入文章别名" },
+									{
+										pattern: /^[a-z0-9-]+$/,
+										message: "别名只能包含小写字母、数字和连字符",
+									},
+								]}
+								tooltip="用于生成文章的 URL，例如：my-first-post"
+							>
+								<Input placeholder="my-article-slug" />
 							</Form.Item>
 
 							{/* 文章摘要 */}
@@ -309,72 +351,6 @@ export const PostEditor: React.FC<PostEditorProps> = ({ mode = "create" }) => {
 										</Select.Option>
 									))}
 								</Select>
-							</Form.Item>
-						</Form>
-					</Card>
-
-					{/* 标签设置 */}
-					<Card title="标签设置" size="small" className="shadow-sm">
-						<div className="space-y-3">
-							<div className="flex flex-wrap gap-2">
-								{tags.map((tag) => (
-									<Tag
-										key={tag}
-										closable
-										onClose={() => handleRemoveTag(tag)}
-										color="blue"
-									>
-										{tag}
-									</Tag>
-								))}
-							</div>
-
-							<div className="flex space-x-2">
-								<Input
-									placeholder="添加标签"
-									value={newTag}
-									onChange={(e) => setNewTag(e.target.value)}
-									onPressEnter={handleAddTag}
-									size="small"
-								/>
-								<Button
-									type="primary"
-									size="small"
-									icon={<TagOutlined />}
-									onClick={handleAddTag}
-								>
-									添加
-								</Button>
-							</div>
-
-							<Text className="text-gray-500 text-xs">
-								按回车或点击添加按钮来添加标签
-							</Text>
-						</div>
-					</Card>
-
-					{/* SEO设置 */}
-					<Card title="SEO设置" size="small" className="shadow-sm">
-						<Form form={form} layout="vertical">
-							<Form.Item name="seoTitle" label="SEO标题">
-								<Input placeholder="自定义SEO标题" />
-							</Form.Item>
-
-							<Form.Item name="seoDescription" label="SEO描述">
-								<TextArea
-									placeholder="自定义SEO描述"
-									rows={3}
-									showCount
-									maxLength={160}
-								/>
-							</Form.Item>
-
-							<Form.Item
-								name="allowComments"
-								label="允许评论"
-								valuePropName="checked"
-							>
-								<Switch defaultChecked />
 							</Form.Item>
 						</Form>
 					</Card>

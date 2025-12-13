@@ -39,7 +39,7 @@ const { TextArea } = Input;
 export const Categories: React.FC = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(
-		null,
+		null
 	);
 	const [form] = Form.useForm();
 
@@ -76,7 +76,7 @@ export const Categories: React.FC = () => {
 	// 统计数据
 	const totalPosts = categories.reduce(
 		(sum, category) => sum + (category.postCount || 0),
-		0,
+		0
 	);
 	const averagePostsPerCategory =
 		categories.length > 0 ? Math.round(totalPosts / categories.length) : 0;
