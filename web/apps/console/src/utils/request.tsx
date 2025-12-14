@@ -46,7 +46,7 @@ export const httpClient = {
 	jsonRequest: async <T, D = unknown>(
 		url: string,
 		method: HttpMethodUnion,
-		config: AxiosRequestConfig<D>,
+		config: AxiosRequestConfig<D>
 	) => {
 		const res = await request.request<JsonResponse<T>>({
 			url,

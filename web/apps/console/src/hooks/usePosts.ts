@@ -2,9 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import { postsApi } from "@/apis";
 import type {
-	CreatePostForm,
+	CreatePostRequest,
 	PostListParams,
-	UpdatePostForm,
+	UpdatePostRequest,
 } from "@/types/posts";
 
 const POSTS_QUERY_KEYS = {
@@ -42,7 +42,7 @@ export const useCreatePost = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: CreatePostForm) => postsApi.createPost(data),
+		mutationFn: (data: CreatePostRequest) => postsApi.createPost(data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: POSTS_QUERY_KEYS.lists() });
 			message.success("文章创建成功！");
@@ -59,7 +59,7 @@ export const useUpdatePost = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ id, data }: { id: number; data: UpdatePostForm }) =>
+		mutationFn: ({ id, data }: { id: number; data: UpdatePostRequest }) =>
 			postsApi.updatePost(id, data),
 		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({ queryKey: POSTS_QUERY_KEYS.lists() });

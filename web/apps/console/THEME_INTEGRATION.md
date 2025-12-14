@@ -30,18 +30,18 @@ import { colors } from '@/theme/colors';
 
 ```css
 .custom-element {
-  color: var(--color-primary);
-  background-color: var(--color-lightgray);
-  border: 1px solid var(--color-border);
+	color: var(--color-primary);
+	background-color: var(--color-lightgray);
+	border: 1px solid var(--color-border);
 }
 
 .custom-button {
-  background: var(--color-primary);
-  color: var(--color-white);
+	background: var(--color-primary);
+	color: var(--color-white);
 }
 
 .custom-button:hover {
-  background: var(--color-primary-emphasis);
+	background: var(--color-primary-emphasis);
 }
 ```
 
@@ -52,20 +52,20 @@ import { colors } from '@/theme/colors';
 ```javascript
 // tailwind.config.js
 module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: 'var(--color-primary)',
-        secondary: 'var(--color-secondary)',
-        success: 'var(--color-success)',
-        warning: 'var(--color-warning)',
-        error: 'var(--color-error)',
-        info: 'var(--color-info)',
-        // ... 其他颜色
-      }
-    }
-  }
-}
+	theme: {
+		extend: {
+			colors: {
+				primary: "var(--color-primary)",
+				secondary: "var(--color-secondary)",
+				success: "var(--color-success)",
+				warning: "var(--color-warning)",
+				error: "var(--color-error)",
+				info: "var(--color-info)",
+				// ... 其他颜色
+			},
+		},
+	},
+};
 ```
 
 然后在 HTML 中使用：
@@ -78,24 +78,29 @@ module.exports = {
 ## 颜色映射表
 
 ### 主色调
+
 - `colorPrimary`: #635BFF (紫色)
 - `colorSecondary`: #16CDC7 (青色)
 
 ### 状态颜色
+
 - `colorSuccess`: #36c96c (成功/绿色)
 - `colorWarning`: #f8c20a (警告/黄色)
 - `colorError`: #FF6692 (错误/红色)
 - `colorInfo`: #46CAEB (信息/蓝色)
 
 ### 文本颜色
+
 - `colorText`: #1F2A3D (主文本)
 - `colorTextSecondary`: #98A4AE (次要文本)
 
 ### 边框颜色
+
 - `colorBorder`: #e0e6eb (主边框)
 - `colorBorderSecondary`: #f3f3f4 (次要边框)
 
 ### 背景颜色
+
 - `colorBgContainer`: #ffffff (容器背景)
 - `colorBgLayout`: #F4F7FB (布局背景)
 - `colorBgSpotlight`: #EFF4FA (高光背景)
@@ -167,23 +172,23 @@ import { Tag } from 'antd';
 ## 自定义组件使用颜色
 
 ```tsx
-import { colors } from '@/theme/colors';
+import { colors } from "@/theme/colors";
 
 const CustomCard = () => {
-  return (
-    <div 
-      style={{
-        backgroundColor: colors.white,
-        border: `1px solid ${colors.border}`,
-        borderRadius: '6px',
-        padding: '16px',
-        color: colors.dark,
-      }}
-    >
-      <h3 style={{ color: colors.primary }}>标题</h3>
-      <p style={{ color: colors.bodyText }}>内容文本</p>
-    </div>
-  );
+	return (
+		<div
+			style={{
+				backgroundColor: colors.white,
+				border: `1px solid ${colors.border}`,
+				borderRadius: "6px",
+				padding: "16px",
+				color: colors.dark,
+			}}
+		>
+			<h3 style={{ color: colors.primary }}>标题</h3>
+			<p style={{ color: colors.bodyText }}>内容文本</p>
+		</div>
+	);
 };
 ```
 
@@ -200,15 +205,14 @@ const CustomCard = () => {
 
 ```typescript
 export const themeConfig: ThemeConfig = {
-  token: {
-    // 在这里添加或修改 token
-  },
-  components: {
-    // 在这里添加或修改组件配置
-    YourComponent: {
-      // 组件特定配置
-    }
-  }
+	token: {
+		// 在这里添加或修改 token
+	},
+	components: {
+		// 在这里添加或修改组件配置
+		YourComponent: {
+			// 组件特定配置
+		},
+	},
 };
 ```
-

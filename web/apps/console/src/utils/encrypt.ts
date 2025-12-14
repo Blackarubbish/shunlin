@@ -13,7 +13,7 @@ const SECRET_KEY =
 export const aesEncrypt = (
 	data: string,
 	key: string,
-	iv: CryptoJS.lib.WordArray,
+	iv: CryptoJS.lib.WordArray
 ) => {
 	try {
 		const encrypted = CryptoJS.AES.encrypt(data, key, {
@@ -36,7 +36,7 @@ export const aesEncrypt = (
 export const aesDecrypt = (
 	encryptedData: string,
 	key: string,
-	iv: CryptoJS.lib.WordArray,
+	iv: CryptoJS.lib.WordArray
 ): string => {
 	try {
 		const decrypted = CryptoJS.AES.decrypt(encryptedData, key, {
@@ -76,7 +76,7 @@ export const generateSalt = (): string => {
  */
 export const hashPasswordWithSalt = (
 	password: string,
-	salt: string,
+	salt: string
 ): string => {
 	return CryptoJS.PBKDF2(password, salt, {
 		keySize: 256 / 32,
@@ -94,7 +94,7 @@ export const hashPasswordWithSalt = (
 export const verifyPassword = (
 	password: string,
 	hashedPassword: string,
-	salt: string,
+	salt: string
 ): boolean => {
 	const hashed = hashPasswordWithSalt(password, salt);
 	return hashed === hashedPassword;
@@ -118,7 +118,7 @@ export const base64Decrypt = (data: string): string => {
 };
 
 export const encryptPassword = (
-	password: string,
+	password: string
 ): { encrypted: string; iv: string } => {
 	const iv = CryptoJS.lib.WordArray.random(16);
 	const encrypted = aesEncrypt(password, SECRET_KEY, iv);
@@ -127,4 +127,3 @@ export const encryptPassword = (
 		iv: iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Base64),
 	};
 };
-

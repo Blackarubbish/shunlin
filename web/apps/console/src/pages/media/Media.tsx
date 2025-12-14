@@ -19,67 +19,71 @@ import {
 	Divider,
 	Image,
 	Input,
-	Modal,
 	message,
+	Modal,
 	Popconfirm,
 	Progress,
 	Row,
 	Select,
 	Space,
+	Spin,
 	Tooltip,
 	Typography,
 	Upload,
-	Spin,
 } from "antd";
 import type React from "react";
 import { useState } from "react";
-import type { MediaFile } from "../../types";
 import {
+	useDeleteMedia,
 	useMediaList,
 	useUploadFile,
-	useDeleteMedia,
 } from "../../hooks/useMedia";
+import type { MediaItem, MediaQueryParams } from "../../types/media";
 
 const { Title, Text } = Typography;
 
 export const MediaLibrary: React.FC = () => {
 	const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
 	const [searchText, setSearchText] = useState("");
-	const [fileTypeFilter, setFileTypeFilter] = useState<string>("");
-	const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-	const [previewFile, setPreviewFile] = useState<MediaFile | null>(null);
+	const [fileTypeFilter, setFileTypeFilter] = useState<
+		MediaQueryParams["filetype"] | ""
+	>("");
+	const [previewFile, setPreviewFile] = useState<MediaItem | null>(null);
+	const [page, setPage] = useState(1);
+	const [pageSize] = useState(20);
 
 	// 使用真实API
-	const { data, isLoading, refetch } = useMediaList({
-		search: searchText,
-		mimeType: fileTypeFilter,
+	const { data, isLoading, refetch, genRealFileURL } = useMediaList({
+		page,
+		pageSize,
+		filetype: fileTypeFilter || undefined,
 	});
 
 	const uploadFileMutation = useUploadFile();
 	const deleteMediaMutation = useDeleteMedia();
 
 	const mediaFiles = data?.items || [];
-	const total = data?.total || 0;
 
-	// 过滤媒体文件
+	// 过滤媒体文件（按搜索文本）
 	const filteredFiles = mediaFiles.filter((file) => {
 		const matchesSearch =
 			file.originalName.toLowerCase().includes(searchText.toLowerCase()) ||
 			file.filename.toLowerCase().includes(searchText.toLowerCase());
-		const matchesType =
-			!fileTypeFilter || file.mimeType.startsWith(fileTypeFilter);
-		return matchesSearch && matchesType;
+		return matchesSearch;
 	});
 
 	// 获取文件图标
-	const getFileIcon = (mimeType: string) => {
-		if (mimeType.startsWith("image/"))
-			return <FileImageOutlined className="text-blue-500" />;
-		if (mimeType.startsWith("video/"))
-			return <VideoCameraOutlined className="text-red-500" />;
-		if (mimeType.startsWith("audio/"))
-			return <AudioOutlined className="text-green-500" />;
-		return <FileTextOutlined className="text-gray-500" />;
+	const getFileIcon = (filetype: string) => {
+		switch (filetype) {
+			case "image":
+				return <FileImageOutlined className="text-blue-500" />;
+			case "video":
+				return <VideoCameraOutlined className="text-red-500" />;
+			case "audio":
+				return <AudioOutlined className="text-green-500" />;
+			default:
+				return <FileTextOutlined className="text-gray-500" />;
+		}
 	};
 
 	// 格式化文件大小
@@ -95,13 +99,21 @@ export const MediaLibrary: React.FC = () => {
 	const uploadProps = {
 		name: "file",
 		multiple: true,
-		customRequest: async ({ file, onSuccess, onError }: any) => {
+		customRequest: async ({
+			file,
+			onSuccess,
+			onError,
+		}: {
+			file: File | Blob | string;
+			onSuccess?: (body: unknown) => void;
+			onError?: (error: Error) => void;
+		}) => {
 			try {
 				await uploadFileMutation.mutateAsync(file as File);
-				onSuccess?.(null, file);
+				onSuccess?.(null);
 				refetch();
 			} catch (error) {
-				onError?.(error);
+				onError?.(error as Error);
 			}
 		},
 		beforeUpload: (file: File) => {
@@ -111,7 +123,7 @@ export const MediaLibrary: React.FC = () => {
 			}
 			return isValidSize;
 		},
-		onChange: (info: any) => {
+		onChange: (info: { file: { status?: string; name: string } }) => {
 			const { status } = info.file;
 			if (status === "done") {
 				message.success(`${info.file.name} 上传成功`);
@@ -167,7 +179,7 @@ export const MediaLibrary: React.FC = () => {
 	};
 
 	// 预览文件
-	const handlePreview = (file: MediaFile) => {
+	const handlePreview = (file: MediaItem) => {
 		setPreviewFile(file);
 	};
 
@@ -190,10 +202,10 @@ export const MediaLibrary: React.FC = () => {
 						}`}
 						bodyStyle={{ padding: 0 }}
 						cover={
-							file.mimeType.startsWith("image/") ? (
+							file.filetype === "image" ? (
 								<div className="aspect-square overflow-hidden">
 									<Image
-										src={file.thumbnailUrl || file.url}
+										src={file.fileURL}
 										alt={file.originalName}
 										className="w-full h-full object-cover"
 										preview={false}
@@ -204,10 +216,10 @@ export const MediaLibrary: React.FC = () => {
 								<div className="aspect-square flex items-center justify-center bg-gray-50">
 									<div className="text-center">
 										<div className="text-4xl mb-2">
-											{getFileIcon(file.mimeType)}
+											{getFileIcon(file.filetype)}
 										</div>
 										<Text className="text-xs text-gray-500">
-											{file.mimeType.split("/")[1]?.toUpperCase()}
+											{file.extension?.toUpperCase() || file.filetype}
 										</Text>
 									</div>
 								</div>
@@ -239,7 +251,7 @@ export const MediaLibrary: React.FC = () => {
 										size="small"
 										icon={<CopyOutlined />}
 										className="bg-white bg-opacity-80"
-										onClick={() => handleCopyUrl(file.url)}
+										onClick={() => handleCopyUrl(file.fileURL)}
 									/>
 								</Tooltip>
 								<Popconfirm
@@ -270,10 +282,10 @@ export const MediaLibrary: React.FC = () => {
 							</Tooltip>
 							<div className="flex items-center justify-between mt-2">
 								<Text className="text-xs text-gray-500">
-									{formatFileSize(file.size)}
+									{formatFileSize(file.filesize)}
 								</Text>
 								<Text className="text-xs text-gray-500">
-									{new Date(file.createdAt).toLocaleDateString("zh-CN")}
+									{new Date(file.uploadedAt).toLocaleDateString("zh-CN")}
 								</Text>
 							</div>
 						</div>
@@ -326,15 +338,18 @@ export const MediaLibrary: React.FC = () => {
 					<Col xs={24} sm={6}>
 						<Select
 							placeholder="文件类型"
-							value={fileTypeFilter}
-							onChange={setFileTypeFilter}
+							value={fileTypeFilter || undefined}
+							onChange={(value) => {
+								setFileTypeFilter(value || "");
+								setPage(1);
+							}}
 							allowClear
 							className="w-full"
 						>
 							<Select.Option value="image">图片</Select.Option>
 							<Select.Option value="video">视频</Select.Option>
 							<Select.Option value="audio">音频</Select.Option>
-							<Select.Option value="application">文档</Select.Option>
+							<Select.Option value="document">文档</Select.Option>
 						</Select>
 					</Col>
 					<Col xs={24} sm={10} className="flex justify-between items-center">
@@ -366,20 +381,6 @@ export const MediaLibrary: React.FC = () => {
 									</Button>
 								</Popconfirm>
 							)}
-							<Button.Group>
-								<Button
-									type={viewMode === "grid" ? "primary" : "default"}
-									onClick={() => setViewMode("grid")}
-								>
-									网格
-								</Button>
-								<Button
-									type={viewMode === "list" ? "primary" : "default"}
-									onClick={() => setViewMode("list")}
-								>
-									列表
-								</Button>
-							</Button.Group>
 						</Space>
 					</Col>
 				</Row>
@@ -419,14 +420,14 @@ export const MediaLibrary: React.FC = () => {
 					<Button
 						key="copy"
 						icon={<CopyOutlined />}
-						onClick={() => previewFile && handleCopyUrl(previewFile.url)}
+						onClick={() => previewFile && handleCopyUrl(previewFile.fileURL)}
 					>
 						复制链接
 					</Button>,
 					<Button
 						key="download"
 						icon={<DownloadOutlined />}
-						onClick={() => previewFile && window.open(previewFile.url)}
+						onClick={() => previewFile && window.open(previewFile.fileURL)}
 					>
 						下载
 					</Button>,
@@ -435,23 +436,26 @@ export const MediaLibrary: React.FC = () => {
 			>
 				{previewFile && (
 					<div className="space-y-4">
-						{previewFile.mimeType.startsWith("image/") ? (
+						{previewFile.filetype === "image" ? (
 							<div className="text-center">
 								<Image
-									src={previewFile.url}
+									src={previewFile.fileURL}
 									alt={previewFile.originalName}
 									className="max-h-96"
 								/>
 							</div>
-						) : previewFile.mimeType.startsWith("video/") ? (
+						) : previewFile.filetype === "video" ? (
 							<video controls className="w-full max-h-96">
-								<source src={previewFile.url} type={previewFile.mimeType} />
+								<source
+									src={previewFile.fileURL}
+									type={`video/${previewFile.extension}`}
+								/>
 								您的浏览器不支持视频播放
 							</video>
 						) : (
 							<div className="text-center py-12">
 								<div className="text-6xl mb-4">
-									{getFileIcon(previewFile.mimeType)}
+									{getFileIcon(previewFile.filetype)}
 								</div>
 								<Text>无法预览此文件类型</Text>
 							</div>
@@ -466,25 +470,27 @@ export const MediaLibrary: React.FC = () => {
 							</div>
 							<div>
 								<Text strong>文件大小：</Text>
-								<div>{formatFileSize(previewFile.size)}</div>
+								<div>{formatFileSize(previewFile.filesize)}</div>
 							</div>
 							<div>
 								<Text strong>文件类型：</Text>
-								<div>{previewFile.mimeType}</div>
+								<div>{previewFile.filetype}</div>
+							</div>
+							<div>
+								<Text strong>文件扩展名：</Text>
+								<div>{previewFile.extension}</div>
 							</div>
 							<div>
 								<Text strong>上传时间：</Text>
 								<div>
-									{new Date(previewFile.createdAt).toLocaleString("zh-CN")}
+									{new Date(previewFile.uploadedAt).toLocaleString("zh-CN")}
 								</div>
 							</div>
 							<div>
-								<Text strong>上传者：</Text>
-								<div>{previewFile.uploaderName}</div>
-							</div>
-							<div>
 								<Text strong>文件URL：</Text>
-								<div className="break-all text-blue-600">{previewFile.url}</div>
+								<div className="break-all text-blue-600">
+									{previewFile.fileURL}
+								</div>
 							</div>
 						</div>
 					</div>

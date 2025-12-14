@@ -1,36 +1,26 @@
+import { mediaApi } from "@/apis/media";
+import type { MediaQueryParams } from "@/types/media";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { mediaApi } from "@/apis";
-import type { MediaListParams, UpdateMediaInfoForm } from "@/types/media";
 
 const MEDIA_QUERY_KEYS = {
 	all: ["media"] as const,
 	lists: () => [...MEDIA_QUERY_KEYS.all, "list"] as const,
-	list: (params: MediaListParams) =>
+	list: (params: MediaQueryParams) =>
 		[...MEDIA_QUERY_KEYS.lists(), params] as const,
-	details: () => [...MEDIA_QUERY_KEYS.all, "detail"] as const,
-	detail: (id: number) => [...MEDIA_QUERY_KEYS.details(), id] as const,
 };
 
 // 获取媒体列表
-export const useMediaList = (params: MediaListParams = {}) => {
+export const useMediaList = (params: MediaQueryParams = {}) => {
+	const genRealFileURL = (fileURL: string) => {
+		return `${import.meta.env.VITE_APP_API_URL}${fileURL}`;
+	};
 	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: MEDIA_QUERY_KEYS.list(params),
 		queryFn: () => mediaApi.getMediaList(params),
 	});
 
-	return { data, isLoading, error, refetch };
-};
-
-// 获取单个媒体文件
-export const useMedia = (id: number, enabled = true) => {
-	const { data, isLoading, error } = useQuery({
-		queryKey: MEDIA_QUERY_KEYS.detail(id),
-		queryFn: () => mediaApi.getMediaById(id),
-		enabled: enabled && !!id,
-	});
-
-	return { data, isLoading, error };
+	return { data, isLoading, error, refetch, genRealFileURL };
 };
 
 // 上传单个文件
@@ -44,21 +34,21 @@ export const useUploadFile = () => {
 			message.success("文件上传成功！");
 		},
 		onError: (error: Error) => {
-			console.error("上传文件失败:", error);
-			message.error(error.message || "上传文件失败，请重试");
+			console.error("上传失败:", error);
+			message.error(error.message || "上传失败，请重试");
 		},
 	});
 };
 
 // 批量上传文件
-export const useBatchUploadFiles = () => {
+export const useUploadFiles = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (files: File[]) => mediaApi.batchUploadFiles(files),
-		onSuccess: () => {
+		mutationFn: (files: File[]) => mediaApi.uploadFiles(files),
+		onSuccess: (results) => {
 			queryClient.invalidateQueries({ queryKey: MEDIA_QUERY_KEYS.lists() });
-			message.success("文件批量上传成功！");
+			message.success(`成功上传 ${results.length} 个文件！`);
 		},
 		onError: (error: Error) => {
 			console.error("批量上传失败:", error);
@@ -67,28 +57,7 @@ export const useBatchUploadFiles = () => {
 	});
 };
 
-// 更新媒体信息
-export const useUpdateMediaInfo = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: ({ id, data }: { id: number; data: UpdateMediaInfoForm }) =>
-			mediaApi.updateMediaInfo(id, data),
-		onSuccess: (_, variables) => {
-			queryClient.invalidateQueries({ queryKey: MEDIA_QUERY_KEYS.lists() });
-			queryClient.invalidateQueries({
-				queryKey: MEDIA_QUERY_KEYS.detail(variables.id),
-			});
-			message.success("媒体信息更新成功！");
-		},
-		onError: (error: Error) => {
-			console.error("更新媒体信息失败:", error);
-			message.error(error.message || "更新媒体信息失败，请重试");
-		},
-	});
-};
-
-// 删除媒体
+// 删除媒体文件
 export const useDeleteMedia = () => {
 	const queryClient = useQueryClient();
 
@@ -96,11 +65,11 @@ export const useDeleteMedia = () => {
 		mutationFn: (id: number) => mediaApi.deleteMedia(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: MEDIA_QUERY_KEYS.lists() });
-			message.success("媒体删除成功！");
+			message.success("文件删除成功！");
 		},
 		onError: (error: Error) => {
-			console.error("删除媒体失败:", error);
-			message.error(error.message || "删除媒体失败，请重试");
+			console.error("删除失败:", error);
+			message.error(error.message || "删除失败，请重试");
 		},
 	});
 };

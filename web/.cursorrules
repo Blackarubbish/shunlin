@@ -1,0 +1,576 @@
+# 顺林博客前端工程 - Cursor Rules
+
+## 项目概述
+这是一个基于 Turborepo 的 Monorepo 博客前端项目，包含博客管理后台（Console）应用。使用 React 19、TypeScript、Ant Design 5.x、Tailwind CSS v4、React Router v7 和 Vite 构建。
+
+## 技术栈规范
+
+### 核心技术
+- **框架**: React 19 with TypeScript 5.8+
+- **构建工具**: Vite 7.x
+- **包管理器**: pnpm 10.12.1 (严格使用，不使用 npm/yarn)
+- **Monorepo 工具**: Turborepo 2.5+
+- **UI 框架**: Ant Design 5.27+ (配合 React 19 补丁)
+- **样式方案**: Tailwind CSS v4.1+ (使用 @theme 和 @layer 语法)
+- **路由**: React Router v7.9+
+- **状态管理**: TanStack Query (React Query) 5.90+
+- **HTTP 客户端**: Axios 1.12+ (封装自定义 httpClient)
+
+### 关键依赖
+- `@uiw/react-md-editor`: Markdown 编辑器
+- `pinyin-pro`: 中文拼音转换（用于 slug 生成）
+- `ahooks`: React Hooks 工具库
+- `crypto-js`: 加密工具
+
+## 代码风格规范
+
+### 基础规则
+1. **严格使用 TypeScript**，避免使用 `any` 类型
+2. **组件使用函数式组件 + Hooks**，不使用 Class 组件
+3. **优先使用 `const` 声明变量**，禁止使用 `var`
+4. **未使用的变量以 `_` 开头** (如 `_unused`)
+5. **遵循 ESLint 和 Prettier 配置**，提交前自动格式化
+
+### TypeScript 规范
+```typescript
+// ✅ 正确：明确的类型定义
+interface UserProps {
+  id: number;
+  username: string;
+  role: "admin" | "editor";
+}
+
+// ✅ 正确：使用类型推断
+const posts = await postsApi.getPosts();
+
+// ❌ 错误：使用 any
+const data: any = response.data;
+
+// ✅ 正确：使用泛型
+const data = await httpClient.jsonRequest<Post>(url, method, config);
+```
+
+### React 组件规范
+```typescript
+// ✅ 正确：函数式组件 + 明确的 Props 类型
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
+  loading?: boolean;
+}
+
+export const Button: React.FC<ButtonProps> = ({ label, onClick, loading = false }) => {
+  return (
+    <button onClick={onClick} disabled={loading}>
+      {label}
+    </button>
+  );
+};
+
+// ❌ 错误：缺少类型定义
+export const Button = ({ label, onClick }) => { ... };
+```
+
+### Hooks 使用规范
+1. **自定义 Hooks 必须以 `use` 开头**
+2. **使用 TanStack Query 进行数据获取**
+3. **认证状态使用 `useAuth` Hook**
+4. **遵循 Hooks 调用规则**（不在条件/循环中调用）
+
+```typescript
+// ✅ 正确：使用 TanStack Query
+const { data: posts, isLoading } = useQuery({
+  queryKey: ['posts', params],
+  queryFn: () => postsApi.getPosts(params),
+  staleTime: 5 * 60 * 1000,
+});
+
+// ✅ 正确：使用 Mutation
+const createPostMutation = useMutation({
+  mutationFn: (data: CreatePostForm) => postsApi.createPost(data),
+  onSuccess: (data) => {
+    message.success("创建成功");
+    navigate("/posts");
+  },
+});
+```
+
+## 项目结构规范
+
+### 目录结构
+```
+apps/console/src/
+├── apis/              # API 接口定义（按模块分离）
+├── components/        # 公共组件
+│   ├── layout/       # 布局组件
+│   ├── Guard.tsx     # 路由守卫
+│   └── Icons.tsx     # 图标组件
+├── hooks/            # 自定义 Hooks
+├── lib/              # 第三方库封装
+│   ├── http-client/  # HTTP 客户端封装
+│   └── sl-editor/    # 编辑器组件
+├── pages/            # 页面组件（按功能模块分离）
+│   ├── auth/         # 认证相关页面
+│   ├── dashboard/    # 仪表盘
+│   ├── posts/        # 文章管理
+│   ├── categories/   # 分类管理
+│   ├── media/        # 媒体库
+│   └── users/        # 用户管理
+├── providers/        # Context Providers
+├── router/           # 路由配置
+├── theme/            # 主题配置
+├── types/            # TypeScript 类型定义
+├── utils/            # 工具函数
+├── App.tsx           # 应用主组件
+├── App.css           # 全局样式
+└── main.tsx          # 应用入口
+```
+
+### 文件命名规范
+- **组件文件**: PascalCase (如 `PostEditor.tsx`)
+- **Hook 文件**: camelCase with `use` prefix (如 `useAuth.ts`)
+- **工具文件**: camelCase (如 `request.ts`)
+- **类型文件**: camelCase (如 `posts.ts`)
+- **样式文件**: kebab-case or same as component (如 `Login.css`)
+
+## API 与数据处理规范
+
+### API 调用模式
+```typescript
+// ✅ 正确：在 apis/ 目录定义接口
+export const postsApi = {
+  getPosts: async (params: PostListParams): Promise<PostListResponse> => {
+    const res = await httpClient.jsonRequest<ApiPostListResponse>(
+      "/api/v1/admin/posts",
+      HttpMethod.GET,
+      { params }
+    );
+    return transformApiPostList(res);
+  },
+};
+
+// ✅ 正确：在 hooks/ 中使用 TanStack Query
+export const usePosts = (params: PostListParams) => {
+  return useQuery({
+    queryKey: ['posts', params],
+    queryFn: () => postsApi.getPosts(params),
+  });
+};
+```
+
+### 数据转换规范
+- API 响应数据需要通过 **transformer** 转换为前端类型
+- 前端表单数据提交前需要转换为 API 格式
+- 转换函数统一放在 `utils/` 目录（如 `postTransformer.ts`）
+
+```typescript
+// ✅ 正确：数据转换
+export const transformApiPostToPost = (apiPost: ApiPost): Post => {
+  return {
+    id: apiPost.id,
+    title: apiPost.title,
+    status: statusMap[apiPost.status] || 'draft',
+    // ... 其他字段转换
+  };
+};
+```
+
+### 错误处理规范
+```typescript
+// ✅ 正确：在 Mutation 中处理错误
+const mutation = useMutation({
+  mutationFn: createPost,
+  onSuccess: (data) => {
+    message.success("创建成功");
+  },
+  onError: (error) => {
+    console.error("创建失败:", error);
+    message.error("创建失败，请重试");
+  },
+});
+```
+
+## 样式规范
+
+### Tailwind CSS 使用规范
+1. **优先使用 Tailwind 原子类**，减少自定义 CSS
+2. **使用 `@layer` 组织样式层级**
+3. **CSS 变量定义在 `:root` 中**
+4. **与 Ant Design 配合时使用 `ConfigProvider` 定制主题**
+
+```tsx
+// ✅ 正确：使用 Tailwind 类名
+<div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-4">
+  <Text className="text-sm text-gray-600">更新时间</Text>
+</div>
+
+// ✅ 正确：使用 CSS 变量
+<div style={{ backgroundColor: 'var(--color-primary)' }}>
+  内容
+</div>
+```
+
+### Ant Design 使用规范
+```typescript
+// ✅ 正确：使用 Ant Design 组件
+import { Button, message, Form } from 'antd';
+
+// ✅ 正确：配合主题配置
+<ConfigProvider theme={themeConfig}>
+  <App />
+</ConfigProvider>
+
+// ✅ 正确：使用 message 全局提示
+message.success("操作成功");
+message.error("操作失败");
+```
+
+## 路由规范
+
+### 路由定义
+- 使用 **React Router v7** 的 `createBrowserRouter`
+- 路由配置统一在 `router/index.tsx`
+- 使用 **lazy loading** 优化性能
+- 路由元数据使用 `handle` 字段
+
+```typescript
+// ✅ 正确：路由配置
+{
+  path: "posts",
+  handle: {
+    icon: "FileTextOutlined",
+    title: "文章管理",
+    order: 2,
+  },
+  children: [
+    {
+      index: true,
+      lazy: () => import("@/pages/posts/PostsList").then(convert),
+    },
+    {
+      path: "create",
+      lazy: () => import("@/pages/posts/PostEditor").then(convert),
+    },
+  ],
+}
+```
+
+### 路径别名
+- 使用 `@/` 代替 `src/`
+- 配置在 `vite.config.ts` 和 `tsconfig.app.json` 中
+
+```typescript
+// ✅ 正确：使用路径别名
+import { useAuth } from '@/hooks/useAuth';
+import { postsApi } from '@/apis/posts';
+import type { Post } from '@/types';
+
+// ❌ 错误：使用相对路径（在深层嵌套时）
+import { useAuth } from '../../../hooks/useAuth';
+```
+
+## 认证与权限规范
+
+### 认证流程
+1. **Token 存储在 localStorage**
+2. **使用 `useAuth` Hook 管理认证状态**
+3. **HTTP 请求自动携带 Bearer Token**
+4. **Token 过期时自动刷新或跳转登录**
+
+```typescript
+// ✅ 正确：使用认证 Hook
+const { user, isAuthenticated, login, logout } = useAuth();
+
+// ✅ 正确：检查认证状态
+if (!isAuthenticated) {
+  navigate('/login');
+}
+```
+
+### 路由守卫
+- 使用 `Guard` 组件保护需要认证的路由
+- 未认证用户自动跳转到登录页
+
+## 表单处理规范
+
+### 表单验证
+```typescript
+// ✅ 正确：使用 Ant Design Form
+const [form] = Form.useForm();
+
+<Form form={form} onFinish={handleSubmit}>
+  <Form.Item
+    name="title"
+    label="标题"
+    rules={[
+      { required: true, message: "请输入标题" },
+      { min: 5, message: "标题至少5个字符" },
+    ]}
+  >
+    <Input />
+  </Form.Item>
+</Form>
+```
+
+### 表单提交
+```typescript
+// ✅ 正确：使用 Mutation 提交表单
+const handleSubmit = async (values: FormValues) => {
+  try {
+    await mutation.mutateAsync(values);
+    message.success("提交成功");
+    navigate('/posts');
+  } catch (error) {
+    message.error("提交失败");
+  }
+};
+```
+
+## 性能优化规范
+
+### 查询优化
+```typescript
+// ✅ 正确：设置合理的 staleTime 和 cacheTime
+const { data } = useQuery({
+  queryKey: ['posts'],
+  queryFn: postsApi.getPosts,
+  staleTime: 5 * 60 * 1000,  // 5分钟内不重新获取
+  refetchOnWindowFocus: false,
+});
+```
+
+### 代码分割
+- 路由级别使用 **lazy loading**
+- 大型组件使用 **React.lazy**
+
+### 避免不必要的重渲染
+```typescript
+// ✅ 正确：使用 useCallback
+const handleClick = useCallback(() => {
+  // 处理逻辑
+}, [dependencies]);
+
+// ✅ 正确：使用 useMemo
+const expensiveValue = useMemo(() => {
+  return computeExpensiveValue(data);
+}, [data]);
+```
+
+## 代码质量规范
+
+### Linting 和 Formatting
+```bash
+# 运行 lint 检查
+pnpm lint
+
+# 自动修复 lint 问题
+pnpm lint:fix
+
+# 格式化代码
+pnpm format:write
+```
+
+### Git 提交规范
+- 提交前确保代码通过 lint 检查
+- 使用清晰的提交信息
+- 遵循约定式提交（Conventional Commits）
+
+```bash
+# ✅ 正确的提交信息
+feat: 添加文章编辑功能
+fix: 修复登录token过期问题
+refactor: 重构用户管理模块
+docs: 更新README文档
+```
+
+## 环境变量规范
+
+### 配置文件
+- 使用 `.env` 文件管理环境变量
+- 变量以 `VITE_` 开头才能在客户端访问
+
+```bash
+# ✅ 正确：环境变量定义
+VITE_API_URL=http://localhost:8822
+VITE_APP_TITLE=顺林博客管理后台
+```
+
+```typescript
+// ✅ 正确：访问环境变量
+const apiUrl = import.meta.env.VITE_API_URL;
+```
+
+## 常见模式和最佳实践
+
+### 1. 列表页面模式
+```typescript
+// 状态管理
+const [params, setParams] = useState<PostListParams>({ pageNum: 1, pageSize: 10 });
+
+// 数据获取
+const { data, isLoading } = useQuery({
+  queryKey: ['posts', params],
+  queryFn: () => postsApi.getPosts(params),
+});
+
+// 表格渲染
+<Table
+  dataSource={data?.items}
+  loading={isLoading}
+  pagination={{
+    current: params.pageNum,
+    pageSize: params.pageSize,
+    total: data?.total,
+    onChange: (page, pageSize) => setParams({ ...params, pageNum: page, pageSize }),
+  }}
+/>
+```
+
+### 2. 编辑器模式（创建/编辑）
+```typescript
+// 根据 URL 判断模式
+const { id } = useParams();
+const mode = id ? 'edit' : 'create';
+
+// 编辑模式加载数据
+const { data: post } = useQuery({
+  queryKey: ['post', id],
+  queryFn: () => postsApi.getOnePost(Number(id)),
+  enabled: mode === 'edit' && !!id,
+});
+
+// 使用不同的 Mutation
+const createMutation = useMutation({ mutationFn: postsApi.createPost });
+const updateMutation = useMutation({ mutationFn: postsApi.updatePost });
+```
+
+### 3. Drawer/Modal 模式
+```typescript
+// 状态管理
+const [drawerOpts, setDrawerOpts] = useState<{
+  open: boolean;
+  type: 'create' | 'edit';
+  record?: Post;
+}>({ open: false, type: 'create' });
+
+// 打开 Drawer
+const handleOpenDrawer = (type: 'create' | 'edit', record?: Post) => {
+  setDrawerOpts({ open: true, type, record });
+};
+```
+
+## 调试规范
+
+### Console 日志
+```typescript
+// ✅ 开发环境可用
+console.log('开发调试信息', data);
+
+// ✅ 警告和错误
+console.warn('警告信息', warning);
+console.error('错误信息', error);
+
+// ❌ 禁止在生产环境保留大量 console.log
+// ESLint 配置：允许 console.warn 和 console.error
+```
+
+### 错误边界
+- 在关键组件使用错误边界
+- 提供友好的错误提示
+
+## 安全规范
+
+### XSS 防护
+- 使用 React 的默认转义机制
+- 渲染 HTML 时使用 `dangerouslySetInnerHTML` 需谨慎
+- Markdown 编辑器使用可信赖的库（`@uiw/react-md-editor`）
+
+### Token 安全
+- Token 存储在 localStorage
+- 敏感操作需要二次验证
+- 定期刷新 Token
+
+### API 安全
+- 所有请求携带认证 Token
+- 敏感数据使用 HTTPS 传输
+- 前端验证 + 后端验证双重保障
+
+## 测试规范（待完善）
+
+### 单元测试
+- 关键业务逻辑编写单元测试
+- 使用 Vitest 作为测试框架
+
+### 集成测试
+- 关键功能流程编写集成测试
+- 使用 Testing Library
+
+## 文档规范
+
+### 代码注释
+```typescript
+// ✅ 正确：复杂逻辑添加注释
+/**
+ * 生成文章 slug
+ * 自动将中文标题转换为拼音，并格式化为 URL 友好格式
+ * @param title - 文章标题
+ * @returns 格式化后的 slug
+ */
+const generateSlug = (title: string): string => {
+  // 使用 pinyin-pro 转换中文
+  const pinyinStr = pinyin(title, {
+    toneType: 'none',
+    separator: '-',
+  });
+  
+  return pinyinStr
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]/g, '')
+    .replace(/-+/g, '-');
+};
+```
+
+### 组件文档
+- 复杂组件添加 JSDoc 注释
+- 说明 Props 用途和类型
+
+## 禁止事项
+
+❌ **禁止使用 `any` 类型**（除非特殊情况并添加注释）
+❌ **禁止使用 `var` 声明变量**
+❌ **禁止直接修改 state**（使用 setState）
+❌ **禁止在循环/条件中调用 Hooks**
+❌ **禁止提交未格式化的代码**
+❌ **禁止提交包含 `console.log` 的生产代码**
+❌ **禁止硬编码敏感信息**（API Key、密码等）
+❌ **禁止在组件内定义大型常量对象**（移到组件外或单独文件）
+❌ **禁止过度嵌套组件**（超过3层建议拆分）
+❌ **禁止使用内联样式**（优先使用 Tailwind 或 CSS modules）
+
+## 推荐使用
+
+✅ **推荐使用函数式组件 + Hooks**
+✅ **推荐使用 TypeScript 类型推断**
+✅ **推荐使用 TanStack Query 管理服务端状态**
+✅ **推荐使用 Tailwind CSS 原子类**
+✅ **推荐使用 Ant Design 组件**
+✅ **推荐使用路径别名 `@/`**
+✅ **推荐使用 lazy loading 优化性能**
+✅ **推荐使用 useCallback/useMemo 优化性能**
+✅ **推荐使用自定义 Hooks 封装逻辑**
+✅ **推荐使用统一的错误处理机制**
+
+## 持续改进
+
+本规范会随着项目发展持续更新，团队成员应：
+1. 定期 Review 代码质量
+2. 分享最佳实践
+3. 优化现有代码
+4. 更新文档和规范
+
+---
+
+**最后更新**: 2025-12-13
+**维护者**: Shunlin Team
+

@@ -1,3 +1,4 @@
+import { TagUtils } from "@/types/posts";
 import {
 	DeleteOutlined,
 	EditOutlined,
@@ -7,7 +8,6 @@ import {
 	SearchOutlined,
 } from "@ant-design/icons";
 import {
-	Avatar,
 	Badge,
 	Button,
 	Card,
@@ -17,17 +17,17 @@ import {
 	Popconfirm,
 	Select,
 	Space,
+	Spin,
 	Table,
 	Tag,
 	Tooltip,
 	Typography,
-	Spin,
 } from "antd";
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Post } from "../../types";
-import { usePosts, useDeletePost } from "../../hooks/usePosts";
+import { useDeletePost, usePosts } from "../../hooks/usePosts";
+import type { PostListItem } from "../../types/posts";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -45,8 +45,8 @@ export const PostsList: React.FC = () => {
 	const { data, isLoading, refetch } = usePosts({
 		pageNum,
 		pageSize,
-		status: statusFilter as any,
-		search: searchText,
+		status: statusFilter ? (Number(statusFilter) as 0 | 1) : undefined,
+		title: searchText,
 	});
 
 	// 删除文章的mutation
@@ -63,22 +63,16 @@ export const PostsList: React.FC = () => {
 			dataIndex: "title",
 			key: "title",
 			width: 300,
-			render: (title: string, record: Post) => (
+			render: (title: string, record: PostListItem) => (
 				<div className="flex items-start space-x-3">
-					<Avatar
-						size={40}
-						shape="square"
-						src={`https://picsum.photos/seed/${record.id}/80/80`}
-						className="rounded-lg"
-					/>
 					<div className="flex-1 min-w-0">
 						<div className="font-medium text-gray-900 truncate">{title}</div>
 						<div className="text-sm text-gray-500 mt-1">
-							{record.excerpt.substring(0, 60)}...
+							{record.slug || "无描述"}
 						</div>
 						<div className="flex items-center space-x-4 mt-2">
 							<Space size="small">
-								{record.tags.map((tag) => (
+								{TagUtils.toArray(record.tag).map((tag) => (
 									<Tag key={tag} color="blue">
 										{tag}
 									</Tag>
@@ -90,27 +84,12 @@ export const PostsList: React.FC = () => {
 			),
 		},
 		{
-			title: "作者",
-			dataIndex: "author",
-			key: "author",
-			width: 120,
-			render: (author: string) => (
-				<div className="flex items-center space-x-2">
-					<Avatar
-						size={24}
-						src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${author || "anonymous"}`}
-					/>
-					<span className="text-sm">{author || "未知作者"}</span>
-				</div>
-			),
-		},
-		{
 			title: "分类",
 			dataIndex: "category",
 			key: "category",
 			width: 100,
-			render: (category: string) => (
-				<Tag color="purple">{category || "未分类"}</Tag>
+			render: (category: PostListItem["category"]) => (
+				<Tag color="purple">{category?.name || "未分类"}</Tag>
 			),
 		},
 		{
@@ -118,13 +97,12 @@ export const PostsList: React.FC = () => {
 			dataIndex: "status",
 			key: "status",
 			width: 100,
-			render: (status: string) => {
+			render: (status: 0 | 1) => {
 				const statusConfig = {
-					published: { color: "success", text: "已发布", count: 1 },
-					draft: { color: "warning", text: "草稿", count: 0 },
-					archived: { color: "default", text: "已归档", count: 0 },
+					0: { color: "warning", text: "草稿", count: 0 },
+					1: { color: "success", text: "已发布", count: 1 },
 				};
-				const config = statusConfig[status as keyof typeof statusConfig];
+				const config = statusConfig[status];
 				return (
 					<Badge
 						count={config.count}
@@ -137,16 +115,16 @@ export const PostsList: React.FC = () => {
 			},
 		},
 		{
-			title: "浏览量",
-			dataIndex: "viewCount",
-			key: "viewCount",
-			width: 100,
-			sorter: (a: Post, b: Post) => a.viewCount - b.viewCount,
-			render: (viewCount: number) => (
-				<Space>
-					<EyeOutlined className="text-gray-400" />
-					<span className="text-sm">{viewCount.toLocaleString()}</span>
-				</Space>
+			title: "更新时间",
+			dataIndex: "updatedAt",
+			key: "updatedAt",
+			width: 180,
+			sorter: (a: PostListItem, b: PostListItem) =>
+				new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+			render: (updatedAt: string) => (
+				<div className="text-sm text-gray-600">
+					{new Date(updatedAt).toLocaleString("zh-CN")}
+				</div>
 			),
 		},
 		{
@@ -154,7 +132,7 @@ export const PostsList: React.FC = () => {
 			dataIndex: "createdAt",
 			key: "createdAt",
 			width: 120,
-			sorter: (a: Post, b: Post) =>
+			sorter: (a: PostListItem, b: PostListItem) =>
 				new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
 			render: (createdAt: string) => (
 				<div className="text-sm text-gray-600">
@@ -167,7 +145,7 @@ export const PostsList: React.FC = () => {
 			key: "action",
 			width: 150,
 			fixed: "right" as const,
-			render: (_: any, record: Post) => (
+			render: (_: unknown, record: PostListItem) => (
 				<Space size="small">
 					<Tooltip title="查看">
 						<Button
@@ -207,21 +185,25 @@ export const PostsList: React.FC = () => {
 	];
 
 	// 事件处理函数
-	const handleView = (record: Post) => {
-		console.log("查看文章:", record);
+	const handleView = (record: PostListItem) => {
+		if (import.meta.env.DEV) {
+			console.warn("查看文章:", record);
+		}
 		Modal.info({
 			title: record.title,
-			content: `${record.content.substring(0, 200)}...`,
+			content: `文章 ID: ${record.id}`,
 			width: 600,
 		});
 	};
 
-	const handleEdit = (record: Post) => {
-		console.log("编辑文章:", record);
+	const handleEdit = (record: PostListItem) => {
+		if (import.meta.env.DEV) {
+			console.warn("编辑文章:", record);
+		}
 		navigate(`/posts/edit/${record.id}`);
 	};
 
-	const handleDelete = (record: Post) => {
+	const handleDelete = (record: PostListItem) => {
 		deletePostMutation.mutate(record.id, {
 			onSuccess: () => {
 				refetch();
@@ -251,7 +233,9 @@ export const PostsList: React.FC = () => {
 	};
 
 	const handleExport = () => {
-		console.log("导出数据");
+		if (import.meta.env.DEV) {
+			console.warn("导出数据");
+		}
 	};
 
 	const rowSelection = {
@@ -260,7 +244,9 @@ export const PostsList: React.FC = () => {
 	};
 
 	// 获取唯一的分类列表
-	const categories = Array.from(new Set(posts.map((post) => post.category)));
+	const categories = Array.from(
+		new Map(posts.map((post) => [post.category.id, post.category])).values()
+	);
 
 	// 处理搜索
 	const handleSearch = () => {
@@ -323,9 +309,8 @@ export const PostsList: React.FC = () => {
 						allowClear
 						className="w-full"
 					>
-						<Select.Option value="published">已发布</Select.Option>
-						<Select.Option value="draft">草稿</Select.Option>
-						<Select.Option value="archived">已归档</Select.Option>
+						<Select.Option value="1">已发布</Select.Option>
+						<Select.Option value="0">草稿</Select.Option>
 					</Select>
 					<Select
 						placeholder="选择分类"
@@ -338,8 +323,8 @@ export const PostsList: React.FC = () => {
 						className="w-full"
 					>
 						{categories.map((category) => (
-							<Select.Option key={category} value={category}>
-								{category}
+							<Select.Option key={category.id} value={category.id.toString()}>
+								{category.name}
 							</Select.Option>
 						))}
 					</Select>

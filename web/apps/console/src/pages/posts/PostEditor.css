@@ -1,0 +1,136 @@
+/* PostEditor 特定样式 */
+
+/* 平滑过渡动画 */
+.post-editor-transition {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 设置面板滑入动画 */
+.settings-panel-enter {
+	animation: slideInRight 0.3s ease-out;
+}
+
+.settings-panel-exit {
+	animation: slideOutRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+	from {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slideOutRight {
+	from {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+}
+
+/* 基本信息折叠动画 */
+.basic-info-collapse {
+	transition:
+		max-height 0.3s ease-out,
+		opacity 0.3s ease-out;
+	overflow: hidden;
+}
+
+/* 操作栏悬停效果 */
+.action-bar-button {
+	transition: all 0.2s ease;
+}
+
+.action-bar-button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 编辑器容器圆角和阴影 */
+.editor-container {
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	transition: box-shadow 0.3s ease;
+}
+
+.editor-container:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 标签动画 */
+.tag-appear {
+	animation: tagFadeIn 0.3s ease-out;
+}
+
+@keyframes tagFadeIn {
+	from {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* 响应式布局优化 */
+@media (max-width: 1280px) {
+	.settings-panel-container {
+		position: fixed;
+		right: 0;
+		top: 64px;
+		bottom: 0;
+		z-index: 100;
+		background: white;
+		box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+	}
+}
+
+/* 加载状态 */
+.loading-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, 0.8);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	backdrop-filter: blur(2px);
+}
+
+/* 成功提示动画 */
+.success-shake {
+	animation: successShake 0.5s ease;
+}
+
+@keyframes successShake {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	10%,
+	30%,
+	50%,
+	70%,
+	90% {
+		transform: translateX(-2px);
+	}
+	20%,
+	40%,
+	60%,
+	80% {
+		transform: translateX(2px);
+	}
+}
