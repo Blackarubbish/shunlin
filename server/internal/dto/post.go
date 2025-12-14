@@ -1,9 +1,24 @@
 package dto
 
 import (
-	"sl-server/internal/model"
 	"time"
 )
+
+type PostStatus int
+
+const (
+	PostStatusDraft PostStatus = iota
+	PostStatusPublished
+)
+
+type PostCategoryInfo struct {
+	ID          uint      `json:"id"`
+	Name        string    `json:"name"`
+	Slug        string    `json:"slug"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+}
 
 type CreatePostRequestDto struct {
 	Title      string `json:"title" binding:"required,min=1,max=200"`
@@ -13,23 +28,23 @@ type CreatePostRequestDto struct {
 }
 
 type CreatePostResponseDto struct {
-	ID       uint            `json:"id"`
-	Title    string          `json:"title"`
-	Content  string          `json:"content"`
-	Slug     string          `json:"slug"`
-	AuthorID uint            `json:"authorID"`
-	Category model.Category `json:"category"`
+	ID       uint             `json:"id"`
+	Title    string           `json:"title"`
+	Content  string           `json:"content"`
+	Slug     string           `json:"slug"`
+	AuthorID uint             `json:"authorID"`
+	Category PostCategoryInfo `json:"category"`
 }
 
 type GetPostsQueryDto struct {
-	Slug       string `form:"slug"`
-	Title      string `form:"title"`
-	CategoryID uint   `form:"categoryID" binding:"omitempty,min=1"`
-	AuthorID   uint   `form:"authorID" binding:"omitempty,min=1"`
-	PageNum    int    `form:"pageNum" binding:"omitempty,min=1"`
-	PageSize   int    `form:"pageSize" binding:"omitempty,min=1,max=100"`
-	Status     int    `form:"status" binding:"omitempty,oneof=0 1"` // 0=草稿 1=已发布
-	SortOrder  string `form:"sortOrder" binding:"omitempty,oneof=asc desc"`
+	Slug       string     `form:"slug"`
+	Title      string     `form:"title"`
+	CategoryID uint       `form:"categoryID" binding:"omitempty,min=1"`
+	AuthorID   uint       `form:"authorID" binding:"omitempty,min=1"`
+	PageNum    int        `form:"pageNum" binding:"omitempty,min=1"`
+	PageSize   int        `form:"pageSize" binding:"omitempty,min=1,max=100"`
+	Status     PostStatus `form:"status" binding:"omitempty,oneof=0 1"`
+	SortOrder  string     `form:"sortOrder" binding:"omitempty,oneof=asc desc"`
 }
 
 // 验证并设置默认值
@@ -47,16 +62,16 @@ func (q *GetPostsQueryDto) Normalize() {
 
 // PostListItemDto 文章列表项（不包含完整内容）
 type PostListItemDto struct {
-	ID         uint            `json:"id"`
-	CreatedAt  time.Time       `json:"created_at"`
-	UpdatedAt  time.Time       `json:"updated_at"`
-	Title      string          `json:"title"`
-	Slug       string          `json:"slug"`
-	Status     int             `json:"status"` // 0=草稿 1=已发布
-	AuthorID   uint            `json:"author_id"`
-	CategoryID uint            `json:"category_id"`
-	Category   model.Category `json:"category"`
-	Tag        string          `json:"tag"`
+	ID         uint             `json:"id"`
+	CreatedAt  time.Time        `json:"createdAt"`
+	UpdatedAt  time.Time        `json:"updatedAt"`
+	Title      string           `json:"title"`
+	Slug       string           `json:"slug"`
+	Status     PostStatus       `json:"status"`
+	AuthorID   uint             `json:"authorID"`
+	CategoryID uint             `json:"categoryID"`
+	Category   PostCategoryInfo `json:"category"`
+	Tag        string           `json:"tag"`
 }
 
 type GetPostsResponseDto struct {
@@ -76,27 +91,27 @@ type UpdatePostRequestDto struct {
 }
 
 type GetOnePostResponseDto struct {
-	ID         uint            `json:"id"`
-	CreatedAt  time.Time       `json:"created_at"`
-	UpdatedAt  time.Time       `json:"updated_at"`
-	Title      string          `json:"title"`
-	Slug       string          `json:"slug"`
-	Status     int             `json:"status"` // 0=草稿 1=已发布
-	AuthorID   uint            `json:"author_id"`
-	CategoryID uint            `json:"category_id"`
-	Category   model.Category `json:"category"`
-	Content    string          `json:"content"`
+	ID         uint             `json:"id"`
+	CreatedAt  time.Time        `json:"createdAt"`
+	UpdatedAt  time.Time        `json:"updatedAt"`
+	Title      string           `json:"title"`
+	Slug       string           `json:"slug"`
+	Status     PostStatus       `json:"status"`
+	AuthorID   uint             `json:"authorID"`
+	CategoryID uint             `json:"categoryID"`
+	Category   PostCategoryInfo `json:"category"`
+	Content    string           `json:"content"`
 }
 
 type UpdatePostResponseDto struct {
-	ID         uint            `json:"id"`
-	CreatedAt  time.Time       `json:"created_at"`
-	UpdatedAt  time.Time       `json:"updated_at"`
-	Title      string          `json:"title"`
-	Slug       string          `json:"slug"`
-	Status     int             `json:"status"` // 0=草稿 1=已发布
-	AuthorID   uint            `json:"author_id"`
-	CategoryID uint            `json:"category_id"`
-	Category   model.Category `json:"category"`
-	Content    string          `json:"content"`
+	ID         uint             `json:"id"`
+	CreatedAt  time.Time        `json:"createdAt"`
+	UpdatedAt  time.Time        `json:"updatedAt"`
+	Title      string           `json:"title"`
+	Slug       string           `json:"slug"`
+	Status     PostStatus       `json:"status"`
+	AuthorID   uint             `json:"authorID"`
+	CategoryID uint             `json:"categoryID"`
+	Category   PostCategoryInfo `json:"category"`
+	Content    string           `json:"content"`
 }

@@ -1,16 +1,14 @@
 package dto
 
-import "sl-server/internal/model"
-
 type UploadResponseDto struct {
 	ID           uint   `json:"id"`
-	OriginalName string `json:"original_name"`
+	OriginalName string `json:"originalName"`
 	Filename     string `json:"filename"`
-	FileURL      string `json:"file_url"`
+	FileURL      string `json:"fileURL"`
 	Filetype     string `json:"filetype"`
 	Filesize     int64  `json:"filesize"`
 	Extension    string `json:"extension"`
-	UploadedAt   string `json:"uploaded_at"`
+	UploadedAt   string `json:"uploadedAt"`
 }
 
 type MediaQueryDto struct {
@@ -29,16 +27,27 @@ func (q *MediaQueryDto) Normalize() {
 	}
 }
 
+type MediaItemDto struct {
+	ID           uint   `json:"id"`
+	OriginalName string `json:"originalName"`
+	Filename     string `json:"filename"`
+	FileURL      string `json:"fileURL"`
+	Filetype     string `json:"filetype"`
+	Filesize     int64  `json:"filesize"`
+	Extension    string `json:"extension"`
+	UploadedAt   string `json:"uploadedAt"`
+}
+
 type MediaListResponseDto struct {
-	Items []model.Media `json:"items"`
+	Items []MediaItemDto `json:"items"`
 	Total int            `json:"total"`
 	Page  int            `json:"page"`
 	Size  int            `json:"size"`
 }
 
 type BatchUploadResponseDto struct {
-	SuccessCount int                 `json:"success_count"`
-	ErrorCount   int                 `json:"error_count"`
+	SuccessCount int                 `json:"successCount"`
+	ErrorCount   int                 `json:"errorCount"`
 	Results      []UploadResponseDto `json:"results"`
 	Errors       []string            `json:"errors,omitempty"`
 }

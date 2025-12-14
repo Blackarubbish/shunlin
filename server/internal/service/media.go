@@ -6,9 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"sl-server/internal/config"
-	"sl-server/internal/repository"
+	"sl-server/internal/consts"
 	"sl-server/internal/dto"
 	"sl-server/internal/model"
+	"sl-server/internal/repository"
 	"sl-server/pkg/response"
 	"sl-server/pkg/upload"
 
@@ -148,8 +149,22 @@ func GetMediaList(query dto.MediaQueryDto) (*dto.MediaListResponseDto, error) {
 		zap.Int("count", len(mediaList)),
 		zap.Int("page", query.Page))
 
+	items := make([]dto.MediaItemDto, len(mediaList))
+	for i, media := range mediaList {
+		items[i] = dto.MediaItemDto{
+			ID:           media.ID,
+			OriginalName: media.OriginalName,
+			Filename:     media.Filename,
+			FileURL:      media.FileURL,
+			Filetype:     media.Filetype,
+			Filesize:     media.Filesize,
+			Extension:    media.Extension,
+			UploadedAt:   media.CreatedAt.Format(consts.TimeFormat),
+		}
+	}
+
 	return &dto.MediaListResponseDto{
-		Items: mediaList,
+		Items: items,
 		Total: int(total),
 		Page:  query.Page,
 		Size:  query.PageSize,

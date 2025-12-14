@@ -3,9 +3,9 @@ package service
 import (
 	"fmt"
 	"sl-server/internal/config"
-	"sl-server/internal/repository"
 	"sl-server/internal/dto"
 	"sl-server/internal/model"
+	"sl-server/internal/repository"
 	resp "sl-server/pkg/response"
 	"sl-server/pkg/utils"
 
@@ -79,7 +79,14 @@ func CreatePost(c *gin.Context, postRequest dto.CreatePostRequestDto) (*dto.Crea
 		Content:  post.Content,
 		Slug:     post.Slug,
 		AuthorID: post.AuthorID,
-		Category: post.Category,
+		Category: dto.PostCategoryInfo{
+			ID:          post.Category.ID,
+			Name:        post.Category.Name,
+			Slug:        post.Category.Slug,
+			Description: post.Category.Description,
+			CreatedAt:   post.Category.CreatedAt,
+			UpdatedAt:   post.Category.UpdatedAt,
+		},
 	}, nil
 }
 
@@ -132,11 +139,18 @@ func GetPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error) {
 			UpdatedAt:  post.UpdatedAt,
 			Title:      post.Title,
 			Slug:       post.Slug,
-			Status:     post.Status,
+			Status:     dto.PostStatus(post.Status),
 			AuthorID:   post.AuthorID,
 			CategoryID: post.CategoryID,
-			Category:   post.Category,
-			Tag:        post.Tag,
+			Category: dto.PostCategoryInfo{
+				ID:          post.Category.ID,
+				Name:        post.Category.Name,
+				Slug:        post.Category.Slug,
+				Description: post.Category.Description,
+				CreatedAt:   post.Category.CreatedAt,
+				UpdatedAt:   post.Category.UpdatedAt,
+			},
+			Tag: post.Tag,
 		}
 	}
 
@@ -163,11 +177,18 @@ func GetOnePostByID(id uint) (*dto.GetOnePostResponseDto, error) {
 		UpdatedAt:  post.UpdatedAt,
 		Title:      post.Title,
 		Slug:       post.Slug,
-		Status:     post.Status,
+		Status:     dto.PostStatus(post.Status),
 		AuthorID:   post.AuthorID,
 		CategoryID: post.CategoryID,
-		Category:   post.Category,
-		Content:    post.Content,
+		Category: dto.PostCategoryInfo{
+			ID:          post.Category.ID,
+			Name:        post.Category.Name,
+			Slug:        post.Category.Slug,
+			Description: post.Category.Description,
+			CreatedAt:   post.Category.CreatedAt,
+			UpdatedAt:   post.Category.UpdatedAt,
+		},
+		Content: post.Content,
 	}, nil
 }
 
@@ -231,11 +252,18 @@ func UpdatePost(id uint, updatePostRequest dto.UpdatePostRequestDto) (*dto.Updat
 		UpdatedAt:  post.UpdatedAt,
 		Title:      post.Title,
 		Slug:       post.Slug,
-		Status:     post.Status,
+		Status:     dto.PostStatus(post.Status),
 		AuthorID:   post.AuthorID,
 		CategoryID: post.CategoryID,
-		Category:   post.Category,
-		Content:    post.Content,
+		Category: dto.PostCategoryInfo{
+			ID:          post.Category.ID,
+			Name:        post.Category.Name,
+			Slug:        post.Category.Slug,
+			Description: post.Category.Description,
+			CreatedAt:   post.Category.CreatedAt,
+			UpdatedAt:   post.Category.UpdatedAt,
+		},
+		Content: post.Content,
 	}, nil
 }
 
@@ -302,11 +330,18 @@ func GetPublicPosts(query dto.GetPostsQueryDto) (*dto.GetPostsResponseDto, error
 			UpdatedAt:  post.UpdatedAt,
 			Title:      post.Title,
 			Slug:       post.Slug,
-			Status:     post.Status,
+			Status:     dto.PostStatus(post.Status),
 			AuthorID:   post.AuthorID,
 			CategoryID: post.CategoryID,
-			Category:   post.Category,
-			Tag:        post.Tag,
+			Category: dto.PostCategoryInfo{
+				ID:          post.Category.ID,
+				Name:        post.Category.Name,
+				Slug:        post.Category.Slug,
+				Description: post.Category.Description,
+				CreatedAt:   post.Category.CreatedAt,
+				UpdatedAt:   post.Category.UpdatedAt,
+			},
+			Tag: post.Tag,
 		}
 	}
 
@@ -377,11 +412,18 @@ func GetAdminPosts(query dto.GetPostsQueryDto, userRole string, userID uint) (*d
 			UpdatedAt:  post.UpdatedAt,
 			Title:      post.Title,
 			Slug:       post.Slug,
-			Status:     post.Status,
+			Status:     dto.PostStatus(post.Status),
 			AuthorID:   post.AuthorID,
 			CategoryID: post.CategoryID,
-			Category:   post.Category,
-			Tag:        post.Tag,
+			Category: dto.PostCategoryInfo{
+				ID:          post.Category.ID,
+				Name:        post.Category.Name,
+				Slug:        post.Category.Slug,
+				Description: post.Category.Description,
+				CreatedAt:   post.Category.CreatedAt,
+				UpdatedAt:   post.Category.UpdatedAt,
+			},
+			Tag: post.Tag,
 		}
 	}
 
