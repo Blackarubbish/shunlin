@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>李小涵 ▸ PIXEL</title>
+
+<style>
+  @font-face {
+    font-family: 'Zpix';
+    src: url('https://cdn.jsdelivr.net/npm/zpix@3.1.4/dist/Zpix.woff2') format('woff2');
+    font-display: swap;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --pink:   #ff77c0;
+    --cyan:   #00f0ff;
+    --yellow: #ffe600;
+    --green:  #00ff66;
+    --purple: #c070ff;
+    --bg:     #0a0a10;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    /* 阻止移动端橡皮筋/下拉刷新 */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: none;
+    overflow: hidden;
+    /* 阻止长按菜单和选中 */
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Zpix', 'PingFang SC', 'Microsoft YaHei', monospace;
+    cursor: crosshair;
+    user-select: none;
+    -webkit-user-select: none;
+    /* 防止 iOS 双击缩放 */
+    touch-action: manipulation;
+  }
+
+  /* ============ CRT 扫描线 ============ */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.06) 2px,
+      rgba(0,0,0,0.06) 4px
+    );
+  }
+  /* CRT 暗角 */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.65) 100%);
+  }
+  /* 屏幕闪烁 */
+  .flicker {
+    position: fixed;
+    inset: 0;
+    z-index: 101;
+    pointer-events: none;
+    background: transparent;
+    animation: flicker 0.15s infinite;
+  }
+  @keyframes flicker {
+    0%   { opacity: 0.03; }
+    50%  { opacity: 0; }
+    100% { opacity: 0.04; }
+  }
+
+  canvas#bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  /* 像素网格背景 */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image:
+      linear-gradient(rgba(0,240,255,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,255,0.5) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* ============ 主舞台 ============ */
+  .stage {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    /* 在移动端留出安全区域 */
+    padding-bottom: var(--safe-bottom);
+  }
+
+  /* ============ 像素边框装饰框 ============ */
+  .pixel-frame {
+    display: inline-block;
+    padding: 2rem 2.5rem;
+    position: relative;
+    border: 3px solid var(--cyan);
+    box-shadow:
+      0 0 0 3px var(--bg),
+      0 0 0 6px var(--purple),
+      0 0 30px rgba(0,240,255,0.35),
+      0 0 60px rgba(192,112,255,0.25),
+      inset 0 0 40px rgba(0,240,255,0.04);
+    animation: framePulse 2s steps(4) infinite;
+  }
+  @keyframes framePulse {
+    0%, 100% { box-shadow: 0 0 0 3px var(--bg), 0 0 0 6px var(--purple), 0 0 30px rgba(0,240,255,0.35), 0 0 60px rgba(192,112,255,0.25), inset 0 0 40px rgba(0,240,255,0.04); }
+    50%      { box-shadow: 0 0 0 3px var(--bg), 0 0 0 6px var(--cyan),   0 0 50px rgba(0,240,255,0.6),  0 0 100px rgba(192,112,255,0.45), inset 0 0 60px rgba(0,240,255,0.08); }
+  }
+
+  /* 四角像素装饰 */
+  .pixel-frame::before,
+  .pixel-frame::after {
+    content: '';
+    position: absolute;
+    width: 12px; height: 12px;
+    background: var(--yellow);
+    image-rendering: pixelated;
+    box-shadow: 0 0 10px var(--yellow);
+  }
+  .pixel-frame::before { top: -8px; left: -8px; }
+  .pixel-frame::after  { bottom: -8px; right: -8px; }
+
+  .corner-tr, .corner-bl {
+    position: absolute;
+    width: 12px; height: 12px;
+    background: var(--pink);
+    image-rendering: pixelated;
+    box-shadow: 0 0 10px var(--pink);
+  }
+  .corner-tr { top: -8px; right: -8px; }
+  .corner-bl { bottom: -8px; left: -8px; }
+
+  /* ============ 文字 ============ */
+  .name {
+    /* 移动端 18vw，桌面端最大 13rem，最小保证可读 */
+    font-size: clamp(3.5rem, 18vw, 13rem);
+    font-weight: normal;
+    letter-spacing: 0.15em;
+    line-height: 1;
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .name span {
+    display: inline-block;
+    text-shadow:
+      2px 2px 0 var(--purple),
+      4px 4px 0 var(--cyan),
+      6px 6px 0 rgba(0,0,0,0.6),
+      0 0 20px var(--cyan),
+      0 0 50px var(--purple),
+      0 0 80px var(--pink);
+    color: #fff;
+    animation: pixelFloat 0.8s steps(4) infinite;
+  }
+  .name span:nth-child(2) { animation-delay: 0.1s; }
+  .name span:nth-child(3) { animation-delay: 0.2s; }
+
+  @keyframes pixelFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+  }
+
+  .name span:nth-child(1) { animation: pixelFloat 0.8s steps(4) infinite, colorCycle1 3s steps(6) infinite; }
+  .name span:nth-child(2) { animation: pixelFloat 0.8s steps(4) infinite 0.1s, colorCycle2 3s steps(6) infinite; }
+  .name span:nth-child(3) { animation: pixelFloat 0.8s steps(4) infinite 0.2s, colorCycle3 3s steps(6) infinite; }
+
+  @keyframes colorCycle1 {
+    0%, 16%  { text-shadow: 2px 2px 0 var(--purple), 4px 4px 0 var(--cyan), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--cyan), 0 0 50px var(--purple), 0 0 80px var(--pink); }
+    33%, 50% { text-shadow: 2px 2px 0 var(--pink), 4px 4px 0 var(--yellow), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--pink), 0 0 50px var(--yellow), 0 0 80px var(--cyan); }
+    66%, 83% { text-shadow: 2px 2px 0 var(--green), 4px 4px 0 var(--cyan), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--green), 0 0 50px var(--cyan), 0 0 80px var(--purple); }
+  }
+  @keyframes colorCycle2 {
+    0%, 16%  { text-shadow: 2px 2px 0 var(--pink), 4px 4px 0 var(--yellow), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--pink), 0 0 50px var(--yellow), 0 0 80px var(--cyan); }
+    33%, 50% { text-shadow: 2px 2px 0 var(--green), 4px 4px 0 var(--cyan), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--green), 0 0 50px var(--cyan), 0 0 80px var(--purple); }
+    66%, 83% { text-shadow: 2px 2px 0 var(--purple), 4px 4px 0 var(--cyan), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--cyan), 0 0 50px var(--purple), 0 0 80px var(--pink); }
+  }
+  @keyframes colorCycle3 {
+    0%, 16%  { text-shadow: 2px 2px 0 var(--green), 4px 4px 0 var(--cyan), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--green), 0 0 50px var(--cyan), 0 0 80px var(--purple); }
+    33%, 50% { text-shadow: 2px 2px 0 var(--purple), 4px 4px 0 var(--cyan), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--cyan), 0 0 50px var(--purple), 0 0 80px var(--pink); }
+    66%, 83% { text-shadow: 2px 2px 0 var(--pink), 4px 4px 0 var(--yellow), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px var(--pink), 0 0 50px var(--yellow), 0 0 80px var(--cyan); }
+  }
+
+  /* ============ 副标题 ============ */
+  .subtitle {
+    margin-top: 1.8rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.5em;
+    color: var(--green);
+    text-shadow: 0 0 10px var(--green), 0 0 25px var(--green);
+    animation: blink 1.2s steps(2) infinite, fadeInUp 1.5s steps(8) forwards;
+    animation-delay: 0s, 0.6s;
+    opacity: 0;
+    white-space: nowrap;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ 像素按钮 ============ */
+  .pixel-btn {
+    position: fixed;
+    bottom: calc(50px + var(--safe-bottom));
+    z-index: 20;
+    padding: 12px 28px;
+    border: 3px solid var(--cyan);
+    background: var(--bg);
+    color: var(--cyan);
+    font-family: 'Zpix', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    box-shadow:
+      4px 4px 0 var(--purple),
+      0 0 20px rgba(0,240,255,0.3);
+    transition: all 0.05s steps(1);
+    /* 确保按钮不会被状态栏遮挡 */
+  }
+  .pixel-btn:active {
+    background: var(--cyan);
+    color: var(--bg);
+    box-shadow:
+      2px 2px 0 var(--purple),
+      0 0 30px rgba(0,240,255,0.6);
+    transform: translate(2px, 2px);
+  }
+
+  /* ============ 状态栏 ============ */
+  .status-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 90;
+    padding: 6px 12px;
+    padding-bottom: calc(6px + var(--safe-bottom));
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-family: 'Zpix', monospace;
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    flex-wrap: wrap;
+  }
+  .status-bar span { color: var(--cyan); }
+  .status-bar .hp-bar { display: flex; align-items: center; gap: 4px; }
+  .status-bar .hp-bar .hp-text { display: none; }
+
+  /* ============ 📱 移动端适配 ============ */
+
+  /* 小屏手机 (iPhone SE, 320-374px) */
+  @media (max-width: 400px) {
+    .pixel-frame {
+      padding: 1.2rem 1.4rem;
+      border-width: 2px;
+    }
+    .pixel-frame::before,
+    .pixel-frame::after,
+    .corner-tr, .corner-bl {
+      width: 10px; height: 10px;
+    }
+    .pixel-frame::before { top: -6px; left: -6px; }
+    .pixel-frame::after  { bottom: -6px; right: -6px; }
+    .corner-tr { top: -6px; right: -6px; }
+    .corner-bl { bottom: -6px; left: -6px; }
+
+    .name {
+      font-size: clamp(2.5rem, 16vw, 4rem);
+      letter-spacing: 0.1em;
+    }
+    .name span {
+      text-shadow:
+        1px 1px 0 var(--purple),
+        3px 3px 0 var(--cyan),
+        4px 4px 0 rgba(0,0,0,0.6),
+        0 0 12px var(--cyan),
+        0 0 30px var(--purple),
+        0 0 50px var(--pink);
+    }
+    @keyframes colorCycle1-sm {
+      0%, 16%  { text-shadow: 1px 1px 0 var(--purple), 3px 3px 0 var(--cyan), 4px 4px 0 rgba(0,0,0,0.6), 0 0 12px var(--cyan), 0 0 30px var(--purple), 0 0 50px var(--pink); }
+      33%, 50% { text-shadow: 1px 1px 0 var(--pink), 3px 3px 0 var(--yellow), 4px 4px 0 rgba(0,0,0,0.6), 0 0 12px var(--pink), 0 0 30px var(--yellow), 0 0 50px var(--cyan); }
+      66%, 83% { text-shadow: 1px 1px 0 var(--green), 3px 3px 0 var(--cyan), 4px 4px 0 rgba(0,0,0,0.6), 0 0 12px var(--green), 0 0 30px var(--cyan), 0 0 50px var(--purple); }
+    }
+    .subtitle {
+      margin-top: 1.2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+    }
+    .pixel-btn {
+      bottom: calc(40px + var(--safe-bottom));
+      padding: 10px 22px;
+      font-size: 0.75rem;
+      border-width: 2px;
+    }
+    .status-bar {
+      font-size: 0.5rem;
+      padding: 4px 8px;
+      padding-bottom: calc(4px + var(--safe-bottom));
+    }
+  }
+
+  /* 中等手机 (iPhone 6/7/8/X, 375-414px) */
+  @media (min-width: 401px) and (max-width: 480px) {
+    .pixel-frame {
+      padding: 1.5rem 2rem;
+    }
+    .name {
+      font-size: clamp(3rem, 17vw, 5rem);
+    }
+    .subtitle {
+      margin-top: 1.4rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.4em;
+    }
+    .pixel-btn {
+      bottom: calc(45px + var(--safe-bottom));
+      padding: 11px 26px;
+      font-size: 0.8rem;
+    }
+    .status-bar {
+      font-size: 0.55rem;
+      padding: 5px 10px;
+      padding-bottom: calc(5px + var(--safe-bottom));
+    }
+  }
+
+  /* 平板及以上 */
+  @media (min-width: 768px) {
+    .pixel-frame {
+      padding: 3rem 5rem;
+      border-width: 4px;
+    }
+    .pixel-frame::before,
+    .pixel-frame::after,
+    .corner-tr, .corner-bl {
+      width: 16px; height: 16px;
+    }
+    .pixel-frame::before { top: -10px; left: -10px; }
+    .pixel-frame::after  { bottom: -10px; right: -10px; }
+    .corner-tr { top: -10px; right: -10px; }
+    .corner-bl { bottom: -10px; left: -10px; }
+
+    .pixel-btn:hover {
+      background: var(--cyan);
+      color: var(--bg);
+      box-shadow:
+        4px 4px 0 var(--purple),
+        0 0 40px rgba(0,240,255,0.7);
+      transform: translate(-2px, -2px);
+    }
+    .pixel-btn {
+      bottom: 50px;
+      padding: 14px 32px;
+      font-size: 0.95rem;
+    }
+    .status-bar {
+      font-size: 0.7rem;
+      padding: 8px 20px;
+    }
+
+    /* 桌面端恢复 crosshair */
+    body { cursor: crosshair; }
+  }
+
+  /* 横屏手机 */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .pixel-frame {
+      padding: 0.8rem 2rem;
+    }
+    .name {
+      font-size: clamp(2rem, 8vh, 5rem);
+    }
+    .subtitle {
+      margin-top: 0.6rem;
+      font-size: 0.65rem;
+    }
+    .pixel-btn {
+      bottom: 12px;
+      padding: 8px 20px;
+      font-size: 0.7rem;
+    }
+    .status-bar {
+      display: none; /* 横屏太窄，隐藏状态栏 */
+    }
+  }
+</style>
+</head>
+<body>
+
+  <canvas id="bg"></canvas>
+  <div class="grid-bg"></div>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  <div class="flicker"></div>
+
+  <div class="stage">
+    <div class="pixel-frame">
+      <div class="corner-tr"></div>
+      <div class="corner-bl"></div>
+
+      <div class="name">
+        <span>李</span><span>小</span><span>涵</span>
+      </div>
+
+      <div class="subtitle">▶ PLAYER 1 ◀</div>
+    </div>
+  </div>
+
+  <button class="pixel-btn" id="burstBtn">🔥 BURST!</button>
+
+  <div class="status-bar">
+    <div class="hp-bar"><span class="hp-text">HP:</span><span>████████████████████</span></div>
+    <div><span class="hp-text">LV:</span><span>99</span></div>
+    <div><span class="hp-text">SCORE:</span><span id="score">000000</span></div>
+  </div>
+
+<script>
+// ==================== 设备检测 ====================
+const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) ||
+                 ('ontouchstart' in window && window.innerWidth < 768);
+
+// ==================== 全局状态 ====================
+const fireworks = [];
+let score = 0;
+
+// ==================== 像素烟花粒子类 ====================
+class PixelParticle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 5 + 2;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.life = 1;
+    this.decay = Math.random() * 0.018 + 0.008;
+    this.size = Math.floor(Math.random() * 3) + 2;
+    this.hue = [195, 285, 50, 150, 330, 10][Math.floor(Math.random() * 6)];
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += 0.05;
+    this.life -= this.decay;
+  }
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = this.life;
+    ctx.fillStyle = `hsl(${this.hue}, 100%, 65%)`;
+    ctx.shadowColor = `hsl(${this.hue}, 100%, 65%)`;
+    ctx.shadowBlur = 6;
+    const sx = Math.round(this.x);
+    const sy = Math.round(this.y);
+    ctx.fillRect(sx, sy, this.size, this.size);
+    ctx.restore();
+  }
+}
+
+// ==================== 爆发函数 ====================
+function burstAt(cx, cy, count) {
+  for (let i = 0; i < count; i++) {
+    fireworks.push(new PixelParticle(cx, cy));
+  }
+}
+
+function randomBurst() {
+  const cx = Math.random() * W * 0.7 + W * 0.15;
+  const cy = Math.random() * H * 0.45 + H * 0.08;
+  burstAt(cx, cy, isMobile ? 60 + Math.floor(Math.random() * 40) : 100 + Math.floor(Math.random() * 80));
+  score += 100;
+  updateScore();
+}
+
+function updateScore() {
+  const el = document.getElementById('score');
+  if (el) el.textContent = String(score).padStart(6, '0');
+}
+
+// ==================== Canvas & 背景粒子 ====================
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+// iOS Safari 的 visualViewport 变化（键盘弹出等）
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', resize);
+  window.visualViewport.addEventListener('scroll', resize);
+}
+resize();
+
+// 移动端减少粒子数以提升性能
+const PARTICLE_COUNT = isMobile ? 60 : 120;
+const particles = [];
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+  particles.push({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    size: Math.random() < 0.15 ? 4 : 2,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    alpha: Math.random() * 0.6 + 0.2,
+    da: (Math.random() - 0.5) * 0.02,
+    hue: [195, 285, 50, 150, 330][Math.floor(Math.random() * 5)],
+  });
+}
+
+let mouse = { x: -9999, y: -9999 };
+window.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+window.addEventListener('touchmove', e => {
+  if (e.touches.length > 0) {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  }
+}, { passive: true });
+// 手指离开后鼠标归位
+window.addEventListener('touchend', () => {
+  mouse.x = -9999;
+  mouse.y = -9999;
+});
+
+function drawGridLines() {
+  const maxDist = isMobile ? 100 : 130;
+  const particleSlice = isMobile ? particles.slice(0, 40) : particles; // 移动端缩减排线
+  for (let i = 0; i < particleSlice.length; i++) {
+    for (let j = i + 1; j < particleSlice.length; j++) {
+      const dx = particleSlice[i].x - particleSlice[j].x;
+      const dy = particleSlice[i].y - particleSlice[j].y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < maxDist) {
+        const alpha = (1 - d / maxDist) * 0.08;
+        ctx.strokeStyle = `rgba(0,240,255,${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(particleSlice[i].x, particleSlice[i].y);
+        ctx.lineTo(particleSlice[j].x, particleSlice[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+// ==================== 主动画循环 ====================
+(function loop() {
+  ctx.clearRect(0, 0, W, H);
+
+  for (const p of particles) {
+    const dx = mouse.x - p.x;
+    const dy = mouse.y - p.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 160 && dist > 1) {
+      const force = 0.04;
+      p.vx += (dx / dist) * force;
+      p.vy += (dy / dist) * force;
+    }
+    p.vx *= 0.997;
+    p.vy *= 0.997;
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < -10) p.x = W + 10;
+    if (p.x > W + 10) p.x = -10;
+    if (p.y < -10) p.y = H + 10;
+    if (p.y > H + 10) p.y = -10;
+    p.alpha += p.da;
+    if (p.alpha > 0.7 || p.alpha < 0.15) p.da *= -1;
+
+    ctx.fillStyle = `hsla(${p.hue}, 100%, 65%, ${p.alpha})`;
+    ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+    ctx.shadowColor = `hsl(${p.hue}, 100%, 65%)`;
+    ctx.shadowBlur = p.size * 3;
+    ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+    ctx.shadowBlur = 0;
+  }
+
+  drawGridLines();
+
+  // 烟花
+  for (let i = fireworks.length - 1; i >= 0; i--) {
+    const p = fireworks[i];
+    p.update();
+    p.draw(ctx);
+    if (p.life <= 0) fireworks.splice(i, 1);
+  }
+
+  requestAnimationFrame(loop);
+})();
+
+// ==================== 事件绑定 ====================
+
+// 按钮点击 → 大爆发
+document.getElementById('burstBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  randomBurst();
+});
+
+// 点击/触摸页面任意位置 → 在点击处爆发
+function handleInteraction(x, y) {
+  burstAt(x, y, isMobile ? 40 + Math.floor(Math.random() * 30) : 60 + Math.floor(Math.random() * 50));
+  score += 50;
+  updateScore();
+}
+
+window.addEventListener('click', (e) => {
+  handleInteraction(e.clientX, e.clientY);
+});
+
+window.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) {
+    const t = e.touches[0];
+    handleInteraction(t.clientX, t.clientY);
+  }
+}, { passive: true });
+
+// ==================== 自动烟花 ====================
+setTimeout(() => randomBurst(), 600);
+setInterval(() => {
+  if (fireworks.length < 30) randomBurst();
+}, 3500);
+
+// ==================== 阻止移动端双击缩放和长按 ====================
+document.addEventListener('dblclick', (e) => e.preventDefault());
+document.addEventListener('gesturestart', (e) => e.preventDefault());
+
+// ==================== Console Easter Egg ====================
+console.log(
+`%c
+ ██╗     ██╗██╗  ██╗██╗  ██╗ █████╗ ███╗   ██╗
+ ██║     ╚═╝╚██╗██╔╝██║  ██║██╔══██╗████╗  ██║
+ ██║     ██╗ ╚███╔╝ ███████║███████║██╔██╗ ██║
+ ██║     ██║ ██╔██╗ ██╔══██║██╔══██║██║╚██╗██║
+ ███████╗██║██╔╝ ██╗██║  ██║██║  ██║██║ ╚████║
+ ╚══════╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+%c🎮 PLAYER 1 已就绪 | ${isMobile ? '📱 移动端优化模式' : '🖥️ 桌面端模式'} | 点击屏幕发射像素烟花！`,
+  'color:#00f0ff;font-size:1em;',
+  'color:#ffe600;'
+);
+</script>
+</body>
+</html>
